@@ -1,0 +1,196 @@
+:root {
+  font-family: "Poppins", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #181C68;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #181C68;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #06071a;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  color: #181C68;
+}
+
+/* Landing Page Styles */
+.landing-page {
+  width: 100%;
+  background-color: #ffffff;
+  color: #181C68;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #ffffff;
+}
+
+.logo {
+  height: 60px;
+}
+
+/* Tombol umum */
+.btn-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px; /* Spasi antara ikon dan teks */
+  padding: 12px 24px; /* Lebih ramping: atas-bawah 12px, kiri-kanan 24px */
+  border-radius: 9999px; /* Efek pil */
+  background-color: #181C68;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem; /* Ukuran teks lebih kecil */
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+.btn-login:hover {
+  background-color: #0d0f40;
+}
+
+.btn-login .icon {
+  font-size: 1rem; /* Ikon disesuaikan */
+}
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px;
+  background-color: #e2ebec;
+}
+
+.hero-text {
+  flex: 1;
+}
+
+.hero-text h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #181C68;
+}
+
+.hero-text p {
+  margin-bottom: 20px;
+  color: #181C68;
+}
+
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Judul Hero */
+.judul-hero {
+  color: #181C68;
+  text-align: left;
+  font-family: "Poppins", sans-serif;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700; /* Gunakan 700 untuk bold */
+  line-height: 150%;
+  margin-bottom: 10px;
+}
+
+.judul-hero2 {
+  color: #181C68;
+  text-align: center; /* Mengatur teks menjadi di tengah */
+  font-family: "Poppins", sans-serif;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700; /* Gunakan 700 untuk bold */
+  line-height: 150%;
+  margin-bottom: 10px;
+}
+
+.produk-section {
+  padding: 40px;
+  background-color: #ffffff;
+  text-align: center;
+}
+
+.produk-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #181C68;
+}
+
+.produk-section p {
+  margin-bottom: 20px;
+  color: #181C68;
+}
+
+.produk-cards {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.produk-card {
+  min-width: 150px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #ffffff;
+  color: #181C68;
+  flex: 0 0 auto;
+}
+
+.produk-card img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* Mode light scheme tambahan */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  .btn-reservasi,
+  .btn-cta {
+    background-color: #f9f9f9;
+    color: #181C68;
+  }
+}
