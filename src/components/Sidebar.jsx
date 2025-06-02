@@ -13,7 +13,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { name: "Dashboard", icon: <LayoutDashboard />, path: "/" },
+  { name: "Dashboard", icon: <LayoutDashboard />, path: "/admin" },
   { name: "Produk", icon: <Box />, path: "/produk" },
   {name: "Penjualan", icon: <ShoppingCart/>, path: "/penjualan"},
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
