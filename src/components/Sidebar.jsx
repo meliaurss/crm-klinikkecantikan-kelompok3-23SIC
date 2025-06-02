@@ -22,7 +22,7 @@ const menuItems = [
 
 const accountItems = [
   { name: "Pengaturan Akun", icon: <Settings />, path: "/akun" },
-  { name: "Sign In", icon: <LogIn />, path: "/signin" },
+  { name: "Kembali", icon: <LogIn />, path: "/" },
   { name: "Sign Up", icon: <UserPlus />, path: "/signup" },
 ];
 

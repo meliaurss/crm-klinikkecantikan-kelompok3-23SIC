@@ -18,7 +18,7 @@ export default function MainLayout() {
       <div id="main-content" className="flex-1 flex flex-col">
         <Header />
         <main className="flex-1 overflow-y-auto">
-          <div className="p-15">
+          <div className="p-7">
             <Outlet />
           </div>
         </main>
