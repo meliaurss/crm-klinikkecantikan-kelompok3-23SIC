@@ -1,13 +1,12 @@
+import { AiFillMessage } from "react-icons/ai"; 
 import {
   LayoutDashboard,
   Users, // untuk pelanggan
   Box, // untuk produk
-  BarChart2, // untuk laporan
+  Megaphone, // untuk laporan
   Settings, // untuk pengaturan akun
-  User,
   LogIn,
   UserPlus,
-  ChartArea,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -15,7 +14,7 @@ const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard />, path: "/" },
   { name: "Produk", icon: <Box />, path: "/produk" },
   {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
-  { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
+  { name: "Feedback", icon: <Megaphone />, path: "/feedback" },
 ];
 
 const accountItems = [

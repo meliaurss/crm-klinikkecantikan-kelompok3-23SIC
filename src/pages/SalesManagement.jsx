@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 const SalesManagement = () => {
@@ -8,7 +8,7 @@ const SalesManagement = () => {
     name: "",
     email: "",
     phone: "",
-    status: "",
+    status: "Baru",
   });
   const [isEditMode, setIsEditMode] = useState(false);
   const [editCustomerId, setEditCustomerId] = useState(null);
@@ -17,6 +17,19 @@ const SalesManagement = () => {
     customerId: null,
     customerName: "",
   });
+
+  // 🚀 Load data dari localStorage saat pertama kali render
+  useEffect(() => {
+    const stored = localStorage.getItem("customers");
+    if (stored) {
+      setCustomers(JSON.parse(stored));
+    }
+  }, []);
+
+  // 💾 Simpan data ke localStorage setiap kali `customers` berubah
+  useEffect(() => {
+    localStorage.setItem("customers", JSON.stringify(customers));
+  }, [customers]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -94,7 +107,6 @@ const SalesManagement = () => {
         </button>
       )}
 
-
       {showForm && (
         <div className="mb-6 p-6 border border-gray-200 rounded-lg shadow bg-white">
           <div className="grid grid-cols-1 gap-4">
@@ -142,23 +154,32 @@ const SalesManagement = () => {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
               >
-
                 <option value="Baru">Baru</option>
                 <option value="Member">Member</option>
               </select>
             </div>
           </div>
 
-          <button
-            onClick={handleAddOrUpdateCustomer}
-            className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-          >
-            {isEditMode ? "Perbarui" : "Simpan"}
-          </button>
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              onClick={() => {
+                setShowForm(false);
+                setIsEditMode(false);
+              }}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleAddOrUpdateCustomer}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+            >
+              {isEditMode ? "Perbarui" : "Simpan"}
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Tabel pelanggan */}
       <div className="w-full overflow-x-auto mt-6">
         <table className="w-full text-sm text-left text-gray-700 bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md">
           <thead className="bg-indigo-50 text-indigo-800 text-xs uppercase font-semibold">
@@ -185,10 +206,11 @@ const SalesManagement = () => {
                   <td className="px-6 py-4">{cust.phone}</td>
                   <td className="px-6 py-4 text-center">
                     <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${cust.status === "Member"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                        }`}
+                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                        cust.status === "Member"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
                     >
                       {cust.status}
                     </span>
@@ -218,7 +240,6 @@ const SalesManagement = () => {
         </table>
       </div>
 
-      {/* Modal konfirmasi hapus */}
       {confirmDelete.show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/30">
           <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-sm text-center border border-gray-200">
@@ -251,7 +272,6 @@ const SalesManagement = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
