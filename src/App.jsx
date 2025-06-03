@@ -1,22 +1,19 @@
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
-import CustomerManagement from "./pages/CustomerManagement";
-import ProductManagement from "./pages/ProductManagement";
-import SalesManagement from "./pages/SalesManagement";
-import LandingPage from "./pages/LandingPage";
+import  ProductManagement from "./pages/ProductManagement";
+import FormReservasi from "./pages/FormReservasi";
+import FormDataDiri from "./pages/FormDataDiri";
 
 export default function App() {
   return (
 
     <Routes>
-      {/* Semua halaman (termasuk LandingPage) pakai MainLayout */}
-      <Route element = {<MainLayout/>}>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/admin" element={<Dashboard />} />
-        <Route path="/pelanggan" element={<CustomerManagement />} />
-        <Route path="/produk" element={<ProductManagement />} />
-        <Route path="/penjualan" element={<SalesManagement />} />
+      <Route element={<MainLayout/>}>
+      <Route path="/" element={<Dashboard/>} />
+      <Route path="/produk" element={< ProductManagement/>} />
+      <Route path="/reservasi" element={< FormReservasi/>} />
+      <Route path="/data-diri" element={< FormDataDiri/>} />
       </Route>
     </Routes>
   );
