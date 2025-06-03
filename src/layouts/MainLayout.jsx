@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
 
 export default function MainLayout() {
   const location = useLocation();
