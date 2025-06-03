@@ -14,6 +14,7 @@ export default function App() {
       <Route path="/produk" element={< ProductManagement/>} />
       <Route path="/reservasi" element={< FormReservasi/>} />
       <Route path="/data-diri" element={< FormDataDiri/>} />
+      <Route path="datapelanggan" element={<SalesManagement/>} />
       </Route>
     </Routes>
   );
