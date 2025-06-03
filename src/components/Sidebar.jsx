@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   Users, // untuk pelanggan
-  ShoppingCart, // untuk penjualan
   Box, // untuk produk
   BarChart2, // untuk laporan
   Settings, // untuk pengaturan akun
@@ -15,7 +14,7 @@ import { Link, useLocation } from "react-router-dom";
 const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard />, path: "/" },
   { name: "Produk", icon: <Box />, path: "/produk" },
-  {name: "Data Pelanggan", icon: <ShoppingCart/>, path: "/datapelanggan"},
+  {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
 ];
 

@@ -1,230 +1,259 @@
 import React, { useState } from "react";
-import { FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
+import { Pencil, Trash2 } from "lucide-react";
 
-const reservationData = [
-  {
-    id: 1,
-    name: "Siti Aminah",
-    gender: "Perempuan",
-    phone: "081234567890",
-    email: "siti@example.com",
-    status: "Pelanggan",
-  },
-  {
-    id: 2,
-    name: "Dewi Lestari",
-    gender: "Perempuan",
-    phone: "081987654321",
-    email: "dewi@example.com",
-    status: "Baru",
-  },
-  {
-    id: 3,
-    name: "Rizal Fadli",
-    gender: "Laki-laki",
-    phone: "082112223333",
-    email: "rizal@example.com",
-    status: "Pelanggan",
-  },
-];
-
-const extractUniqueCustomers = (reservations) => {
-  const map = new Map();
-  reservations.forEach((r) => {
-    if (!map.has(r.phone)) {
-      map.set(r.phone, { ...r });
-    }
-  });
-  return Array.from(map.values());
-};
-
-export default function CustomerManagement() {
-  const [customers, setCustomers] = useState(
-    extractUniqueCustomers(reservationData)
-  );
-  const [editingId, setEditingId] = useState(null);
-  const [editData, setEditData] = useState({
+const SalesManagement = () => {
+  const [customers, setCustomers] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
     name: "",
-    gender: "",
-    phone: "",
     email: "",
+    phone: "",
     status: "",
   });
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editCustomerId, setEditCustomerId] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState({
+    show: false,
+    customerId: null,
+    customerName: "",
+  });
 
-  const handleEdit = (customer) => {
-    setEditingId(customer.id);
-    setEditData(customer);
-  };
-
-  const handleSave = () => {
-    setCustomers((prev) =>
-      prev.map((c) => (c.id === editingId ? { ...c, ...editData } : c))
-    );
-    setEditingId(null);
-    setEditData({ name: "", gender: "", phone: "", email: "", status: "" });
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Yakin ingin menghapus data pelanggan ini?")) {
-      setCustomers(customers.filter((c) => c.id !== id));
-    }
-  };
-
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddOrUpdateCustomer = () => {
+    if (!formData.name || !formData.email || !formData.phone) {
+      alert("Semua field wajib diisi!");
+      return;
+    }
+
+    if (isEditMode) {
+      setCustomers((prev) =>
+        prev.map((cust) =>
+          cust.id === editCustomerId ? { ...cust, ...formData } : cust
+        )
+      );
+      setIsEditMode(false);
+      setEditCustomerId(null);
+    } else {
+      const newCustomer = {
+        id: Date.now(),
+        ...formData,
+      };
+      setCustomers((prev) => [...prev, newCustomer]);
+    }
+
+    setFormData({ name: "", email: "", phone: "", status: "Baru" });
+    setShowForm(false);
+  };
+
+  const handleEditCustomer = (cust) => {
+    setFormData({
+      name: cust.name,
+      email: cust.email,
+      phone: cust.phone,
+      status: cust.status,
+    });
+    setEditCustomerId(cust.id);
+    setIsEditMode(true);
+    setShowForm(true);
+  };
+
+  const confirmDeleteCustomer = (id, name) => {
+    setConfirmDelete({ show: true, customerId: id, customerName: name });
+  };
+
+  const handleDeleteConfirmed = () => {
+    setCustomers((prev) =>
+      prev.filter((cust) => cust.id !== confirmDelete.customerId)
+    );
+    setConfirmDelete({ show: false, customerId: null, customerName: "" });
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 px-4 py-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+    <div className="p-6 w-full">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">
         Manajemen Data Pelanggan
       </h1>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 bg-white rounded-lg overflow-hidden">
-          <thead className="bg-gray-100 text-gray-700">
+      {!showForm && (
+        <button
+          onClick={() => {
+            setShowForm(true);
+            setFormData({ name: "", email: "", phone: "", status: "Baru" });
+            setIsEditMode(false);
+          }}
+          className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+        >
+          Tambah Pelanggan
+        </button>
+      )}
+
+
+      {showForm && (
+        <div className="mb-6 p-6 border border-gray-200 rounded-lg shadow bg-white">
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="block font-medium mb-1">Nama</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Nama pelanggan"
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Email pelanggan"
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Telepon</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="Nomor telepon"
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Status</label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              >
+
+                <option value="Baru">Baru</option>
+                <option value="Member">Member</option>
+              </select>
+            </div>
+          </div>
+
+          <button
+            onClick={handleAddOrUpdateCustomer}
+            className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+          >
+            {isEditMode ? "Perbarui" : "Simpan"}
+          </button>
+        </div>
+      )}
+
+      {/* Tabel pelanggan */}
+      <div className="w-full overflow-x-auto mt-6">
+        <table className="w-full text-sm text-left text-gray-700 bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-indigo-50 text-indigo-800 text-xs uppercase font-semibold">
             <tr>
-              <th className="px-6 py-4 text-left">Nama</th>
-              <th className="px-6 py-4 text-left">Jenis Kelamin</th>
-              <th className="px-6 py-4 text-left">Telepon</th>
-              <th className="px-6 py-4 text-left">Email</th>
-              <th className="px-6 py-4 text-left">Status</th>
-              <th className="px-6 py-4 text-center"></th>
+              <th className="px-6 py-3">Nama</th>
+              <th className="px-6 py-3">Email</th>
+              <th className="px-6 py-3">Telepon</th>
+              <th className="px-6 py-3 text-center">Status</th>
+              <th className="px-6 py-3 text-center"></th>
             </tr>
           </thead>
-          <tbody className="divide-y text-gray-800">
-            {customers.map((customer) => (
-              <tr key={customer.id} className="hover:bg-gray-50">
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <input
-                      name="name"
-                      value={editData.name}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    />
-                  ) : (
-                    customer.name
-                  )}
-                </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <select
-                      name="gender"
-                      value={editData.gender}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    >
-                      <option value="" disabled>
-                        Pilih jenis kelamin
-                      </option>
-                      <option value="Laki-laki">Laki-laki</option>
-                      <option value="Perempuan">Perempuan</option>
-                    </select>
-                  ) : (
-                    customer.gender
-                  )}
-                </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <input
-                      name="phone"
-                      value={editData.phone}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    />
-                  ) : (
-                    customer.phone
-                  )}
-                </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <input
-                      name="email"
-                      value={editData.email}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    />
-                  ) : (
-                    customer.email
-                  )}
-                </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <select
-                      name="status"
-                      value={editData.status}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    >
-                      <option value="" disabled>
-                        Pilih status
-                      </option>
-                      <option value="Pelanggan">Pelanggan</option>
-                      <option value="Baru">Baru</option>
-                    </select>
-                  ) : (
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        customer.status === "Pelanggan"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {customer.status}
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-3 text-center">
-                  {editingId === customer.id ? (
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={handleSave}
-                        className="text-green-600 hover:text-green-800"
-                        title="Simpan"
-                      >
-                        <FaSave />
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="text-gray-500 hover:text-gray-700"
-                        title="Batal"
-                      >
-                        <FaTimes />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={() => handleEdit(customer)}
-                        className="text-blue-600 hover:text-blue-800"
-                        title="Edit"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(customer.id)}
-                        className="text-red-600 hover:text-red-800"
-                        title="Hapus"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {customers.length === 0 && (
+          <tbody className="divide-y divide-gray-100">
+            {customers.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-4 text-gray-500">
-                  Tidak ada data pelanggan.
+                <td colSpan={5} className="text-center py-6 text-gray-500">
+                  Belum ada data pelanggan.
                 </td>
               </tr>
+            ) : (
+              customers.map((cust) => (
+                <tr key={cust.id} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4">{cust.name}</td>
+                  <td className="px-6 py-4">{cust.email}</td>
+                  <td className="px-6 py-4">{cust.phone}</td>
+                  <td className="px-6 py-4 text-center">
+                    <span
+                      className={`px-3 py-1 text-xs font-semibold rounded-full ${cust.status === "Member"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                        }`}
+                    >
+                      {cust.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex justify-center items-center gap-3">
+                      <button
+                        onClick={() => handleEditCustomer(cust)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() =>
+                          confirmDeleteCustomer(cust.id, cust.name)
+                        }
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Modal konfirmasi hapus */}
+      {confirmDelete.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/30">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-sm text-center border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">
+              Hapus Pelanggan
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Apakah kamu yakin ingin menghapus{" "}
+              <span className="font-semibold text-red-600">
+                {confirmDelete.customerName}
+              </span>
+              ?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleDeleteConfirmed}
+                className="bg-red-600 px-4 py-2 text-white rounded-lg hover:bg-red-700 transition"
+              >
+                Hapus
+              </button>
+              <button
+                onClick={() =>
+                  setConfirmDelete({ show: false, customerId: null })
+                }
+                className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
-}
+};
+
+export default SalesManagement;
