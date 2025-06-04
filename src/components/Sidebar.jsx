@@ -1,4 +1,4 @@
-import { SlCalender } from "react-icons/sl"; 
+import { BsCalendar } from "react-icons/bs";
 import {
   LayoutDashboard,
   Users, // untuk pelanggan
@@ -18,7 +18,7 @@ const menuItems = [
   { name: "Produk", icon: <Box />, path: "/produk" },
   {name: "Data Pelanggan", icon: <ShoppingCart/>, path: "/datapelanggan"},
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
-  { name: "Reservasi", icon: <SlCalender />, path: "/reservasi" },
+  { name: "Reservasi", icon: <BsCalendar />, path: "/reservasi" },
 
 ];
 
