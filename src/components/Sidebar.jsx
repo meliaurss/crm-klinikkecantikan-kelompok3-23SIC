@@ -25,7 +25,12 @@ const menuItems = [
 <<<<<<< HEAD
   {name: "Data Pelanggan", icon: <ShoppingCart/>, path: "/datapelanggan"},
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
+<<<<<<< HEAD
   { name: "Reservasi", icon: <BsCalendar />, path: "/reservasi" },
+=======
+  { name: "Reservasi", icon: <SlCalender />, path: "/reservasi" },
+  { name: "Reservasi", icon: <SlCalender />, path: "/reservasi-management" },
+>>>>>>> KELOMPOK3/indah
 
 =======
   {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
