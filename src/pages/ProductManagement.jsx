@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+
 
 const initialProducts = [
   {
@@ -29,6 +32,8 @@ function formatCurrency(num) {
 export default function ProductManagement() {
   const [products, setProducts] = useState(initialProducts);
   const [showForm, setShowForm] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -55,32 +60,69 @@ export default function ProductManagement() {
       alert("Semua kolom harus diisi");
       return;
     }
+
     const newProduct = {
       ...formData,
       id: products.length + 1,
       stock: parseInt(formData.stock),
       price: parseFloat(formData.price),
     };
+
     setProducts([...products, newProduct]);
+    resetForm();
+  };
+
+  const handleUpdateProduct = () => {
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.id === editId
+          ? {
+            ...formData,
+            id: editId,
+            stock: parseInt(formData.stock),
+            price: parseFloat(formData.price),
+          }
+          : product
+      )
+    );
+    resetForm();
+  };
+
+  const handleEdit = (product) => {
+    setFormData({
+      name: product.name,
+      category: product.category,
+      stock: product.stock.toString(),
+      price: product.price.toString(),
+      active: product.active,
+    });
+    setEditId(product.id);
+    setShowForm(true);
+  };
+
+  const resetForm = () => {
     setFormData({ name: "", category: "", stock: "", price: "", active: true });
+    setEditId(null);
     setShowForm(false);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Yakin ingin menghapus produk ini?")) {
-      setProducts(products.filter((p) => p.id !== id));
-    }
+  const confirmDelete = () => {
+    setProducts(products.filter((p) => p.id !== deleteId));
+    setDeleteId(null);
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-semibold mb-4">Manajemen Produk</h1>
 
       <button
-        onClick={() => setShowForm((prev) => !prev)}
+        onClick={() => {
+          setShowForm((prev) => !prev);
+          if (!showForm) resetForm();
+        }}
         className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
       >
-        {showForm ? "Batal Tambah Produk" : "Tambah Produk"}
+        {showForm ? "Batal" : "Tambah Produk"}
       </button>
 
       {showForm && (
@@ -143,48 +185,39 @@ export default function ProductManagement() {
           </div>
 
           <button
-            onClick={handleAddProduct}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            onClick={editId ? handleUpdateProduct : handleAddProduct}
+            className={`px-4 py-2 ${editId ? "bg-yellow-500 hover:bg-yellow-600" : "bg-green-600 hover:bg-green-700"
+              } text-white rounded`}
           >
-            Simpan Produk
+            {editId ? "Update Produk" : "Simpan Produk"}
           </button>
         </div>
       )}
 
-      <div className="overflow-x-auto bg-white shadow rounded">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Nama
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Kategori
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                Stok
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                Harga
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-                Status
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-                Aksi
-              </th>
-            </tr>
+      <div className="overflow-x-auto bg-white rounded-xl shadow-md">
+        <table className="w-[2000px] table-fixed">
+          <thead className="bg-[#dbeafe] text-[#1e3a8a]">
+        <tr>
+      <th className="w-[150px] px-4 py-3 text-left">Nama</th>
+      <th className="w-[120px] px-4 py-3 text-left">Kategori</th>
+      <th className="w-[80px] px-4 py-3 text-right">Stok</th>
+      <th className="w-[100px] px-4 py-3 text-right">Harga</th>
+      <th className="w-[100px] px-4 py-3 text-center">Status</th>
+      <th className="w-[100px] px-4 py-3 text-center">Aksi</th>
+    </tr>
+
+
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-200 text-gray-700">
             {products.map((product) => (
               <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4">{product.name}</td>
-                <td className="px-6 py-4">{product.category}</td>
-                <td className="px-6 py-4 text-right">{product.stock}</td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-4 py-3">{product.name}</td>
+                <td className="px-4 py-3">{product.category}</td>
+                <td className="px-4 py-3 text-right">{product.stock}</td>
+                <td className="px-4 py-3 text-right">
                   {formatCurrency(product.price)}
                 </td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-4 py-3 text-center">
                   {product.active ? (
                     <span className="inline-block px-2 py-1 text-xs text-green-800 bg-green-100 rounded">
                       Aktif
@@ -195,20 +228,25 @@ export default function ProductManagement() {
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-4 text-center space-x-2">
-                  <button
-                    className="text-indigo-600 hover:text-indigo-900"
-                    onClick={() => alert("Fitur Edit belum tersedia")}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="text-red-600 hover:text-red-900"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Hapus
-                  </button>
+                <td className="px-4 py-3 text-center">
+                  <div className="flex justify-center gap-5">
+                    <button
+                      onClick={() => handleEdit(product)}
+                      className="text-blue-600 hover:text-blue-800"
+                      title="Edit"
+                    >
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => setDeleteId(product.id)}
+                      className="text-red-600 hover:text-red-800"
+                      title="Hapus"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </div>
                 </td>
+
               </tr>
             ))}
             {products.length === 0 && (
@@ -221,6 +259,35 @@ export default function ProductManagement() {
           </tbody>
         </table>
       </div>
+
+      {deleteId !== null && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">Konfirmasi Hapus</h2>
+            <p className="mb-4 text-gray-600">
+              Yakin ingin menghapus produk{" "}
+              <span className="font-semibold text-red-600">
+                {products.find((p) => p.id === deleteId)?.name}
+              </span>
+              ?
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

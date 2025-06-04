@@ -17,6 +17,7 @@ const menuItems = [
   { name: "Produk", icon: <Box />, path: "/produk" },
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
   { name: "Reservasi", icon: <SlCalender />, path: "/reservasi" },
+  { name: "Reservasi", icon: <SlCalender />, path: "/reservasi-management" },
 
 ];
 

@@ -3,7 +3,8 @@ import MainLayout from "./components/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import  ProductManagement from "./pages/ProductManagement";
 import FormReservasi from "./pages/FormReservasi";
-import FormDataDiri from "./pages/FormDataDiri";
+import ReservasiManagement from "./pages/ReservasiManagement";
+
 
 function App() {
   return(
@@ -13,7 +14,7 @@ function App() {
       <Route path="/" element={<Dashboard/>} />
       <Route path="/produk" element={< ProductManagement/>} />
       <Route path="/reservasi" element={< FormReservasi/>} />
-      <Route path="/data-diri" element={< FormDataDiri/>} />
+      <Route path="/reservasi-management" element={< ReservasiManagement/>} />
       </Route>
     </Routes> 
   )
