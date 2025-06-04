@@ -28,7 +28,7 @@ const initialCustomers = [
 export default function SalesManagement() {
   const [customers, setCustomers] = useState(initialCustomers);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", status: "Baru" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", status: "" });
   const [editId, setEditId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
@@ -50,7 +50,7 @@ export default function SalesManagement() {
       setCustomers([...customers, newCustomer]);
     }
 
-    setFormData({ name: "", email: "", phone: "", status: "Baru" });
+    setFormData({ name: "", email: "", phone: "", status: "" });
     setShowForm(false);
     setEditId(null);
   };
@@ -73,7 +73,7 @@ export default function SalesManagement() {
       <button
         onClick={() => {
           setShowForm((prev) => !prev);
-          setFormData({ name: "", email: "", phone: "", status: "Baru" });
+          setFormData({ name: "", email: "", phone: "", status: "" });
           setEditId(null);
         }}
         className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
