@@ -19,7 +19,7 @@ export default function MainLayout() {
         <Header />
         <main className="flex-1 overflow-y-auto">
           <div className="p-7">
-            <Outlet />
+            <Outlet/>
           </div>
         </main>
       </div>
