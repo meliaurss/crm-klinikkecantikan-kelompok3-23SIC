@@ -86,4 +86,8 @@ const LandingPage = () => {
     );
 };
 
+<<<<<<< HEAD
 export default LandingPage;
+=======
+export default LandingPage;
+>>>>>>> KELOMPOK3/Kinantiara

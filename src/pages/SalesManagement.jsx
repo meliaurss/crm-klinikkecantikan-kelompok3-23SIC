@@ -1,230 +1,183 @@
 import React, { useState } from "react";
-import { FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-const reservationData = [
+const initialCustomers = [
   {
     id: 1,
-    name: "Siti Aminah",
-    gender: "Perempuan",
+    name: "Budi Santoso",
+    email: "budi@mail.com",
     phone: "081234567890",
-    email: "siti@example.com",
-    status: "Pelanggan",
+    status: "Member",
   },
   {
     id: 2,
-    name: "Dewi Lestari",
-    gender: "Perempuan",
-    phone: "081987654321",
-    email: "dewi@example.com",
+    name: "Siti Aminah",
+    email: "siti@mail.com",
+    phone: "089876543210",
     status: "Baru",
   },
   {
     id: 3,
-    name: "Rizal Fadli",
-    gender: "Laki-laki",
-    phone: "082112223333",
-    email: "rizal@example.com",
-    status: "Pelanggan",
+    name: "Andi Wijaya",
+    email: "andi@mail.com",
+    phone: "081299988877",
+    status: "Member",
   },
 ];
 
-const extractUniqueCustomers = (reservations) => {
-  const map = new Map();
-  reservations.forEach((r) => {
-    if (!map.has(r.phone)) {
-      map.set(r.phone, { ...r });
-    }
-  });
-  return Array.from(map.values());
-};
+export default function SalesManagement() {
+  const [customers, setCustomers] = useState(initialCustomers);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", status: "" });
+  const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
-export default function CustomerManagement() {
-  const [customers, setCustomers] = useState(
-    extractUniqueCustomers(reservationData)
-  );
-  const [editingId, setEditingId] = useState(null);
-  const [editData, setEditData] = useState({
-    name: "",
-    gender: "",
-    phone: "",
-    email: "",
-    status: "",
-  });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddOrEditCustomer = () => {
+    if (!formData.name || !formData.email || !formData.phone) {
+      alert("Semua field wajib diisi!");
+      return;
+    }
+
+    if (editId !== null) {
+      setCustomers(customers.map((c) => (c.id === editId ? { ...formData, id: editId } : c)));
+    } else {
+      const newCustomer = { id: customers.length + 1, ...formData };
+      setCustomers([...customers, newCustomer]);
+    }
+
+    setFormData({ name: "", email: "", phone: "", status: "" });
+    setShowForm(false);
+    setEditId(null);
+  };
 
   const handleEdit = (customer) => {
-    setEditingId(customer.id);
-    setEditData(customer);
+    setFormData(customer);
+    setEditId(customer.id);
+    setShowForm(true);
   };
 
-  const handleSave = () => {
-    setCustomers((prev) =>
-      prev.map((c) => (c.id === editingId ? { ...c, ...editData } : c))
-    );
-    setEditingId(null);
-    setEditData({ name: "", gender: "", phone: "", email: "", status: "" });
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Yakin ingin menghapus data pelanggan ini?")) {
-      setCustomers(customers.filter((c) => c.id !== id));
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditData((prev) => ({ ...prev, [name]: value }));
+  const confirmDelete = () => {
+    setCustomers(customers.filter((c) => c.id !== deleteId));
+    setDeleteId(null);
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 px-4 py-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
-        Manajemen Data Pelanggan
-      </h1>
+    <div className="p-6 w-full max-w-screen-xl mx-auto relative">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Manajemen Data Pelanggan</h1>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 bg-white rounded-lg overflow-hidden">
-          <thead className="bg-gray-100 text-gray-700">
+      <button
+        onClick={() => {
+          setShowForm((prev) => !prev);
+          setFormData({ name: "", email: "", phone: "", status: "" });
+          setEditId(null);
+        }}
+        className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+      >
+        {showForm ? "Batal" : "Tambah Pelanggan"}
+      </button>
+
+      {showForm && (
+        <div className="mb-6 p-6 border border-gray-200 rounded-lg shadow bg-white">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-medium mb-1">Nama</label>
+              <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Nama pelanggan" className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">Email</label>
+              <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Email pelanggan" className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">Telepon</label>
+              <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="Nomor telepon" className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            </div>
+            <div>
+              <label className="block font-medium mb-1">Status</label>
+              <select name="status" value={formData.status} onChange={handleInputChange} className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                <option value="Baru">Baru</option>
+                <option value="Member">Member</option>
+              </select>
+            </div>
+          </div>
+          <button onClick={handleAddOrEditCustomer} className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+            {editId !== null ? "Update" : "Simpan"}
+          </button>
+        </div>
+      )}
+
+      <div className="w-full overflow-x-auto mt-6">
+        <table className="w-full text-sm text-left text-gray-700 bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-indigo-50 text-indigo-800 text-xs uppercase font-semibold">
             <tr>
-              <th className="px-6 py-4 text-left">Nama</th>
-              <th className="px-6 py-4 text-left">Jenis Kelamin</th>
-              <th className="px-6 py-4 text-left">Telepon</th>
-              <th className="px-6 py-4 text-left">Email</th>
-              <th className="px-6 py-4 text-left">Status</th>
-              <th className="px-6 py-4 text-center"></th>
+              <th className="px-6 py-3">Nama</th>
+              <th className="px-6 py-3">Email</th>
+              <th className="px-6 py-3">Telepon</th>
+              <th className="px-6 py-3 text-center">Status</th>
+              <th className="px-6 py-3 text-center"></th>
             </tr>
           </thead>
-          <tbody className="divide-y text-gray-800">
-            {customers.map((customer) => (
-              <tr key={customer.id} className="hover:bg-gray-50">
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <input
-                      name="name"
-                      value={editData.name}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    />
-                  ) : (
-                    customer.name
-                  )}
+          <tbody className="divide-y divide-gray-100">
+            {customers.map((cust) => (
+              <tr key={cust.id} className="hover:bg-gray-50 transition">
+                <td className="px-6 py-4">{cust.name}</td>
+                <td className="px-6 py-4">{cust.email}</td>
+                <td className="px-6 py-4">{cust.phone}</td>
+                <td className="px-6 py-4 text-center">
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${cust.status === "Member" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>{cust.status}</span>
                 </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <select
-                      name="gender"
-                      value={editData.gender}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    >
-                      <option value="" disabled>
-                        Pilih jenis kelamin
-                      </option>
-                      <option value="Laki-laki">Laki-laki</option>
-                      <option value="Perempuan">Perempuan</option>
-                    </select>
-                  ) : (
-                    customer.gender
-                  )}
-                </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <input
-                      name="phone"
-                      value={editData.phone}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    />
-                  ) : (
-                    customer.phone
-                  )}
-                </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <input
-                      name="email"
-                      value={editData.email}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    />
-                  ) : (
-                    customer.email
-                  )}
-                </td>
-                <td className="px-6 py-3">
-                  {editingId === customer.id ? (
-                    <select
-                      name="status"
-                      value={editData.status}
-                      onChange={handleChange}
-                      className="border px-3 py-1 rounded w-full"
-                    >
-                      <option value="" disabled>
-                        Pilih status
-                      </option>
-                      <option value="Pelanggan">Pelanggan</option>
-                      <option value="Baru">Baru</option>
-                    </select>
-                  ) : (
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        customer.status === "Pelanggan"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {customer.status}
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-3 text-center">
-                  {editingId === customer.id ? (
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={handleSave}
-                        className="text-green-600 hover:text-green-800"
-                        title="Simpan"
-                      >
-                        <FaSave />
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="text-gray-500 hover:text-gray-700"
-                        title="Batal"
-                      >
-                        <FaTimes />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={() => handleEdit(customer)}
-                        className="text-blue-600 hover:text-blue-800"
-                        title="Edit"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(customer.id)}
-                        className="text-red-600 hover:text-red-800"
-                        title="Hapus"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  )}
+                <td className="px-6 py-4 text-center space-x-2 flex justify-center">
+                  <button onClick={() => handleEdit(cust)} className="text-blue-600 hover:text-blue-800">
+                    <PencilIcon className="h-5 w-5" />
+                  </button>
+                  <button onClick={() => setDeleteId(cust.id)} className="text-red-600 hover:text-red-800">
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
                 </td>
               </tr>
             ))}
             {customers.length === 0 && (
               <tr>
-                <td colSpan="6" className="text-center py-4 text-gray-500">
-                  Tidak ada data pelanggan.
-                </td>
+                <td colSpan={5} className="text-center py-4 text-gray-500">Tidak ada data pelanggan</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Modal Hapus */}
+      {deleteId !== null && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">Konfirmasi Hapus</h2>
+            <p className="mb-4 text-gray-600">
+              Yakin ingin menghapus pelanggan{" "}
+              <span className="font-semibold text-red-600">
+                {customers.find((c) => c.id === deleteId)?.name}
+              </span>
+              ?
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

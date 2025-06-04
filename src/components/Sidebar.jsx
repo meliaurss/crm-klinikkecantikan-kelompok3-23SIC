@@ -1,25 +1,36 @@
+<<<<<<< HEAD
 import { BsCalendar } from "react-icons/bs";
+=======
+import { AiFillMessage } from "react-icons/ai"; 
+>>>>>>> KELOMPOK3/Kinantiara
 import {
   LayoutDashboard,
   Users, // untuk pelanggan
-  ShoppingCart, // untuk penjualan
   Box, // untuk produk
-  BarChart2, // untuk laporan
+  Megaphone, // untuk laporan
   Settings, // untuk pengaturan akun
   LogIn,
   UserPlus,
+<<<<<<< HEAD
   
   ChartArea,
+=======
+>>>>>>> KELOMPOK3/Kinantiara
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard />, path: "/admin" },
   { name: "Produk", icon: <Box />, path: "/produk" },
+<<<<<<< HEAD
   {name: "Data Pelanggan", icon: <ShoppingCart/>, path: "/datapelanggan"},
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
   { name: "Reservasi", icon: <BsCalendar />, path: "/reservasi" },
 
+=======
+  {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
+  { name: "Feedback", icon: <Megaphone />, path: "/feedback" },
+>>>>>>> KELOMPOK3/Kinantiara
 ];
 
 const accountItems = [
