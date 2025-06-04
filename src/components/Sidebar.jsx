@@ -1,5 +1,7 @@
 import { BsCalendar } from "react-icons/bs";
 import { AiFillMessage } from "react-icons/ai"; 
+import { SlCalender } from "react-icons/sl";
+
 import {
   LayoutDashboard,
   Users, // untuk pelanggan
@@ -8,6 +10,8 @@ import {
   Settings, // untuk pengaturan akun
   LogIn,
   UserPlus,
+  ShoppingCart,
+  BarChart2,
   
   ChartArea,
 } from "lucide-react";
