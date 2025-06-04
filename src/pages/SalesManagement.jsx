@@ -1,182 +1,112 @@
-import React, { useState, useEffect } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import React, { useState } from "react";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-const SalesManagement = () => {
-  const [customers, setCustomers] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
+const initialCustomers = [
+  {
+    id: 1,
+    name: "Budi Santoso",
+    email: "budi@mail.com",
+    phone: "081234567890",
+    status: "Member",
+  },
+  {
+    id: 2,
+    name: "Siti Aminah",
+    email: "siti@mail.com",
+    phone: "089876543210",
     status: "Baru",
-  });
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editCustomerId, setEditCustomerId] = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState({
-    show: false,
-    customerId: null,
-    customerName: "",
-  });
+  },
+  {
+    id: 3,
+    name: "Andi Wijaya",
+    email: "andi@mail.com",
+    phone: "081299988877",
+    status: "Member",
+  },
+];
 
-  // 🚀 Load data dari localStorage saat pertama kali render
-  useEffect(() => {
-    const stored = localStorage.getItem("customers");
-    if (stored) {
-      setCustomers(JSON.parse(stored));
-    }
-  }, []);
-
-  // 💾 Simpan data ke localStorage setiap kali `customers` berubah
-  useEffect(() => {
-    localStorage.setItem("customers", JSON.stringify(customers));
-  }, [customers]);
+export default function SalesManagement() {
+  const [customers, setCustomers] = useState(initialCustomers);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", status: "Baru" });
+  const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddOrUpdateCustomer = () => {
+  const handleAddOrEditCustomer = () => {
     if (!formData.name || !formData.email || !formData.phone) {
       alert("Semua field wajib diisi!");
       return;
     }
 
-    if (isEditMode) {
-      setCustomers((prev) =>
-        prev.map((cust) =>
-          cust.id === editCustomerId ? { ...cust, ...formData } : cust
-        )
-      );
-      setIsEditMode(false);
-      setEditCustomerId(null);
+    if (editId !== null) {
+      setCustomers(customers.map((c) => (c.id === editId ? { ...formData, id: editId } : c)));
     } else {
-      const newCustomer = {
-        id: Date.now(),
-        ...formData,
-      };
-      setCustomers((prev) => [...prev, newCustomer]);
+      const newCustomer = { id: customers.length + 1, ...formData };
+      setCustomers([...customers, newCustomer]);
     }
 
     setFormData({ name: "", email: "", phone: "", status: "Baru" });
     setShowForm(false);
+    setEditId(null);
   };
 
-  const handleEditCustomer = (cust) => {
-    setFormData({
-      name: cust.name,
-      email: cust.email,
-      phone: cust.phone,
-      status: cust.status,
-    });
-    setEditCustomerId(cust.id);
-    setIsEditMode(true);
+  const handleEdit = (customer) => {
+    setFormData(customer);
+    setEditId(customer.id);
     setShowForm(true);
   };
 
-  const confirmDeleteCustomer = (id, name) => {
-    setConfirmDelete({ show: true, customerId: id, customerName: name });
-  };
-
-  const handleDeleteConfirmed = () => {
-    setCustomers((prev) =>
-      prev.filter((cust) => cust.id !== confirmDelete.customerId)
-    );
-    setConfirmDelete({ show: false, customerId: null, customerName: "" });
+  const confirmDelete = () => {
+    setCustomers(customers.filter((c) => c.id !== deleteId));
+    setDeleteId(null);
   };
 
   return (
-    <div className="p-6 w-full">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        Manajemen Data Pelanggan
-      </h1>
+    <div className="p-6 w-full max-w-screen-xl mx-auto relative">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Manajemen Data Pelanggan</h1>
 
-      {!showForm && (
-        <button
-          onClick={() => {
-            setShowForm(true);
-            setFormData({ name: "", email: "", phone: "", status: "Baru" });
-            setIsEditMode(false);
-          }}
-          className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-        >
-          Tambah Pelanggan
-        </button>
-      )}
+      <button
+        onClick={() => {
+          setShowForm((prev) => !prev);
+          setFormData({ name: "", email: "", phone: "", status: "Baru" });
+          setEditId(null);
+        }}
+        className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+      >
+        {showForm ? "Batal" : "Tambah Pelanggan"}
+      </button>
 
       {showForm && (
         <div className="mb-6 p-6 border border-gray-200 rounded-lg shadow bg-white">
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block font-medium mb-1">Nama</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="Nama pelanggan"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
+              <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Nama pelanggan" className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" />
             </div>
-
             <div>
               <label className="block font-medium mb-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Email pelanggan"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
+              <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Email pelanggan" className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" />
             </div>
-
             <div>
               <label className="block font-medium mb-1">Telepon</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="Nomor telepon"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
+              <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="Nomor telepon" className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" />
             </div>
-
             <div>
               <label className="block font-medium mb-1">Status</label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              >
+              <select name="status" value={formData.status} onChange={handleInputChange} className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400">
                 <option value="Baru">Baru</option>
                 <option value="Member">Member</option>
               </select>
             </div>
           </div>
-
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              onClick={() => {
-                setShowForm(false);
-                setIsEditMode(false);
-              }}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-            >
-              Batal
-            </button>
-            <button
-              onClick={handleAddOrUpdateCustomer}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-            >
-              {isEditMode ? "Perbarui" : "Simpan"}
-            </button>
-          </div>
+          <button onClick={handleAddOrEditCustomer} className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+            {editId !== null ? "Update" : "Simpan"}
+          </button>
         </div>
       )}
 
@@ -192,81 +122,57 @@ const SalesManagement = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {customers.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center py-6 text-gray-500">
-                  Belum ada data pelanggan.
+            {customers.map((cust) => (
+              <tr key={cust.id} className="hover:bg-gray-50 transition">
+                <td className="px-6 py-4">{cust.name}</td>
+                <td className="px-6 py-4">{cust.email}</td>
+                <td className="px-6 py-4">{cust.phone}</td>
+                <td className="px-6 py-4 text-center">
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${cust.status === "Member" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>{cust.status}</span>
+                </td>
+                <td className="px-6 py-4 text-center space-x-2 flex justify-center">
+                  <button onClick={() => handleEdit(cust)} className="text-blue-600 hover:text-blue-800">
+                    <PencilIcon className="h-5 w-5" />
+                  </button>
+                  <button onClick={() => setDeleteId(cust.id)} className="text-red-600 hover:text-red-800">
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
                 </td>
               </tr>
-            ) : (
-              customers.map((cust) => (
-                <tr key={cust.id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4">{cust.name}</td>
-                  <td className="px-6 py-4">{cust.email}</td>
-                  <td className="px-6 py-4">{cust.phone}</td>
-                  <td className="px-6 py-4 text-center">
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        cust.status === "Member"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {cust.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex justify-center items-center gap-3">
-                      <button
-                        onClick={() => handleEditCustomer(cust)}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                      <button
-                        onClick={() =>
-                          confirmDeleteCustomer(cust.id, cust.name)
-                        }
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+            ))}
+            {customers.length === 0 && (
+              <tr>
+                <td colSpan={5} className="text-center py-4 text-gray-500">Tidak ada data pelanggan</td>
+              </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      {confirmDelete.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/30">
-          <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-sm text-center border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">
-              Hapus Pelanggan
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Apakah kamu yakin ingin menghapus{" "}
+      {/* Modal Hapus */}
+      {deleteId !== null && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">Konfirmasi Hapus</h2>
+            <p className="mb-4 text-gray-600">
+              Yakin ingin menghapus pelanggan{" "}
               <span className="font-semibold text-red-600">
-                {confirmDelete.customerName}
+                {customers.find((c) => c.id === deleteId)?.name}
               </span>
               ?
             </p>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-3">
               <button
-                onClick={handleDeleteConfirmed}
-                className="bg-red-600 px-4 py-2 text-white rounded-lg hover:bg-red-700 transition"
-              >
-                Hapus
-              </button>
-              <button
-                onClick={() =>
-                  setConfirmDelete({ show: false, customerId: null })
-                }
-                className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
               >
                 Batal
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Hapus
               </button>
             </div>
           </div>
@@ -274,6 +180,4 @@ const SalesManagement = () => {
       )}
     </div>
   );
-};
-
-export default SalesManagement;
+}
