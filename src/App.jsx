@@ -8,6 +8,7 @@ import SalesManagement from "./pages/SalesManagement";
 import LandingPage from "./pages/LandingPage";
 import Feedback from "./pages/feedback";
 import ReservasiManagement from "./pages/ReservasiManagement";
+import FaqManagement from "./pages/FaqManagement";
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
       <Route path="datapelanggan" element={<SalesManagement/>} />
       <Route path="feedback" element={<Feedback/>} />
       <Route path="/reservasi-management" element={< ReservasiManagement/>} />
+      <Route path="/faq" element={<FaqManagement />} />
       </Route>
     </Routes>
   );

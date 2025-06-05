@@ -12,8 +12,8 @@ import {
   UserPlus,
   ShoppingCart,
   BarChart2,
-  
   ChartArea,
+  HelpCircle,   // <== import icon FAQ yang baru
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -22,11 +22,10 @@ const menuItems = [
   { name: "Produk", icon: <Box />, path: "/produk" },
   {name: "Data Pelanggan", icon: <ShoppingCart/>, path: "/datapelanggan"},
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
-  { name: "Reservasi", icon: <BsCalendar />, path: "/reservasi" },
-  { name: "Reservasi", icon: <SlCalender />, path: "/reservasi" },
   { name: "Reservasi", icon: <SlCalender />, path: "/reservasi-management" },
   {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
   { name: "Feedback", icon: <Megaphone />, path: "/feedback" },
+  { name: "Faq", icon: <HelpCircle />, path: "/faq" },  
 ];
 
 const accountItems = [
