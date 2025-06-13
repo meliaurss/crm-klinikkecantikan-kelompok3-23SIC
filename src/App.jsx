@@ -4,7 +4,6 @@ import MainLayout from "./layouts/MainLayout";
 import LandingLayout from "./layouts/LandingLayout.jsx";
 
 import Dashboard from "./pages/Dashboard";
-import ProductManagement from "./pages/ProductManagement";
 import FormReservasi from "./pages/FormReservasi";
 import FormDataDiri from "./pages/FormDataDiri";
 import SalesManagement from "./pages/SalesManagement";
@@ -12,6 +11,7 @@ import LandingPage from "./pages/LandingPage";
 import Feedback from "./pages/feedback";
 import ReservasiManagement from "./pages/ReservasiManagement";
 import FaqManagement from "./pages/FaqManagement";
+import InventoryManagement from "./pages/InventoryManagement.jsx";
 
 export default function App() {
   return (
@@ -24,7 +24,7 @@ export default function App() {
       {/* Admin Dashboard Layout */}
       <Route element={<MainLayout />}>
         <Route path="/admin" element={<Dashboard />} />
-        <Route path="/produk" element={<ProductManagement />} />
+        <Route path="/inventory" element={<InventoryManagement />} />
         <Route path="/reservasi" element={<FormReservasi />} />
         <Route path="/data-diri" element={<FormDataDiri />} />
         <Route path="/datapelanggan" element={<SalesManagement />} />
