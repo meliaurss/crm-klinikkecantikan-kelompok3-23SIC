@@ -15,12 +15,12 @@ import {
   ChartArea,
   HelpCircle,   // <== import icon FAQ yang baru
 } from "lucide-react";
+
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard />, path: "/admin" },
   { name: "Produk", icon: <Box />, path: "/produk" },
-  {name: "Data Pelanggan", icon: <ShoppingCart/>, path: "/datapelanggan"},
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
   { name: "Reservasi", icon: <SlCalender />, path: "/reservasi-management" },
   {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
@@ -40,7 +40,7 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <aside className="bg-white w-64 h-screen shadow-lg px-4 py-6 hidden md:block">
+    <aside className="bg-white w-64 h-full shadow-lg px-4 py-6 hidden md:block">
       <div className="text-xl font-bold mb-8 text-purple-700">Klinik Kecantikan</div>
       <nav className="space-y-1">
         {menuItems.map((item) => (
