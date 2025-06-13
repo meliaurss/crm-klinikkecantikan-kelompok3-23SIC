@@ -1,5 +1,4 @@
-import React from "react";
-
+import React from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,9 +9,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-
-import { Bar, Line } from "react-chartjs-2";
+} from 'chart.js'
+import { Bar, Line } from 'react-chartjs-2'
 
 ChartJS.register(
   CategoryScale,
@@ -23,43 +21,20 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend
-);
+)
 
 const Dashboard = () => {
   // Data summary cards
   const stats = [
-    {
-      label: "Pendapatan Hari Ini",
-      value: "$53,000",
-      percent: "+55%",
-      color: "green",
-    },
-    {
-      label: "Pengguna Hari Ini",
-      value: "2,300",
-      percent: "+3%",
-      color: "blue",
-    },
+    { label: "Pendapatan Hari Ini", value: "$53,000", percent: "+55%", color: "green" },
+    { label: "Pengguna Hari Ini", value: "2,300", percent: "+3%", color: "blue" },
     { label: "Klien Baru", value: "+3,462", percent: "-2%", color: "red" },
     { label: "Penjualan", value: "$103,430", percent: "+5%", color: "purple" },
-  ];
+  ]
 
   // Data untuk grafik Penjualan Bulanan (Bar Chart)
   const barData = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "Mei",
-      "Jun",
-      "Jul",
-      "Agu",
-      "Sep",
-      "Okt",
-      "Nov",
-      "Des",
-    ],
+    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
     datasets: [
       {
         label: "Penjualan (dalam ribuan $)",
@@ -67,32 +42,19 @@ const Dashboard = () => {
         backgroundColor: "rgba(99, 102, 241, 0.7)", // purple-600
       },
     ],
-  };
+  }
 
   const barOptions = {
     responsive: true,
     plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Penjualan Bulanan Tahun Ini" },
+      legend: { position: 'top' },
+      title: { display: true, text: 'Penjualan Bulanan Tahun Ini' },
     },
-  };
+  }
 
   // Data untuk grafik Pertumbuhan Pelanggan (Line Chart)
   const lineData = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "Mei",
-      "Jun",
-      "Jul",
-      "Agu",
-      "Sep",
-      "Okt",
-      "Nov",
-      "Des",
-    ],
+    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
     datasets: [
       {
         label: "Jumlah Pelanggan",
@@ -104,15 +66,15 @@ const Dashboard = () => {
         pointRadius: 4,
       },
     ],
-  };
+  }
 
   const lineOptions = {
     responsive: true,
     plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Pertumbuhan Pelanggan Tahun Ini" },
+      legend: { position: 'top' },
+      title: { display: true, text: 'Pertumbuhan Pelanggan Tahun Ini' },
     },
-  };
+  }
 
   return (
     <div className="p-6 space-y-8">
@@ -121,13 +83,9 @@ const Dashboard = () => {
         {stats.map(({ label, value, percent, color }) => (
           <div key={label} className="bg-white rounded-xl shadow p-5">
             <p className="text-sm text-gray-500">{label}</p>
-            <h2
-              className={`text-2xl font-bold text-${color}-600 flex items-center gap-2`}
-            >
+            <h2 className={`text-2xl font-bold text-${color}-600 flex items-center gap-2`}>
               {value}
-              <span className={`text-xs font-semibold text-${color}-500`}>
-                {percent}
-              </span>
+              <span className={`text-xs font-semibold text-${color}-500`}>{percent}</span>
             </h2>
           </div>
         ))}
@@ -143,7 +101,7 @@ const Dashboard = () => {
         <Line options={lineOptions} data={lineData} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard
