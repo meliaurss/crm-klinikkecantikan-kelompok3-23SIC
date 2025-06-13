@@ -26,19 +26,19 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   background-color: #ffffff;
   color: #181C68;
+  font-family: "Poppins", sans-serif;
+  display: block; /* fix: jangan pakai flex di body */
 }
 
-/* Landing Page Styles */
 .landing-page {
   width: 100%;
   background-color: #ffffff;
   color: #181C68;
+  overflow-x: hidden;
 }
+
 
 .header {
   display: flex;
@@ -138,44 +138,49 @@ body {
 }
 
 .produk-section {
-  padding: 40px;
+  padding: 40px 20px;
   background-color: #ffffff;
   text-align: center;
-}
-
-.produk-section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  color: #181C68;
-}
-
-.produk-section p {
-  margin-bottom: 20px;
-  color: #181C68;
+  max-width: 1200px;
+  margin: 0 auto; /* agar center */
 }
 
 .produk-cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* responsive grid */
   gap: 20px;
-  overflow-x: auto;
-  padding: 10px 0;
+  margin-top: 20px;
 }
 
 .produk-card {
-  min-width: 150px;
+  min-width: 200px; /* Atur agar lebih lebar jika diperlukan */
+  min-height: 300px; /* Tambahkan tinggi minimum */
   border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 16px;
   background-color: #ffffff;
   color: #181C68;
   flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Atur konten merata */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.produk-card:hover {
+  transform: translateY(-5px);
 }
 
 .produk-card img {
   width: 100%;
-  height: auto;
-  margin-bottom: 10px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
 }
+
 
 /* Mode light scheme tambahan */
 @media (prefers-color-scheme: light) {
@@ -193,5 +198,6 @@ body {
     background-color: #f9f9f9;
     color: #181C68;
   }
+  
 }
 

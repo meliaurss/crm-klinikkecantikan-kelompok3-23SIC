@@ -1,0 +1,18 @@
+/* src/pages/AllProducts.css */
+.all-products-page {
+  font-family: 'Poppins', sans-serif;
+  background-color: #fff;
+}
+
+.all-products-page h1 {
+  color: #181C68;
+}
+
+.all-products-page .card {
+  transition: all 0.3s ease;
+}
+
+.all-products-page .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
