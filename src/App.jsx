@@ -12,6 +12,7 @@ import LandingPage from "./pages/LandingPage";
 import ReservasiManagement from "./pages/ReservasiManagement";
 import FaqManagement from "./pages/FaqManagement";
 import AllProducts from "./pages/AllProducts.jsx";
+import Feedback from "./pages/feedback.jsx";
 
 export default function App() {
   return (
