@@ -114,6 +114,27 @@ body {
   object-fit: cover;
 }
 
+.hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem 2rem;
+  background-color: #eaf3f4;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-image img {
+  max-height: 350px;
+  width: auto;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+
 /* Judul Hero */
 .judul-hero {
   color: #181C68;

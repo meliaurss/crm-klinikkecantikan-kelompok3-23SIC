@@ -10,9 +10,10 @@ import FormDataDiri from "./pages/FormDataDiri";
 import SalesManagement from "./pages/SalesManagement";
 import LandingPage from "./pages/LandingPage";
 import ReservasiManagement from "./pages/ReservasiManagement";
-import FaqManagement from "./pages/FaqManagement";
 import AllProducts from "./pages/AllProducts.jsx";
 import Feedback from "./pages/feedback.jsx";
+import AdminFeedback from "./pages/AdminFeedback.jsx";
+import AdminFAQ from "./pages/AdminFaq.jsx";
 
 export default function App() {
   return (
@@ -31,8 +32,9 @@ export default function App() {
         <Route path="/data-diri" element={<FormDataDiri />} />
         <Route path="/datapelanggan" element={<SalesManagement />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/adminfeedback" element={<AdminFeedback />} />
         <Route path="/reservasi-management" element={<ReservasiManagement />} />
-        <Route path="/faq" element={<FaqManagement />} />
+        <Route path="/adminfaq" element={<AdminFAQ />} />
       </Route>
     </Routes>
   );

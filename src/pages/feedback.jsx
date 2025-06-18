@@ -58,10 +58,21 @@ const Feedback = () => {
       return;
     }
 
-    const newFeedback = { ...form, id: Date.now() };
+    const newFeedback = {
+      ...form,
+      id: Date.now(),
+      isApproved: false, // ditambahkan untuk keperluan admin
+    };
+
     const updated = [newFeedback, ...feedbacks];
     setFeedbacks(updated);
     localStorage.setItem("feedbacks", JSON.stringify(updated));
+
+    // Simpan ke 'allFeedbacks' agar bisa dikelola admin
+    const existing = JSON.parse(localStorage.getItem("allFeedbacks")) || [];
+    const updatedAll = [newFeedback, ...existing];
+    localStorage.setItem("allFeedbacks", JSON.stringify(updatedAll));
+
     setForm({
       name: "",
       treatment: "",
