@@ -1,0 +1,262 @@
+import React, { useState } from "react";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+
+const initialProducts = [
+  {
+    id: 1,
+    name: "Laptop ABC",
+    image: "https://via.placeholder.com/100",
+    price: 7500000,
+    description: "Laptop untuk kerja dan gaming",
+  },
+  {
+    id: 2,
+    name: "Kursi Gaming",
+    image: "https://via.placeholder.com/100",
+    price: 1250000,
+    description: "Nyaman untuk duduk lama",
+  },
+];
+
+function formatCurrency(num) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(num);
+}
+
+export default function ManajemenProduk() {
+  const [products, setProducts] = useState(initialProducts);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+    price: "",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      image: "",
+      price: "",
+      description: "",
+    });
+    setEditId(null);
+  };
+
+  const toggleForm = () => {
+    if (!showForm) {
+      resetForm();
+      setShowForm(true);
+    } else {
+      setShowForm(false);
+    }
+  };
+
+  const handleAddProduct = () => {
+    const { name, image, price, description } = formData;
+
+    if (!name || !image || !price || !description) {
+      alert("Semua kolom harus diisi");
+      return;
+    }
+
+    const newProduct = {
+      ...formData,
+      id: products.length + 1,
+      price: parseFloat(price),
+    };
+
+    setProducts([...products, newProduct]);
+    setShowForm(false);
+    resetForm();
+  };
+
+  const handleEdit = (product) => {
+    setFormData({
+      name: product.name,
+      image: product.image,
+      price: product.price.toString(),
+      description: product.description,
+    });
+    setEditId(product.id);
+    setShowForm(true);
+  };
+
+  const handleUpdateProduct = () => {
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.id === editId
+          ? {
+              ...formData,
+              id: editId,
+              price: parseFloat(formData.price),
+            }
+          : product
+      )
+    );
+    setShowForm(false);
+    resetForm();
+  };
+
+  const confirmDelete = () => {
+    setProducts(products.filter((p) => p.id !== deleteId));
+    setDeleteId(null);
+  };
+
+  const filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="p-6 w-full mx-auto">
+      <h1 className="text-2xl font-bold mb-4 text-gray-800">Manajemen Produk</h1>
+
+      <div className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-center">
+        <input
+          type="text"
+          placeholder="Cari nama produk..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="px-4 py-2 border rounded shadow-sm w-full sm:w-80 focus:outline-none focus:ring focus:border-blue-400"
+        />
+        <button
+          onClick={toggleForm}
+          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+        >
+          {showForm ? "Batal" : "Tambah Produk"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="mb-6 p-4 border border-gray-300 rounded bg-white shadow-sm max-w-6xl">
+          {[
+            { label: "Nama Produk", name: "name", type: "text" },
+            { label: "Gambar Produk (URL)", name: "image", type: "text" },
+            { label: "Harga", name: "price", type: "number" },
+            { label: "Keterangan", name: "description", type: "text" },
+          ].map(({ label, name, type }) => (
+            <div className="mb-2" key={name}>
+              <label className="block mb-1 font-medium text-sm text-gray-700">{label}</label>
+              <input
+                type={type}
+                name={name}
+                value={formData[name]}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded focus:ring-indigo-400 focus:outline-none text-sm"
+              />
+            </div>
+          ))}
+
+          <button
+            onClick={editId ? handleUpdateProduct : handleAddProduct}
+            className={`px-4 py-2 text-sm ${
+              editId
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-green-600 hover:bg-green-700"
+            } text-white rounded`}
+          >
+            {editId ? "Update Produk" : "Simpan Produk"}
+          </button>
+        </div>
+      )}
+
+      <div className="overflow-auto rounded-lg shadow-lg bg-white">
+        <table className="min-w-full text-sm text-left">
+          <thead className="bg-indigo-50 text-indigo-800 text-xs uppercase font-semibold">
+            <tr>
+              <th className="px-4 py-3 text-center">Nama</th>
+              <th className="px-4 py-3 text-center">Gambar Produk</th>
+              <th className="px-4 py-3 text-center">Harga</th>
+              <th className="px-4 py-3 text-center">Keterangan</th>
+              <th className="px-4 py-3 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <tr key={product.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 text-center">{product.name}</td>
+                  <td className="px-4 py-2 text-center">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="mx-auto w-16 h-16 object-cover rounded"
+                    />
+                  </td>
+                  <td className="px-4 py-2 text-center">{formatCurrency(product.price)}</td>
+                  <td className="px-4 py-2 text-center">{product.description}</td>
+                  <td className="px-4 py-2 text-center">
+                    <div className="flex justify-center gap-3">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="text-indigo-600 hover:text-indigo-800"
+                      >
+                        <PencilIcon className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => setDeleteId(product.id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="px-4 py-6 text-center text-gray-500">
+                  Tidak ada produk ditemukan.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {deleteId !== null && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">
+              Konfirmasi Hapus
+            </h2>
+            <p className="mb-4 text-gray-600">
+              Yakin ingin menghapus produk{" "}
+              <span className="font-semibold text-red-600">
+                {products.find((p) => p.id === deleteId)?.name}
+              </span>
+              ?
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

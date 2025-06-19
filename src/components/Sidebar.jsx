@@ -1,3 +1,5 @@
+import { MdOutlineInventory2 } from "react-icons/md"; 
+import { MdOutlineInventory } from "react-icons/md"; 
 import { BsCalendar } from "react-icons/bs";
 import { AiFillMessage } from "react-icons/ai"; 
 import { SlCalender } from "react-icons/sl";
@@ -13,15 +15,17 @@ import {
   ShoppingCart,
   BarChart2,
   ChartArea,
-  HelpCircle,   // <== import icon FAQ yang baru
+  HelpCircle, 
+   Package,   // <== import icon FAQ yang baru
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard />, path: "/admin" },
-  { name: "Produk", icon: <Box />, path: "/produk" },
+  { name: "Inventory", icon: <Package />, path: "/inventory" },
   { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
+  { name: "Produk", icon: <Box />, path: "/produk" },
   { name: "Reservasi", icon: <SlCalender />, path: "/reservasi-management" },
   {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
   { name: "Kelola Feedback", icon: <HelpCircle />, path: "/adminfeedback" },  

@@ -44,7 +44,7 @@ const FAQManagement = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
+    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
       <h2 className="text-3xl font-bold mb-6 text-center text-[#181C68]">Kelola FAQ</h2>
 
       <div className="mb-8">
