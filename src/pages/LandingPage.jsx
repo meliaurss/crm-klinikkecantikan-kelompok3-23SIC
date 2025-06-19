@@ -79,7 +79,7 @@ const LandingPage = () => {
             Layanan
           </a>
           <a
-            href="#tentang"
+            href="#tentangkami"
             className="text-[#181C68] font-medium hover:underline"
           >
             Tentang Kami
