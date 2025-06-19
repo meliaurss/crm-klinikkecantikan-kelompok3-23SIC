@@ -12,6 +12,7 @@ import Feedback from "./pages/feedback";
 import ReservasiManagement from "./pages/ReservasiManagement";
 import FaqManagement from "./pages/FaqManagement";
 import InventoryManagement from "./pages/InventoryManagement.jsx";
+import ManajemenProduk from "./pages/ProdukManagement.jsx";
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
       <Route element={<MainLayout />}>
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/inventory" element={<InventoryManagement />} />
+        <Route path="/produk" element={<ManajemenProduk />} />
         <Route path="/reservasi" element={<FormReservasi />} />
         <Route path="/data-diri" element={<FormDataDiri />} />
         <Route path="/datapelanggan" element={<SalesManagement />} />
