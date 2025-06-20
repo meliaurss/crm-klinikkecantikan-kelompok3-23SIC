@@ -29,7 +29,8 @@ const menuItems = [
   { name: "Reservasi", icon: <SlCalender />, path: "/reservasi-management" },
   {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
   { name: "Kelola Feedback", icon: <HelpCircle />, path: "/adminfeedback" },  
-  { name: "Kelola Faq", icon: <HelpCircle />, path: "/adminfaq" },  
+  { name: "Kelola Faq", icon: <HelpCircle />, path: "/adminfaq" }, 
+  { name: "List Pelanggan", icon: <Users/>, path: "/listpelanggan" },  
 ];
 
 const accountItems = [

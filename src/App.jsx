@@ -15,6 +15,7 @@ import AdminFeedback from "./pages/AdminFeedback.jsx";
 import AdminFAQ from "./pages/AdminFaq.jsx";
 import InventoryManagement from "./pages/InventoryManagement.jsx";
 import ManajemenProduk from "./pages/ProdukManagement.jsx";
+import ListPelanggan from "./pages/ListPelanggan.jsx";
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/adminfeedback" element={<AdminFeedback />} />
         <Route path="/reservasi-management" element={<ReservasiManagement />} />
         <Route path="/adminfaq" element={<AdminFAQ />} />
+        <Route path="/listpelanggan" element={<ListPelanggan />} />
       </Route>
     </Routes>
   );
