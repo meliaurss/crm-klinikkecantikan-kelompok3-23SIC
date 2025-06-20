@@ -8,6 +8,15 @@ import Feedback from "./feedback";
 import gambar1 from "../assets/gambar1.png";
 import gambar2 from "../assets/gambar2.png";
 import gambar3 from "../assets/gambar3.png";
+import acnecleanser from "../assets/acnecleanser.png";
+import bodylotion from "../assets/bodylotion.png";
+import hydraserum from "../assets/hydraserum.png";
+import lipbalm from "../assets/lipbalm.png";
+import moisturizer from "../assets/moisturizer.png";
+import sunscreen from "../assets/sunscreen.png";
+import toneressence from "../assets/toneressence.png";
+import whiteningcream from "../assets/whiteningcream.png";
+import promo1 from "../assets/promo1.png";
 import {
   Award,
   UserPlus,
@@ -57,50 +66,42 @@ const LandingPage = () => {
   const handleShowAllProducts = () => setShowAllProducts(true);
 
   return (
-    <div className="landing-page relative">
-      {/* Header */}
-      <header className="header flex justify-between items-center p-4 bg-white shadow-md sticky top-0 z-50">
-        <h1 className="text-2xl font-bold text-[#181C68] font-poppins">
+    <div className="landing-page relative font-sans text-gray-800">
+      <header className="header flex justify-between items-center px-6 py-4 bg-white shadow sticky top-0 z-50">
+        <h1 className="text-3xl font-extrabold tracking-tight text-[#181C68] uppercase">
           MAHACARE
         </h1>
-
-        {/* Desktop Menu */}
-        <nav className="hidden md:flex space-x-6">
-          <a
-            href="#produk"
-            className="text-[#181C68] font-medium hover:underline"
-          >
-            Produk
-          </a>
-          <a
-            href="#layanan"
-            className="text-[#181C68] font-medium hover:underline"
-          >
-            Layanan
-          </a>
-          <a
-            href="#tentangkami"
-            className="text-[#181C68] font-medium hover:underline"
-          >
-            Tentang Kami
-          </a>
-          <a
-            href="#feedback"
-            className="text-[#181C68] font-medium hover:underline"
-          >
-            Feedback
-          </a>
-          <a href="#faq" className="text-[#181C68] font-medium hover:underline">
-            FAQ
-          </a>
+        <nav className="hidden md:flex items-center space-x-6">
+          {[
+            { label: "Produk", href: "#produk" },
+            { label: "Layanan", href: "#layanan" },
+            { label: "Tentang Kami", href: "#tentang-kami" },
+            { label: "Feedback", href: "#feedback" },
+            { label: "FAQ", href: "#faq" }
+          ].map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-[#181C68] font-medium hover:underline transition"
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
-
-        {/* Login Button */}
-        <Link to="/admin" className="btn-login text-white px-4 py-2 rounded">
-          Login
-        </Link>
-
-        {/* Hamburger for Mobile */}
+        <div className="flex items-center space-x-2">
+          <Link
+            to="/register"
+            className="hidden md:inline-block bg-transparent border border-[#181C68] text-[#181C68] px-4 py-2 rounded hover:bg-[#181C68] hover:text-white transition"
+          >
+            Register
+          </Link>
+          <Link
+            to="/admin"
+            className="bg-[#181C68] !text-white px-4 py-2 rounded hover:bg-[#141a59] transition"
+          >
+            Login
+          </Link>
+        </div>
         <div
           className="md:hidden flex flex-col cursor-pointer ml-4"
           onClick={() => setShowMenu(!showMenu)}
@@ -109,28 +110,29 @@ const LandingPage = () => {
           <span className="w-6 h-1 bg-[#181C68] mb-1 rounded"></span>
           <span className="w-6 h-1 bg-[#181C68] rounded"></span>
         </div>
-
-        {/* Mobile Menu */}
         {showMenu && (
           <div className="absolute top-16 right-4 bg-white rounded shadow-md flex flex-col p-4 space-y-2 z-50">
-            {["produk", "layanan", "tentang", "feedback", "faq"].map((item) => (
+            {["produk", "layanan", "tentang-kami", "feedback", "faq"].map((item) => (
               <a
                 key={item}
                 href={`#${item}`}
                 className="text-[#181C68] font-medium"
                 onClick={() => setShowMenu(false)}
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
+                {item.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
               </a>
             ))}
+            <Link to="/register" className="text-[#181C68] font-medium">Register</Link>
+            <Link to="/admin" className="text-[#181C68] font-medium">Login</Link>
           </div>
         )}
       </header>
 
+
       {/* Hero Section */}
       <section id="hero" className="hero flex flex-col md:flex-row items-center justify-between p-8 bg-gray-100">
         <div className="hero-text flex-1">
-          <h2 className="judul-hero mb-4">
+          <h2 className="judul-hero mb-4 ">
             Klinik Kecantikan Terdekat untuk Berbagai Masalah Kulit dan Wajah
           </h2>
           <p className="mb-4 text-gray-600">
@@ -210,31 +212,59 @@ const LandingPage = () => {
       {/* Layanan */}
       <section id="layanan" className="py-16 px-4 bg-white">
         <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-[#181C68] mb-3">Layanan Unggulan Kami</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#181C68] mb-3">
+            Layanan Unggulan Kami
+          </h2>
           <p className="text-gray-600">
             Berbagai layanan untuk kebutuhan kecantikan dan kesehatan kulit Anda.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[1, 2, 3].map((item) => (
+          {[
+            {
+              id: 1,
+              nama: "Facial Glow Treatment",
+              deskripsi:
+                "Perawatan wajah yang mencerahkan dan melembapkan kulit agar tampak lebih sehat dan bercahaya.",
+              gambar: gambar1,
+            },
+            {
+              id: 2,
+              nama: "Acne Care Therapy",
+              deskripsi:
+                "Mengurangi jerawat dan peradangan kulit dengan formula dan teknologi modern.",
+              gambar: gambar2,
+            },
+            {
+              id: 3,
+              nama: "Anti-Aging Rejuvenation",
+              deskripsi:
+                "Perawatan untuk mengencangkan kulit dan mengurangi tanda-tanda penuaan secara alami.",
+              gambar: gambar3,
+            },
+          ].map((item) => (
             <div
-              key={item}
+              key={item.id}
               className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200"
             >
-              <div className="bg-gray-300 h-48 flex items-center justify-center">
-                <div className="w-24 h-24 bg-white border border-gray-400 flex items-center justify-center">
-                  <span className="text-gray-500 text-sm">Image</span>
-                </div>
+              <div className="bg-gray-100 h-48 flex items-center justify-center">
+                <img
+                  src={item.gambar}
+                  alt={item.nama}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="p-4 text-center">
-                <h3 className="font-semibold text-lg text-gray-800 mb-2">NAMA TREATMENT</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Pellentesque convallis accumsan suscipit aliquet eu diam quis nulla turpis.
-                  In mus massa lectus laoreet sed semper.
-                </p>
+                <h3 className="font-semibold text-lg text-gray-800 mb-2">
+                  {item.nama}
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">{item.deskripsi}</p>
                 <hr className="mb-2" />
-                <a className="text-sm text-blue-600 hover:underline" onClick={handleOpenReservasiForm}>
+                <a
+                  className="text-sm text-blue-600 hover:underline cursor-pointer"
+                  onClick={handleOpenReservasiForm}
+                >
                   Reservasi Sekarang →
                 </a>
               </div>
@@ -245,8 +275,7 @@ const LandingPage = () => {
         <div className="text-center mt-6">
           <Link
             to="/treatments"
-            className="inline-block px-6 py-2 bg-[#181C68] !text-white font-semibold rounded-lg shadow hover:bg-[#141a59] transition"
-          >
+            className="inline-block px-6 py-2 bg-[#181C68] !text-white font-semibold rounded-lg shadow hover:bg-[#141a59] transition"          >
             Lihat Semua Treatment
           </Link>
         </div>
@@ -263,47 +292,133 @@ const LandingPage = () => {
           perawatan bertujuan untuk hasil terbaik dari permasalahan wajah dan
           kulit Anda.
         </p>
+
         <div className="produk-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {(showAllProducts ? Array(12) : Array(4))
-            .fill(0)
-            .map((_, idx) => (
-              <div
-                key={idx}
-                className="relative bg-white p-4 rounded-2xl shadow hover:shadow-lg transition duration-300 flex flex-col h-full"
-              >
-                <img
-                  src={product}
-                  alt="Produk"
-                  className="w-full h-48 object-contain mb-4"
-                />
-
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="text-gray-800 font-semibold text-sm mb-1">
-                      Kylab Hydra Barrier Skin
-                    </h3>
-                    <p className="text-[#181C68] font-semibold text-sm">
-                      $120.00
-                    </p>
-                  </div>
-                  <button className="text-gray-400 hover:text-pink-500 text-xl">
-                    ♡
-                  </button>
+          {(showAllProducts
+            ? [
+              {
+                nama: "Mahacare Hydra Serum",
+                harga: 120,
+                rating: 4,
+                review: 131,
+                gambar: hydraserum,
+              },
+              {
+                nama: "Mahacare Daily Sunscreen",
+                harga: 95,
+                rating: 5,
+                review: 89,
+                gambar: sunscreen,
+              },
+              {
+                nama: "Mahacare Deep Moisturizer",
+                harga: 135,
+                rating: 4,
+                review: 102,
+                gambar: moisturizer,
+              },
+              {
+                nama: "Mahacare Acne Cleanser",
+                harga: 105,
+                rating: 3,
+                review: 67,
+                gambar: acnecleanser,
+              },
+              {
+                nama: "Mahacare Whitening Cream",
+                harga: 140,
+                rating: 4,
+                review: 98,
+                gambar: whiteningcream,
+              },
+              {
+                nama: "Mahacare Lip Balm",
+                harga: 45,
+                rating: 5,
+                review: 143,
+                gambar: lipbalm,
+              },
+              {
+                nama: "Mahacare Body Lotion",
+                harga: 110,
+                rating: 4,
+                review: 82,
+                gambar: bodylotion,
+              },
+              {
+                nama: "Mahacare Toner Essence",
+                harga: 100,
+                rating: 4,
+                review: 55,
+                gambar: toneressence,
+              },
+            ]
+            : [
+              {
+                nama: "Mahacare Hydra Serum",
+                harga: 120,
+                rating: 4,
+                review: 131,
+                gambar: hydraserum,
+              },
+              {
+                nama: "Mahacare Daily Sunscreen",
+                harga: 95,
+                rating: 5,
+                review: 89,
+                gambar: sunscreen,
+              },
+              {
+                nama: "Mahacare Deep Moisturizer",
+                harga: 135,
+                rating: 4,
+                review: 102,
+                gambar: moisturizer,
+              },
+              {
+                nama: "Mahacare Acne Cleanser",
+                harga: 105,
+                rating: 3,
+                review: 67,
+                gambar: acnecleanser,
+              },
+            ]
+          ).map((item, idx) => (
+            <div
+              key={idx}
+              className="relative bg-white p-4 rounded-2xl shadow hover:shadow-lg transition duration-300 flex flex-col h-full"
+            >
+              <img
+                src={item.gambar}
+                alt={item.nama}
+                className="w-full h-48 object-cover mb-4 rounded-md"
+              />
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="text-gray-800 font-semibold text-sm mb-1">
+                    {item.nama}
+                  </h3>
+                  <p className="text-[#181C68] font-semibold text-sm">
+                    ${item.harga.toFixed(2)}
+                  </p>
                 </div>
-
-                <div className="flex items-center text-sm text-gray-600 mb-4">
-                  <span className="text-yellow-400 mr-1">★★★★☆</span>
-                  <span>(131)</span>
-                </div>
-
-                <button className="mt-auto bg-gray-100 text-[#181C68] font-semibold py-2 rounded-md hover:bg-[#181C68] hover:text-white transition">
-                  Beli Sekarang
+                <button className="text-gray-400 hover:text-pink-500 text-xl">
+                  ♡
                 </button>
               </div>
-            ))}
+              <div className="flex items-center text-sm text-gray-600 mb-4">
+                <span className="text-yellow-400 mr-1">
+                  {"★".repeat(item.rating) + "☆".repeat(5 - item.rating)}
+                </span>
+                <span>({item.review})</span>
+              </div>
+              <button className="mt-auto bg-gray-100 text-[#181C68] font-semibold py-2 rounded-md hover:bg-[#181C68] hover:text-white transition">
+                Beli Sekarang
+              </button>
+            </div>
+          ))}
         </div>
 
-        {/* Perbaikan bagian tombol "Lihat Semua Produk" */}
         {!showAllProducts && (
           <div className="text-center mt-6">
             <Link
@@ -327,19 +442,38 @@ const LandingPage = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((item) => (
+          {[
+            {
+              tanggal: "20/06/2025",
+              judul: "Diskon 30% untuk Facial Treatment di Hari Jumat",
+              gambar: promo1,
+            },
+            {
+              tanggal: "25/06/2025",
+              judul: "Buy 1 Get 1 Serum Mahacare khusus pelanggan baru",
+              gambar: promo1,
+            },
+            {
+              tanggal: "30/06/2025",
+              judul: "Gratis Konsultasi Kulit + Gift Set Mahacare",
+              gambar: promo1,
+            },
+          ].map((item, index) => (
             <div
-              key={item}
+              key={index}
               className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
             >
-              <div className="bg-gray-200 h-48 flex items-center justify-center">
-                <span className="text-gray-500">[Gambar Promo]</span>
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={item.gambar}
+                  alt={`Promo ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="p-4">
-                <p className="text-sm text-gray-500">DD/MM/YYYY</p>
+                <p className="text-sm text-gray-500">{item.tanggal}</p>
                 <p className="text-base font-semibold text-[#181C68] mt-1 mb-2">
-                  Pellentesque convallis accumsan suscipit aliquet eu diam quis nulla
-                  turpis.
+                  {item.judul}
                 </p>
                 <Link
                   to="/promo-detail"
@@ -361,7 +495,6 @@ const LandingPage = () => {
           </Link>
         </div>
       </section>
-
 
       {/* Feedback */}
       <section id="feedback" className="p-8 bg-white">
@@ -541,7 +674,7 @@ const LandingPage = () => {
               <i className="fab fa-instagram text-white"></i>
             </a>
             <a href="#" aria-label="LinkedIn">
-               <i className="fab fa-linkedin-in text-white"></i>
+              <i className="fab fa-linkedin-in text-white"></i>
             </a>
           </div>
         </div>
