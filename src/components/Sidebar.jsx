@@ -1,36 +1,27 @@
-import { MdOutlineInventory2 } from "react-icons/md"; 
-import { MdOutlineInventory } from "react-icons/md"; 
-import { BsCalendar } from "react-icons/bs";
-import { AiFillMessage } from "react-icons/ai"; 
+import { MdOutlineInventory2 } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
-
 import {
   LayoutDashboard,
-  Users, // untuk pelanggan
-  Box, // untuk produk
-  Megaphone, // untuk laporan
-  Settings, // untuk pengaturan akun
+  Users,
+  Box,
+  BarChart2,
+  HelpCircle,
+  Package,
+  Settings,
   LogIn,
   UserPlus,
-  ShoppingCart,
-  BarChart2,
-  ChartArea,
-  HelpCircle, 
-   Package,   // <== import icon FAQ yang baru
 } from "lucide-react";
-
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { name: "Dashboard", icon: <LayoutDashboard />, path: "/admin" },
-  { name: "Inventory", icon: <Package />, path: "/inventory" },
-  { name: "Laporan", icon: <BarChart2 />, path: "/laporan" },
-  { name: "Produk", icon: <Box />, path: "/produk" },
-  { name: "Reservasi", icon: <SlCalender />, path: "/reservasi-management" },
-  {name: "Data Pelanggan", icon: <Users/>, path: "/datapelanggan"},
-  { name: "Kelola Feedback", icon: <HelpCircle />, path: "/adminfeedback" },  
-  { name: "Kelola Faq", icon: <HelpCircle />, path: "/adminfaq" }, 
-  { name: "List Pelanggan", icon: <Users/>, path: "/listpelanggan" },  
+  { name: "Dashboard", icon: <LayoutDashboard />, path: "/admin/dashboard" },
+  { name: "Inventory", icon: <Package />, path: "/admin/inventory" },
+  { name: "Laporan", icon: <BarChart2 />, path: "/admin/laporan" },
+  { name: "Produk", icon: <Box />, path: "/admin/produk" },
+  { name: "Reservasi", icon: <SlCalender />, path: "/admin/reservations" },
+  { name: "Data Pelanggan", icon: <Users />, path: "/admin/customers" },
+  { name: "Kelola Feedback", icon: <HelpCircle />, path: "/admin/feedback" },
+  { name: "Kelola FAQ", icon: <HelpCircle />, path: "/admin/faqs" },
 ];
 
 const accountItems = [
@@ -41,46 +32,58 @@ const accountItems = [
 
 const Sidebar = () => {
   const location = useLocation();
-
   const isActive = (path) => location.pathname === path;
 
   return (
-    <aside className="bg-white w-64 h-full shadow-lg px-4 py-6 hidden md:block">
-      <div className="text-xl font-bold mb-8 text-purple-700">Klinik Kecantikan</div>
-      <nav className="space-y-1">
-        {menuItems.map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-purple-100 transition ${
-              isActive(item.path)
-                ? "bg-purple-200 text-purple-800 font-semibold"
-                : "text-gray-700"
-            }`}
-          >
-            <span className="w-5 h-5">{item.icon}</span>
-            {item.name}
-          </Link>
-        ))}
-      </nav>
+    <aside className="bg-gradient-to-b from-blue-500 via-indigo-600 to-purple-700 text-white w-64 h-screen shadow-xl hidden md:flex flex-col justify-between p-6">
+      {/* Top Section */}
+      <div>
+        {/* Branding */}
+        <div className="text-2xl font-extrabold tracking-wide mb-6 text-white drop-shadow-lg">
+          ✨ Mahacare Admin
+        </div>
 
-      <div className="mt-8 text-xs font-semibold text-gray-500">AKUN</div>
-      <nav className="mt-2 space-y-1">
-        {accountItems.map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-purple-100 transition ${
-              isActive(item.path)
-                ? "bg-purple-200 text-purple-800 font-semibold"
-                : "text-gray-700"
-            }`}
-          >
-            <span className="w-5 h-5">{item.icon}</span>
-            {item.name}
-          </Link>
-        ))}
-      </nav>
+        {/* Menu Utama */}
+        <nav className="space-y-1">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`group flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 ${
+                isActive(item.path)
+                  ? "bg-white text-purple-800 font-bold shadow"
+                  : "hover:bg-white/10 text-white/80 hover:text-white"
+              }`}
+            >
+              <span className="w-5 h-5">{item.icon}</span>
+              <span className="text-sm">{item.name}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      {/* Bottom Section */}
+      <div>
+        <div className="text-xs font-semibold uppercase text-white/60 mb-2 mt-6">
+          Akun
+        </div>
+        <nav className="space-y-1">
+          {accountItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`group flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 ${
+                isActive(item.path)
+                  ? "bg-white text-purple-800 font-bold shadow"
+                  : "hover:bg-white/10 text-white/80 hover:text-white"
+              }`}
+            >
+              <span className="w-5 h-5">{item.icon}</span>
+              <span className="text-sm">{item.name}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
     </aside>
   );
 };
