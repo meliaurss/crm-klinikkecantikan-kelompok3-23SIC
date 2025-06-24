@@ -4,20 +4,18 @@ import MainLayout from "./layouts/MainLayout";
 import LandingLayout from "./layouts/LandingLayout";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
-import Dashboard from "./pages/Dashboard";
-
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 import LandingPage from "./pages/LandingPage";
-import ReservasiManagement from "./pages/ReservasiManagement";
-import AllProducts from "./pages/AllProducts";
+import ReservasiManagement from "./pages/Admin/ReservasiManagement";
 import AdminFeedback from "./pages/Admin/AdminFeedback";
 import AdminFAQ from "./pages/Admin/AdminFaq";
-import InventoryManagement from "./pages/InventoryManagement";
-import ListPelanggan from "./pages/ListPelanggan";
-import CustomerManagement from "./pages/CustomerManagement";
+import InventoryManagement from "./pages/Admin/InventoryManagement";
+import CustomerManagement from "./pages/Admin/CustomerManagement";
 import CustomerDashboard from "./pages/Customer/CustomerDashboard";
 import CustomerLayout from "./layouts/CustomerLayout";
 import CustomerProducts from "./pages/Customer/CustomerProducts";
 import Login from "./pages/Auth/Login";
+
 
 export default function App() {
   return (
@@ -26,7 +24,6 @@ export default function App() {
         {/* Landing Page Layout */}
         <Route element={<LandingLayout />}>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/products" element={<AllProducts />} />
         </Route>
 
         {/* Login Page without layout */}
@@ -39,8 +36,8 @@ export default function App() {
               <MainLayout />
           }
         >
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard/>} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard/>} />
           <Route path="inventory" element={<InventoryManagement/>} />
           <Route path="reservations" element={<ReservasiManagement/>} />
           <Route path="customers" element={<CustomerManagement/>} />
