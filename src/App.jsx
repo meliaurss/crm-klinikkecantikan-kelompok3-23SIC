@@ -15,6 +15,7 @@ import CustomerDashboard from "./pages/Customer/CustomerDashboard";
 import CustomerLayout from "./layouts/CustomerLayout";
 import CustomerProducts from "./pages/Customer/CustomerProducts";
 import Login from "./pages/Auth/Login";
+import FAQManagement from "./pages/Admin/FAQManagement";
 
 
 export default function App() {
@@ -42,7 +43,7 @@ export default function App() {
           <Route path="reservations" element={<ReservasiManagement/>} />
           <Route path="customers" element={<CustomerManagement/>} />
           <Route path="feedback" element={<AdminFeedback/>} />
-          <Route path="faqs" element={<AdminFAQ/>} />
+          <Route path="faqs" element={<FAQManagement/>}/>
         </Route>
 
         {/* Customer Routes (Tanpa Login) */}

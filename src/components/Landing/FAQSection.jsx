@@ -1,31 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-
-const faqs = [
-  {
-    question: "Apa itu Mahacare?",
-    answer: "Mahacare adalah klinik kecantikan yang menyediakan berbagai layanan perawatan kulit, wajah, dan tubuh dengan teknologi modern."
-  },
-  {
-    question: "Apakah perlu reservasi sebelum datang?",
-    answer: "Kami menyarankan reservasi terlebih dahulu agar kamu mendapatkan jadwal yang pasti dan tidak menunggu lama di klinik."
-  },
-  {
-    question: "Apakah Mahacare menerima pembayaran non-tunai?",
-    answer: "Ya, kami menerima pembayaran via GoPay, DANA, ShopeePay, serta transfer bank."
-  },
-  {
-    question: "Apakah konsultasi dokter dikenakan biaya?",
-    answer: "Konsultasi awal di Mahacare adalah GRATIS, terutama untuk pelanggan baru."
-  }
-];
+import { supabase } from '../../supabase'; // pastikan path benar
 
 const FAQSection = () => {
+  const [faqs, setFaqs] = useState([]);
   const [openIndex, setOpenIndex] = useState(null);
 
+  useEffect(() => {
+    fetchVisibleFAQs();
+  }, []);
+
+  const fetchVisibleFAQs = async () => {
+    const { data, error } = await supabase
+      .from("faqs")
+      .select("*")
+      .eq("is_visible", true)
+      .order("created_at", { ascending: false });
+
+    if (!error) setFaqs(data);
+  };
+
   const toggle = (index) => {
-    setOpenIndex(prev => (prev === index ? null : index));
+    setOpenIndex((prev) => (prev === index ? null : index));
   };
 
   return (
@@ -44,11 +41,11 @@ const FAQSection = () => {
         <div className="space-y-4">
           {faqs.map((faq, index) => (
             <motion.div
-              key={index}
+              key={faq.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.15 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
               className="bg-white rounded-xl shadow-md overflow-hidden"
             >
               <button
@@ -62,13 +59,11 @@ const FAQSection = () => {
                   }`}
                 />
               </button>
-
               <AnimatePresence>
                 {openIndex === index && (
                   <motion.div
-                    key="answer"
                     initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
+                    animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                     className="px-6 pb-4 text-sm text-gray-600"

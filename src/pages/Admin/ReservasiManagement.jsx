@@ -91,7 +91,7 @@ export default function ReservasiManagement() {
   );
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 px-4 py-10">
+    <div className="p-6 w-full mx-auto">
       <div className="max-w-[95%] mx-auto">
         <h1 className="text-3xl font-semibold text-gray-800 mb-4">
           Manajemen Data Reservasi
