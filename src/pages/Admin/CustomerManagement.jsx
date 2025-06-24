@@ -1,7 +1,5 @@
 // src/pages/Admin/CustomerManagement.jsx
 import React, { useState, useEffect } from "react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import React, { useState, useEffect } from "react";
 import { TrashIcon, PencilIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { supabase } from "../../supabase";
 
