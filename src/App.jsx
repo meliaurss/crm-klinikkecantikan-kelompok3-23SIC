@@ -10,7 +10,7 @@ import ReservasiManagement from "./pages/Admin/ReservasiManagement";
 import AdminFeedback from "./pages/Admin/AdminFeedback";
 import AdminFAQ from "./pages/Admin/AdminFaq";
 import InventoryManagement from "./pages/InventoryManagement";
-import CustomerManagement from "./pages/CustomerManagement";
+import CustomerManagement from "./pages/Customer/CustomerManagement";
 import CustomerDashboard from "./pages/Customer/CustomerDashboard";
 import CustomerLayout from "./layouts/CustomerLayout";
 import CustomerProducts from "./pages/Customer/CustomerProducts";
