@@ -15,7 +15,7 @@ const LandingHeader = () => (
 
         {/* Nav Links */}
         <nav className="hidden md:flex space-x-8 text-sm font-medium">
-          {["Produk", "Layanan", "Tentang", "Promo"].map((item) => (
+          {["Produk", "Layanan", "Tentang", "Promo", "Feedback"].map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}

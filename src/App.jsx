@@ -11,10 +11,13 @@ import AdminFeedback from "./pages/Admin/AdminFeedback";
 import AdminFAQ from "./pages/Admin/AdminFaq";
 import InventoryManagement from "./pages/Admin/InventoryManagement";
 import CustomerManagement from "./pages/Admin/CustomerManagement";
+import InventoryManagement from "./pages/InventoryManagement";
+import ListPelanggan from "./pages/ListPelanggan";
 import CustomerDashboard from "./pages/Customer/CustomerDashboard";
 import CustomerLayout from "./layouts/CustomerLayout";
 import CustomerProducts from "./pages/Customer/CustomerProducts";
 import Login from "./pages/Auth/Login";
+import CustomerManagement from "./pages/Admin/CustomerManagement";
 
 
 export default function App() {
