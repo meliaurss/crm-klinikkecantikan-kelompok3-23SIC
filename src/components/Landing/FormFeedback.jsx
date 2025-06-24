@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from "../../supabase";
 
 const StarRating = ({ name, value, onChange }) => {
   const stars = [1, 2, 3, 4, 5];
-
   return (
     <div className="flex items-center gap-1">
       {stars.map((star) => (
@@ -10,9 +10,7 @@ const StarRating = ({ name, value, onChange }) => {
           key={star}
           type="button"
           onClick={() => onChange(name, star)}
-          className={`text-xl ${
-            star <= value ? "text-yellow-400" : "text-gray-300"
-          }`}
+          className={`text-xl ${star <= value ? "text-yellow-400" : "text-gray-300"}`}
         >
           ★
         </button>
@@ -22,56 +20,115 @@ const StarRating = ({ name, value, onChange }) => {
 };
 
 const Feedback = () => {
-  const [feedbacks, setFeedbacks] = useState(() => {
-    const saved = localStorage.getItem("feedbacks");
-    return saved ? JSON.parse(saved) : [];
-  });
-
   const [form, setForm] = useState({
     name: "",
     treatment: "",
     doctorRating: 0,
     serviceRating: 0,
     placeRating: 0,
+    productRating: 0,
     message: "",
   });
 
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const POINT_VALUE = 50;
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error("Gagal mengambil user:", error.message);
+      } else {
+        setUser(data.user);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRatingChange = (field, value) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.treatment || !form.message) {
-      alert("Nama, treatment, dan pesan wajib diisi.");
+    if (!user) {
+      alert("Harap login terlebih dahulu.");
       return;
     }
 
-    const newFeedback = {
-      ...form,
-      id: Date.now(),
-      isApproved: false, // ditambahkan untuk keperluan admin
-    };
+    const { name, treatment, doctorRating, serviceRating, placeRating, productRating, message } = form;
 
-    const updated = [newFeedback, ...feedbacks];
-    setFeedbacks(updated);
-    localStorage.setItem("feedbacks", JSON.stringify(updated));
+    if (!name || !treatment || !message) {
+      alert("Nama, jenis treatment, dan pesan wajib diisi.");
+      return;
+    }
 
-    // Simpan ke 'allFeedbacks' agar bisa dikelola admin
-    const existing = JSON.parse(localStorage.getItem("allFeedbacks")) || [];
-    const updatedAll = [newFeedback, ...existing];
-    localStorage.setItem("allFeedbacks", JSON.stringify(updatedAll));
+    setLoading(true);
+
+    // 1. Insert feedback
+    const { error: feedbackError } = await supabase.from("feedbacks").insert([
+      {
+        user_id: user.id,
+        name,
+        treatment,
+        doctor_rating: doctorRating,
+        service_rating: serviceRating,
+        place_rating: placeRating,
+        product_rating: productRating,
+        feedback_text: message,
+        point_awarded: POINT_VALUE,
+        is_approved: false,
+      },
+    ]);
+
+    if (feedbackError) {
+      alert("Gagal menyimpan feedback: " + feedbackError.message);
+      setLoading(false);
+      return;
+    }
+
+    // 2. Insert ke point_history
+    const { error: historyError } = await supabase.from("point_history").insert([
+      {
+        user_id: user.id,
+        type: "feedback",
+        description: `Feedback untuk ${treatment}`,
+        point: POINT_VALUE,
+      },
+    ]);
+
+    if (historyError) {
+      alert("Gagal menyimpan riwayat poin: " + historyError.message);
+      setLoading(false);
+      return;
+    }
+
+    // 3. Tambahkan total poin via RPC
+    const { error: pointError } = await supabase.rpc("increment_user_points", {
+      uid: user.id,
+      point_delta: POINT_VALUE,
+    });
+
+    if (pointError) {
+      alert("Gagal menambahkan poin: " + pointError.message);
+      setLoading(false);
+      return;
+    }
+
+    // 4. Hapus notifikasi feedback
+    await supabase
+      .from("notifications")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("type", "feedback");
+
+    alert("Feedback berhasil dikirim! +50 poin ditambahkan.");
 
     setForm({
       name: "",
@@ -79,19 +136,20 @@ const Feedback = () => {
       doctorRating: 0,
       serviceRating: 0,
       placeRating: 0,
+      productRating: 0,
       message: "",
     });
+    setLoading(false);
   };
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Feedback Pelanggan</h1>
-
+      <h1 className="text-3xl font-bold mb-6 text-[#181C68]">Feedback Pelanggan</h1>
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md mb-8"
+        className="bg-white p-6 rounded-lg shadow-md mb-8 space-y-4"
       >
-        <div className="mb-4">
+        <div>
           <label className="block mb-1 font-medium">Nama</label>
           <input
             type="text"
@@ -99,17 +157,17 @@ const Feedback = () => {
             value={form.name}
             onChange={handleChange}
             placeholder="Nama Anda"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full px-3 py-2 border rounded"
           />
         </div>
 
-        <div className="mb-4">
+        <div>
           <label className="block mb-1 font-medium">Jenis Treatment</label>
           <select
             name="treatment"
             value={form.treatment}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full px-3 py-2 border rounded"
           >
             <option value="">-- Pilih Treatment --</option>
             <option value="Facial">Facial</option>
@@ -121,73 +179,45 @@ const Feedback = () => {
           </select>
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">Dokter</label>
-          <StarRating
-            name="doctorRating"
-            value={form.doctorRating}
-            onChange={handleRatingChange}
-          />
+        <div>
+          <label className="block mb-1 font-medium">Rating Dokter</label>
+          <StarRating name="doctorRating" value={form.doctorRating} onChange={handleRatingChange} />
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">Pelayanan</label>
-          <StarRating
-            name="serviceRating"
-            value={form.serviceRating}
-            onChange={handleRatingChange}
-          />
+        <div>
+          <label className="block mb-1 font-medium">Rating Pelayanan</label>
+          <StarRating name="serviceRating" value={form.serviceRating} onChange={handleRatingChange} />
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">Tempat</label>
-          <StarRating
-            name="placeRating"
-            value={form.placeRating}
-            onChange={handleRatingChange}
-          />
+        <div>
+          <label className="block mb-1 font-medium">Rating Tempat</label>
+          <StarRating name="placeRating" value={form.placeRating} onChange={handleRatingChange} />
         </div>
 
-        <div className="mb-4">
+        <div>
+          <label className="block mb-1 font-medium">Rating Produk</label>
+          <StarRating name="productRating" value={form.productRating} onChange={handleRatingChange} />
+        </div>
+
+        <div>
           <label className="block mb-1 font-medium">Pesan Singkat</label>
           <textarea
             name="message"
             value={form.message}
             onChange={handleChange}
             placeholder="Tulis pesan Anda..."
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full px-3 py-2 border rounded"
           />
         </div>
 
         <button
           type="submit"
-          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+          disabled={loading}
+          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
         >
-          Kirim Feedback
+          {loading ? "Mengirim..." : "Kirim Feedback"}
         </button>
       </form>
-
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Feedback Masuk</h2>
-        {feedbacks.length === 0 ? (
-          <p className="text-gray-500">Belum ada feedback.</p>
-        ) : (
-          <ul className="space-y-4">
-            {feedbacks.map((fb) => (
-              <li key={fb.id} className="border p-4 rounded">
-                <p className="text-indigo-700 font-bold">{fb.name}</p>
-                <p className="text-sm text-gray-600">Treatment: {fb.treatment}</p>
-                <div className="text-sm text-gray-700 mt-1">
-                  <p>⭐ Dokter: {fb.doctorRating}/5</p>
-                  <p>⭐ Pelayanan: {fb.serviceRating}/5</p>
-                  <p>⭐ Tempat: {fb.placeRating}/5</p>
-                </div>
-                <p className="mt-2 text-gray-800 italic">"{fb.message}"</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
     </div>
   );
 };
