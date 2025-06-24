@@ -9,8 +9,8 @@ import LandingPage from "./pages/LandingPage";
 import ReservasiManagement from "./pages/Admin/ReservasiManagement";
 import AdminFeedback from "./pages/Admin/AdminFeedback";
 import AdminFAQ from "./pages/Admin/AdminFaq";
-import InventoryManagement from "./pages/InventoryManagement";
-import CustomerManagement from "./pages/Customer/CustomerManagement";
+import InventoryManagement from "./pages/Admin/InventoryManagement.jsx";
+import CustomerManagement from "./pages/Admin/CustomerManagement";
 import CustomerDashboard from "./pages/Customer/CustomerDashboard";
 import CustomerLayout from "./layouts/CustomerLayout";
 import CustomerProducts from "./pages/Customer/CustomerProducts";
@@ -93,7 +93,7 @@ export default function App() {
             element={<ProdukManagement products={products} setProducts={setProducts} />}
           />
           <Route path="reservations" element={<ReservasiManagement />} />
-          <Route path="customers" element={<CustomerManagement />} />
+          <Route path="customers" element={<CustomerManagement/>} />
           <Route path="feedback" element={<AdminFeedback />} />
           <Route path="faqs" element={<AdminFAQ />} />
         </Route>
