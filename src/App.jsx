@@ -16,6 +16,8 @@ import CustomerLayout from "./layouts/CustomerLayout";
 import CustomerProducts from "./pages/Customer/CustomerProducts";
 import Login from "./pages/Auth/Login";
 import ProdukManagement from "./pages/Admin/ProdukManagement";
+import AllProducts from './pages/AllProducts';
+import FAQManagement from "./pages/Admin/FAQManagement.jsx";
 
 import { supabase } from './supabase.js';
 
@@ -85,23 +87,24 @@ export default function App() {
             // </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="inventory" element={<InventoryManagement />} />
           <Route
             path="produk"
             element={<ProdukManagement products={products} setProducts={setProducts} />}
           />
           <Route path="reservations" element={<ReservasiManagement />} />
-          <Route path="customers" element={<CustomerManagement/>} />
+          <Route path="customers" element={<CustomerManagement />} />
           <Route path="feedback" element={<AdminFeedback />} />
-          <Route path="faqs" element={<AdminFAQ />} />
+          <Route path="faqs" element={<FAQManagement />} />
         </Route>
 
         {/* Customer Routes */}
         <Route path="/customer" element={<CustomerLayout />}>
           <Route index element={<CustomerDashboard />} />
           <Route path="dashboard" element={<CustomerDashboard />} />
+          <Route path="products" element={<CustomerProducts />} />
           <Route
             path="products"
             element={
