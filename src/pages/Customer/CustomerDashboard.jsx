@@ -12,6 +12,8 @@ import ProductsSection from '../../components/Landing/ProductsSection';
 import AboutUsSection from '../../components/Landing/AboutUsSection';
 import FAQSection from '../../components/Landing/FAQSection';
 import FormReservasi from '../../components/Landing/FormReservasi';
+import HeroPrediksiPage from '../../components/Customer/HeroPrediksiPage';
+
 
 export default function CustomerDashboard() {
   const { user } = useAuth();
@@ -34,6 +36,8 @@ export default function CustomerDashboard() {
       {/* Hero dengan logika reservasi */}
       <HeroSection onReservasiClick={() => setShowReservasiForm(true)} />
 
+      <HeroPrediksiPage/>
+
       {/* Info Member */}
       <section className="max-w-7xl mx-auto px-4 py-10 space-y-10">
         <div className="text-center">
@@ -51,6 +55,7 @@ export default function CustomerDashboard() {
       <PromoSection />
       <ServicesSection />
       <ProductsSection />
+      
 
       {showReservasiForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

@@ -18,8 +18,10 @@ import Login from "./pages/Auth/Login";
 import ProdukManagement from "./pages/Admin/ProdukManagement";
 import AllProducts from './pages/AllProducts';
 import FAQManagement from "./pages/Admin/FAQManagement.jsx";
-
 import { supabase } from './supabase.js';
+import HeroPrediksiPage from "./components/Customer/HeroPrediksiPage.jsx";
+import FormPrediksiPage from "./pages/Customer/FormPrediksiPage.jsx";
+
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -73,6 +75,8 @@ export default function App() {
               />
             }
           />
+          <Route path="/prediksi" element={<HeroPrediksiPage />} />
+          <Route path="/prediksi/form" element={<FormPrediksiPage />} />
         </Route>
 
         {/* Login Page without layout */}
@@ -83,7 +87,7 @@ export default function App() {
           path="/admin"
           element={
             // <ProtectedRoute requiredRoles={['admin']}>
-              <MainLayout />
+            <MainLayout />
             // </ProtectedRoute>
           }
         >
@@ -104,7 +108,6 @@ export default function App() {
         <Route path="/customer" element={<CustomerLayout />}>
           <Route index element={<CustomerDashboard />} />
           <Route path="dashboard" element={<CustomerDashboard />} />
-          <Route path="products" element={<CustomerProducts />} />
           <Route
             path="products"
             element={
