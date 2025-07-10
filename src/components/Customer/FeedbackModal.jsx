@@ -1,41 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { supabase } from "../../supabase";
 
-const FeedbackModal = ({ onClose, onSubmit }) => {
-  const [feedback, setFeedback] = useState('');
+export default function FeedbackModal({ userId, onClose, onSuccess }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    treatment: "",
+    doctor_rating: 5,
+    service_rating: 5,
+    place_rating: 5,
+    message: "",
+    is_approved: false,
+    user_id: userId,
+  });
 
-  const handleSubmit = () => {
-    if (feedback.trim() === '') return;
-    onSubmit(feedback);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { error } = await supabase.from("feedbacks").insert([formData]);
+    if (error) {
+      alert("Gagal mengirim feedback: " + error.message);
+    } else {
+      // Tambahkan poin ke user
+      await supabase.rpc("add_feedback_point", { uid: userId });
+      onSuccess();
+      onClose();
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-lg relative">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-xl"
-        >
-          ×
-        </button>
-        <h3 className="text-lg font-semibold text-indigo-600 mb-4">Feedback untuk Tambah Poin</h3>
-        <textarea
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-          rows={4}
-          className="w-full border rounded-md p-3"
-          placeholder="Tulis pengalaman Anda setelah treatment atau pembelian produk"
-        ></textarea>
-        <div className="text-right mt-4">
-          <button
-            onClick={handleSubmit}
-            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-          >
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-md">
+        <h2 className="text-lg font-bold mb-4 text-center text-indigo-700">
+          Kirim Feedback
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input name="name" placeholder="Nama" required value={formData.name} onChange={handleChange}
+            className="w-full border rounded px-3 py-2" />
+          <input name="treatment" placeholder="Treatment yang diambil" required value={formData.treatment}
+            onChange={handleChange} className="w-full border rounded px-3 py-2" />
+          <textarea name="message" placeholder="Masukan" required value={formData.message}
+            onChange={handleChange} className="w-full border rounded px-3 py-2" />
+          <button type="submit" className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
             Kirim
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
-};
-
-export default FeedbackModal;
+}
