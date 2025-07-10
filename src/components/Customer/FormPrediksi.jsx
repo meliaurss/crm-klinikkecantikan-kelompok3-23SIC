@@ -29,7 +29,7 @@ const FormPrediksi = () => {
 
     try {
       const response = await axios.post(
-        "https://58b1-34-125-202-176.ngrok-free.app/predict",
+        "https://3fff-34-124-160-48.ngrok-free.app/predict",
         formData
       );
       setResult(response.data);

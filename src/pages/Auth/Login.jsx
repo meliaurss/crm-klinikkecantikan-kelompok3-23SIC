@@ -1,4 +1,3 @@
-// src/pages/Auth/Login.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -10,6 +9,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
 
+  // ✅ FIXED: Tambahkan handleChange
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };

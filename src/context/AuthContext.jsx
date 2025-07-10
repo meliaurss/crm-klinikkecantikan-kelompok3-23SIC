@@ -8,59 +8,33 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const session = supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) {
-        fetchProfile(data.session.user.id);
-      }
+    supabase.auth.getSession().then(res => {
+      if (res.data?.session?.user) fetchProfile(res.data.session.user.id);
     });
 
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setUser(null);
-      }
+    const listener = supabase.auth.onAuthStateChange((_, session) => {
+      if (session?.user) fetchProfile(session.user.id);
+      else setUser(null);
     });
+
+    return () => listener?.subscription?.unsubscribe();
   }, []);
 
-  const fetchProfile = async (id) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (data && !error) {
-      setUser({ ...data, id });
-    }
+  const fetchProfile = async id => {
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
+    if (data && !error) setUser(data);
   };
 
   const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return { success: false, message: error.message };
-    }
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.user) return { success: false, message: error?.message || 'Login gagal' };
 
     const userId = data.user.id;
+    const { data: profile, error: profileError } = await supabase.from('profiles').select('*').eq('id', userId).single();
+    if (profileError || !profile) return { success: false, message: 'Gagal mengambil role pengguna.' };
 
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-
-    if (profileError || !profile) {
-      return { success: false, message: 'Gagal mendapatkan role pengguna.' };
-    }
-
-    const fullUser = { ...profile, id: userId };
-    setUser(fullUser);
-
-    return { success: true, user: fullUser };
+    setUser(profile);
+    return { success: true, user: profile };
   };
 
   const logout = async () => {
@@ -68,11 +42,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);
