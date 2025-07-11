@@ -1,45 +1,44 @@
-// src/App.jsx
 import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 
-
 // Layouts
 import MainLayout from "./layouts/MainLayout";
 import LandingLayout from "./layouts/LandingLayout";
-import CustomerLayout from "./layouts/CustomerLayout"; // Perhatikan CustomerLayout
+import CustomerLayout from "./layouts/CustomerLayout";
 
 // Context
-import { AuthProvider, useAuth } from "./context/AuthContext"; // Import useAuth
+import { AuthProvider } from "./context/AuthContext";
 
 // Pages - General
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/another/Dashboard";
 import LandingPage from "./pages/LandingPage";
-import ReservasiManagement from "./pages/ReservasiManagement";
-import AllProducts from "./pages/AllProducts"; // Ini akan digunakan untuk /products-all
-import InventoryManagement from "./pages/InventoryManagement";
-import CustomerManagement from "./pages/CustomerManagement";
-import ReservasiManagement from "./pages/Admin/ReservasiManagement";
-import AdminFeedback from "./pages/Admin/AdminFeedback";
-import AdminFAQ from "./pages/Admin/AdminFaq";
-import InventoryManagement from "./pages/Admin/InventoryManagement.jsx";
-import CustomerManagement from "./pages/Admin/CustomerManagement";
-import CustomerDashboard from "./pages/Customer/CustomerDashboard";
-import CustomerLayout from "./layouts/CustomerLayout";
-import CustomerProducts from "./pages/Customer/CustomerProducts";
 import Login from "./pages/Auth/Login";
+import RegisterPage from "./pages/Auth/RegisterPage";
 
-// Pages - Admin
+// Admin Pages
+import ReservasiManagement from "./pages/Admin/ReservasiManagement";
+import ProdukManagement from "./pages/Admin/ProdukManagement";
+import InventoryManagement from "./pages/Admin/InventoryManagement";
+import CustomerManagement from "./pages/Admin/CustomerManagement";
 import AdminFeedback from "./pages/Admin/AdminFeedback";
 import AdminFAQ from "./pages/Admin/AdminFaq";
-import ProdukManagement from "./pages/Admin/ProdukManagement";
-import AllProducts from './pages/AllProducts';
-import FAQManagement from "./pages/Admin/FAQManagement.jsx";
-import HeroPrediksiPage from "./components/Customer/HeroPrediksiPage.jsx";
-import FormPrediksiPage from "./pages/Customer/FormPrediksiPage.jsx";
-import RegisterPage from "./pages/Auth/RegisterPage.jsx";
-import { supabase } from './supabase.js';
-import FormReservasi from "./components/Landing/FormReservasi.jsx"
+import FAQManagement from "./pages/Admin/FAQManagement"; // Jika digunakan
+
+// Customer Pages
+import CustomerDashboard from "./pages/Customer/CustomerDashboard";
+import HeroPrediksiPage from "./components/Customer/HeroPrediksiPage";
+import FormPrediksiPage from "./pages/Customer/FormPrediksiPage";
+import FormReservasi from "./components/Landing/FormReservasi";
+
+// Produk & Keranjang
+import AllProducts from "./pages/AllProducts";
+import DetailProduct from "./pages/DetailProduct";
+import CartPage from "./pages/CartPage";
+
+
+// Supabase
+import { supabase } from './supabase';
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -47,20 +46,19 @@ export default function App() {
   const [errorProducts, setErrorProducts] = useState(null);
 
   const [cartItems, setCartItems] = useState(() => {
-    // Ambil data keranjang dari localStorage saat aplikasi pertama kali dimuat
     const savedCart = localStorage.getItem('cartItems');
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
-  // Simpan data keranjang ke localStorage setiap kali cartItems berubah
+  // Simpan ke localStorage setiap kali cart berubah
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Tambah ke keranjang
   const handleAddToCart = (productToAdd) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === productToAdd.id);
-
       if (existingItem) {
         return prevItems.map((item) =>
           item.id === productToAdd.id
@@ -75,9 +73,9 @@ export default function App() {
 
   const handleUpdateQuantity = (id, newQuantity) => {
     setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item
-      ).filter(item => item.quantity > 0) // Pastikan untuk menghapus item jika kuantitas jadi 0 atau kurang
+      prevItems
+        .map(item => item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item)
+        .filter(item => item.quantity > 0)
     );
   };
 
@@ -85,6 +83,7 @@ export default function App() {
     setCartItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
+  // Ambil produk dari Supabase
   useEffect(() => {
     async function getProducts() {
       setLoadingProducts(true);
@@ -106,7 +105,6 @@ export default function App() {
         }));
         setProducts(fetchedProducts);
       }
-
       setLoadingProducts(false);
     }
 
@@ -115,131 +113,75 @@ export default function App() {
 
   return (
     <AuthProvider>
-      {/* ⬇️ TOASTER DITEMPATKAN DI SINI */}
       <Toaster position="top-center" reverseOrder={false} />
 
       <Routes>
+        {/* 🌐 Public Routes - Landing */}
         <Route element={<LandingLayout />}>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/products-all" element={<AllProducts products={products} loading={loadingProducts} error={errorProducts} />} />
-          <Route path="/prediksi" element={<HeroPrediksiPage />} />
-          <Route path="/prediksi/form" element={<FormPrediksiPage />} />
-        </Route>
-      <AppContent
-        products={products}
-        setProducts={setProducts}
-        loadingProducts={loadingProducts}
-        setLoadingProducts={setLoadingProducts}
-        errorProducts={errorProducts}
-        setErrorProducts={setErrorProducts}
-        cartItems={cartItems} // Teruskan cartItems ke AppContent
-        handleAddToCart={handleAddToCart}
-        handleUpdateQuantity={handleUpdateQuantity}
-        handleRemoveItem={handleRemoveItem}
-      />
-    </AuthProvider>
-  );
-}
-
-// Create a new component to consume AuthContext and other props
-function AppContent({
-  products,
-  setProducts,
-  loadingProducts,
-  errorProducts,
-  handleAddToCart,
-  handleUpdateQuantity,
-  handleRemoveItem,
-  cartItems // Terima cartItems dari App
-}) {
-  const { currentUser } = useAuth(); // Consume currentUser here
-
-  return (
-    <Routes>
-      {/* Landing Page Routes with LandingLayout (TIDAK ADA PERUBAHAN DI SINI) */}
-      <Route element={<LandingLayout />}>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/products-all"
-          element={
+          <Route path="/products-all" element={
             <AllProducts
               products={products}
               loading={loadingProducts}
               error={errorProducts}
               handleAddToCart={handleAddToCart}
-              currentUser={currentUser}
               isCustomerRoute={false}
             />
-          }
-        />
-        <Route
-          path="/product/:productId"
-          element={<DetailProduct handleAddToCart={handleAddToCart} currentUser={currentUser} />}
-        />
-      </Route>
+          } />
+          <Route path="/prediksi" element={<HeroPrediksiPage />} />
+          <Route path="/prediksi/form" element={<FormPrediksiPage />} />
+        </Route>
 
-      {/* Cart Page */}
-      <Route
-        path="/cart"
-        element={
+        {/* 🔍 Detail Produk */}
+        <Route path="/product/:productId" element={
+          <DetailProduct handleAddToCart={handleAddToCart} />
+        } />
+
+        {/* 🛒 Keranjang */}
+        <Route path="/cart" element={
           <CartPage
             cartItems={cartItems}
             handleUpdateQuantity={handleUpdateQuantity}
             handleRemoveItem={handleRemoveItem}
           />
-        }
-      />
+        } />
 
-      {/* Login Page */}
-      <Route path="/login" element={<Login />} />
+        {/* 🔐 Auth */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-      {/* Admin Routes with MainLayout (TIDAK ADA PERUBAHAN DI SINI) */}
-      <Route
-        path="/admin"
-        element={<MainLayout />}
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="inventory" element={<InventoryManagement />} />
-        <Route
-          path="produk"
-          element={
+        {/* 🧑‍💼 Admin */}
+        <Route path="/admin" element={<MainLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="inventory" element={<InventoryManagement />} />
+          <Route path="produk" element={
             <ProdukManagement
               products={products}
               setProducts={setProducts}
             />
-          }
-        />
-        <Route path="reservations" element={<ReservasiManagement />} />
-        <Route path="customers" element={<CustomerManagement />} />
-        <Route path="feedback" element={<AdminFeedback />} />
-        <Route path="faqs" element={<AdminFAQ />} />
-      </Route>
+          } />
+          <Route path="reservations" element={<ReservasiManagement />} />
+          <Route path="customers" element={<CustomerManagement />} />
+          <Route path="feedback" element={<AdminFeedback />} />
+          <Route path="faqs" element={<AdminFAQ />} />
+          {/* <Route path="faq-management" element={<FAQManagement />} /> */}
+        </Route>
 
-      {/* Customer Routes with CustomerLayout (PERUBAHAN DI SINI) */}
-      <Route path="/customer" element={<CustomerLayout cartItems={cartItems} />}> {/* <--- cartItems diteruskan ke CustomerLayout */}
-        <Route index element={<CustomerDashboard />} />
-        <Route path="dashboard" element={<CustomerDashboard />} />
-        <Route path="reservasi" element={<FormReservasi />} />
-        <Route
-          path="produk"
-          element={
+        {/* 👩‍⚕️ Customer */}
+        <Route path="/customer" element={<CustomerLayout cartItems={cartItems} />}>
+          <Route index element={<CustomerDashboard />} />
+          <Route path="dashboard" element={<CustomerDashboard />} />
+          <Route path="reservasi" element={<FormReservasi />} />
+          <Route path="produk" element={
             <AllProducts
               products={products}
               loading={loadingProducts}
               error={errorProducts}
               handleAddToCart={handleAddToCart}
-              currentUser={currentUser}
               isCustomerRoute={true}
             />
-          }
-        />
-      </Route>
-    </Routes>
-        <Route path="/customer" element={<CustomerLayout />}>
-          <Route index element={<CustomerDashboard />} />
-          <Route path="dashboard" element={<CustomerDashboard />} />
-          <Route path="products" element={<CustomerProducts products={products} loading={loadingProducts} error={errorProducts} />} />
+          } />
         </Route>
       </Routes>
     </AuthProvider>
