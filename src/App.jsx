@@ -33,8 +33,8 @@ import FormReservasi from "./components/Landing/FormReservasi";
 
 // Produk & Keranjang
 import AllProducts from "./pages/AllProducts";
-import DetailProduct from "./pages/DetailProduct";
-import CartPage from "./pages/CartPage";
+import DetailProduct from "./components/Customer/DetailProduk";
+import CartPage from "./components/Customer/CardPage";
 
 
 // Supabase

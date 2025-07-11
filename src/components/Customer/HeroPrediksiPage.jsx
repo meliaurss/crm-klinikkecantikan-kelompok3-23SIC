@@ -102,4 +102,4 @@ export default function HeroPrediksiPage() {
       </motion.div>
     </div>
   );
-}
+} 

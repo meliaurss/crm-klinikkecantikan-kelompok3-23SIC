@@ -32,7 +32,7 @@ const MemberPoints = () => {
       .from("users")
       .select("points")
       .eq("id", currentUser.id)
-      .single();
+      .maybeSingle();
 
     if (userError) {
       console.error("Gagal mengambil poin user:", userError.message);
