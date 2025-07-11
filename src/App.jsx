@@ -11,12 +11,13 @@ import CustomerLayout from "./layouts/CustomerLayout";
 import { AuthProvider } from "./context/AuthContext";
 
 // Pages - General
-import Dashboard from "./pages/another/Dashboard";
+// import Dashboard from "./pages/another/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Auth/Login";
 import RegisterPage from "./pages/Auth/RegisterPage";
 
 // Admin Pages
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ReservasiManagement from "./pages/Admin/ReservasiManagement";
 import ProdukManagement from "./pages/Admin/ProdukManagement";
 import InventoryManagement from "./pages/Admin/InventoryManagement";
@@ -152,8 +153,8 @@ export default function App() {
 
         {/* 🧑‍💼 Admin */}
         <Route path="/admin" element={<MainLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="inventory" element={<InventoryManagement />} />
           <Route path="produk" element={
             <ProdukManagement
