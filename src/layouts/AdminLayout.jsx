@@ -1,21 +1,32 @@
-// src/layouts/AdminLayout.jsx
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+// // src/layouts/MainLayout.jsx
+// import { Outlet } from "react-router-dom";
+// import Header from "../components/Admin/Header";
+// import Sidebar from "../components/Admin/Sidebar";
+// import { motion } from "framer-motion";
 
-const AdminLayout = () => {
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 overflow-auto">
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
-};
+// export default function MainLayout() {
+//   return (
+//     <div className="h-screen w-screen flex overflow-hidden bg-white">
+//       {/* Sidebar */}
+//       <Sidebar />
 
-export default AdminLayout;
+//       {/* Konten utama */}
+//       <div className="flex-1 flex flex-col overflow-hidden">
+//         {/* Header */}
+//         <Header />
+
+//         {/* Main Content */}
+//         <motion.main
+//           className="flex-1 overflow-auto"
+//           initial={{ opacity: 0, y: 10 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           transition={{ duration: 0.5, ease: "easeOut" }}
+//         >
+//           <div className="p-4 sm:p-6 lg:p-8 bg-white min-h-full">
+//             <Outlet />
+//           </div>
+//         </motion.main>
+//       </div>
+//     </div>
+//   );
+// }

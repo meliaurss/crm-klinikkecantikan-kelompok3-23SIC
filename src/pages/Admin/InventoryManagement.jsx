@@ -1,6 +1,7 @@
 // src/pages/Admin/InventoryManagement.jsx
-import React, { useState } from "react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import React, { useState, useEffect } from "react";
+import { PencilIcon, TrashIcon, PlusIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { motion, AnimatePresence } from "framer-motion";
 
 const initialProducts = [
   {
@@ -31,8 +32,21 @@ function formatCurrency(num) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
+    minimumFractionDigits: 0,
   }).format(num);
 }
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  exit: { opacity: 0, y: -20 },
+};
+
+const popIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { type: "spring", damping: 20 } },
+  exit: { opacity: 0, scale: 0.9 },
+};
 
 export default function InventoryManagement() {
   const [products, setProducts] = useState(initialProducts);
@@ -40,6 +54,7 @@ export default function InventoryManagement() {
   const [showForm, setShowForm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [editId, setEditId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -50,6 +65,13 @@ export default function InventoryManagement() {
     tanggalUpdate: "",
     active: true,
   });
+
+  // Simulate loading
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -106,17 +128,22 @@ export default function InventoryManagement() {
       return;
     }
 
-    const newProduct = {
-      ...formData,
-      id: products.length + 1,
-      stock: parseInt(stock),
-      totalTerjual: parseInt(totalTerjual),
-      price: parseFloat(price),
-    };
+    setIsLoading(true);
+    setTimeout(() => {
+      const newProduct = {
+        ...formData,
+        id: products.length + 1,
+        stock: parseInt(stock),
+        totalTerjual: parseInt(totalTerjual),
+        price: parseFloat(price),
+        tanggalUpdate: new Date().toISOString().split('T')[0],
+      };
 
-    setProducts([...products, newProduct]);
-    setShowForm(false);
-    resetForm();
+      setProducts([...products, newProduct]);
+      setShowForm(false);
+      resetForm();
+      setIsLoading(false);
+    }, 800);
   };
 
   const handleEdit = (product) => {
@@ -135,197 +162,383 @@ export default function InventoryManagement() {
   };
 
   const handleUpdateProduct = () => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === editId
-          ? {
-              ...formData,
-              id: editId,
-              stock: parseInt(formData.stock),
-              totalTerjual: parseInt(formData.totalTerjual),
-              price: parseFloat(formData.price),
-            }
-          : product
-      )
-    );
-    setShowForm(false);
-    resetForm();
+    setIsLoading(true);
+    setTimeout(() => {
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.id === editId
+            ? {
+                ...formData,
+                id: editId,
+                stock: parseInt(formData.stock),
+                totalTerjual: parseInt(formData.totalTerjual),
+                price: parseFloat(formData.price),
+                tanggalUpdate: new Date().toISOString().split('T')[0],
+              }
+            : product
+        )
+      );
+      setShowForm(false);
+      resetForm();
+      setIsLoading(false);
+    }, 800);
   };
 
   const confirmDelete = () => {
-    setProducts(products.filter((p) => p.id !== deleteId));
-    setDeleteId(null);
+    setIsLoading(true);
+    setTimeout(() => {
+      setProducts(products.filter((p) => p.id !== deleteId));
+      setDeleteId(null);
+      setIsLoading(false);
+    }, 800);
   };
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const categories = [...new Set(products.map(p => p.category))];
+
   return (
-    <div className="p-6 w-full mx-auto">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">Manajemen Inventaris</h1>
-
-      <div className="mb-4 flex flex-col sm:flex-row gap-3 sm:items-center">
-        <input
-          type="text"
-          placeholder="Cari nama produk..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border rounded shadow-sm w-full sm:w-80 focus:outline-none focus:ring focus:border-blue-400"
-        />
-        <button
-          onClick={toggleForm}
-          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-        >
-          {showForm ? "Batal" : "Tambah Produk"}
-        </button>
-      </div>
-
-      {showForm && (
-        <div className="mb-15 p-4 border border-gray-300 rounded bg-white shadow-sm max-w-6xl">
-          {[...[
-            { label: "Nama Produk", name: "name", type: "text" },
-            { label: "Kategori", name: "category", type: "text" },
-            { label: "Tanggal Masuk", name: "tanggalMasuk", type: "date" },
-            { label: "Stok", name: "stock", type: "number" },
-            { label: "Total Terjual", name: "totalTerjual", type: "number" },
-            { label: "Harga", name: "price", type: "number" },
-            { label: "Tanggal Update", name: "tanggalUpdate", type: "date" },
-          ]].map(({ label, name, type }) => (
-            <div className="mb-2" key={name}>
-              <label className="block mb-1 font-medium text-sm text-gray-700">{label}</label>
-              <input
-                type={type}
-                name={name}
-                value={formData[name]}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded focus:ring-indigo-400 focus:outline-none text-sm"
-              />
-            </div>
-          ))}
-
-          <div className="mb-4">
-            <label className="inline-flex items-center text-sm text-gray-700">
-              <input
-                type="checkbox"
-                name="active"
-                checked={formData.active}
-                onChange={handleChange}
-                className="mr-2"
-              />
-              Aktif
-            </label>
-          </div>
-
-          <button
-            onClick={editId ? handleUpdateProduct : handleAddProduct}
-            className={`px-4 py-2 text-sm ${
-              editId
-                ? "bg-yellow-500 hover:bg-yellow-600"
-                : "bg-green-600 hover:bg-green-700"
-            } text-white rounded`}
+    <div className="min-h-screen p-6 w-full mx-auto bg-white">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-7xl mx-auto"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <motion.h1 
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl font-bold text-gray-800"
           >
-            {editId ? "Update Produk" : "Simpan Produk"}
-          </button>
-        </div>
-      )}
-
-      <div className="overflow-auto rounded-lg shadow-lg bg-white">
-        <table className="min-w-full text-sm text-left">
-          <thead className="bg-indigo-50 text-indigo-800 text-xs uppercase font-semibold">
-            <tr>
-              <th className="px-4 py-3 text-center">Nama</th>
-              <th className="px-4 py-3 text-center">Kategori</th>
-              <th className="px-6 py-3 text-center">Tanggal Masuk</th>
-              <th className="px-4 py-3 text-center">Stok</th>
-              <th className="px-4 py-3 text-center">Total Terjual</th>
-              <th className="px-4 py-3 text-center">Harga</th>
-              <th className="px-4 py-3 text-center">Status</th>
-              <th className="px-6 py-3 text-center">Tanggal Update</th>
-              <th className="px-4 py-3 text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 text-center">{product.name}</td>
-                  <td className="px-4 py-2 text-center">{product.category}</td>
-                  <td className="px-6 py-2 text-center">{product.tanggalMasuk}</td>
-                  <td className="px-4 py-2 text-center">{product.stock}</td>
-                  <td className="px-4 py-2 text-center">{product.totalTerjual}</td>
-                  <td className="px-4 py-2 text-center">{formatCurrency(product.price)}</td>
-                  <td className="px-4 py-2 text-center">
-                    {product.active ? (
-                      <span className="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
-                        Aktif
-                      </span>
-                    ) : (
-                      <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-200 text-gray-700 rounded">
-                        Nonaktif
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-2 text-center">{product.tanggalUpdate}</td>
-                  <td className="px-4 py-2 text-center">
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={() => handleEdit(product)}
-                        className="text-indigo-600 hover:text-indigo-800"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => setDeleteId(product.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+            Manajemen Inventaris
+          </motion.h1>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleForm}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all"
+          >
+            {showForm ? (
+              <>
+                <XMarkIcon className="w-5 h-5" />
+                <span>Batal</span>
+              </>
             ) : (
-              <tr>
-                <td colSpan="9" className="px-4 py-6 text-center text-gray-500">
-                  Tidak ada produk ditemukan.
-                </td>
-              </tr>
+              <>
+                <PlusIcon className="w-5 h-5" />
+                <span>Tambah Produk</span>
+              </>
             )}
-          </tbody>
-        </table>
-      </div>
-
-      {deleteId !== null && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">
-              Konfirmasi Hapus
-            </h2>
-            <p className="mb-4 text-gray-600">
-              Yakin ingin menghapus produk{" "}
-              <span className="font-semibold text-red-600">
-                {products.find((p) => p.id === deleteId)?.name}
-              </span>
-              ?
-            </p>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => setDeleteId(null)}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-              >
-                Batal
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Hapus
-              </button>
-            </div>
-          </div>
+          </motion.button>
         </div>
-      )}
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center"
+        >
+          <div className="relative flex-grow">
+            <input
+              type="text"
+              placeholder="Cari nama produk..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 pl-10 border-0 rounded-xl bg-white/70 backdrop-blur-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/90 transition-all"
+            />
+            <svg
+              className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+        </motion.div>
+
+        <AnimatePresence>
+          {showForm && (
+            <motion.div
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="mb-8 p-6 rounded-2xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg max-w-4xl mx-auto"
+            >
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                {editId ? "Edit Produk" : "Tambah Produk Baru"}
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { label: "Nama Produk", name: "name", type: "text", required: true },
+                  { label: "Kategori", name: "category", type: "select", options: categories, required: true },
+                  { label: "Tanggal Masuk", name: "tanggalMasuk", type: "date", required: true },
+                  { label: "Stok", name: "stock", type: "number", min: 0, required: true },
+                  { label: "Total Terjual", name: "totalTerjual", type: "number", min: 0, required: true },
+                  { label: "Harga", name: "price", type: "number", min: 0, required: true },
+                  { label: "Tanggal Update", name: "tanggalUpdate", type: "date", required: true },
+                ].map(({ label, name, type, options, min, required }) => (
+                  <div className="mb-3" key={name}>
+                    <label className="block mb-2 font-medium text-sm text-gray-700">
+                      {label} {required && <span className="text-red-500">*</span>}
+                    </label>
+                    {type === "select" ? (
+                      <select
+                        name={name}
+                        value={formData[name]}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm transition-all"
+                        required={required}
+                      >
+                        <option value="">Pilih Kategori</option>
+                        {options?.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type={type}
+                        name={name}
+                        min={min}
+                        value={formData[name]}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm transition-all"
+                        required={required}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center mt-4 mb-6">
+                <label className="inline-flex items-center text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    name="active"
+                    checked={formData.active}
+                    onChange={handleChange}
+                    className="w-4 h-4 mr-2 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="font-medium">Produk Aktif</span>
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={toggleForm}
+                  className="px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
+                >
+                  Batal
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={editId ? handleUpdateProduct : handleAddProduct}
+                  disabled={isLoading}
+                  className={`px-5 py-2.5 text-white rounded-lg transition-all flex items-center gap-2 ${
+                    editId
+                      ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                      : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+                  }`}
+                >
+                  {isLoading ? (
+                    <>
+                      <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                      Memproses...
+                    </>
+                  ) : editId ? (
+                    "Update Produk"
+                  ) : (
+                    "Simpan Produk"
+                  )}
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {isLoading && !showForm && !deleteId ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : (
+          <motion.div 
+            variants={popIn}
+            initial="hidden"
+            animate="visible"
+            className="overflow-hidden rounded-2xl shadow-xl bg-white/30 backdrop-blur-lg border border-white/40"
+          >
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                  <tr>
+                    <th className="px-6 py-4 text-left font-medium">Nama</th>
+                    <th className="px-4 py-4 text-left font-medium">Kategori</th>
+                    <th className="px-4 py-4 text-center font-medium">Stok</th>
+                    <th className="px-4 py-4 text-center font-medium">Terjual</th>
+                    <th className="px-4 py-4 text-right font-medium">Harga</th>
+                    <th className="px-4 py-4 text-center font-medium">Status</th>
+                    <th className="px-6 py-4 text-center font-medium">Update</th>
+                    <th className="px-4 py-4 text-center font-medium">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/20">
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                      <motion.tr
+                        key={product.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className="hover:bg-white/20"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-800">
+                          {product.name}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-gray-600">
+                          {product.category}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-center text-gray-600">
+                          {product.stock}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-center text-gray-600">
+                          {product.totalTerjual}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-right font-medium text-gray-800">
+                          {formatCurrency(product.price)}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-center">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              product.active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {product.active ? "Aktif" : "Nonaktif"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center text-gray-600">
+                          {product.tanggalUpdate}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-center">
+                          <div className="flex justify-center gap-2">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleEdit(product)}
+                              className="p-1.5 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-100 transition-all"
+                            >
+                              <PencilIcon className="w-5 h-5" />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => setDeleteId(product.id)}
+                              className="p-1.5 text-red-600 hover:text-red-800 rounded-full hover:bg-red-100 transition-all"
+                            >
+                              <TrashIcon className="w-5 h-5" />
+                            </motion.button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="8"
+                        className="px-6 py-8 text-center text-gray-500"
+                      >
+                        Tidak ada produk ditemukan.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
+
+        <AnimatePresence>
+          {deleteId !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            >
+              <motion.div
+                variants={popIn}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Konfirmasi Hapus
+                  </h2>
+                  <button
+                    onClick={() => setDeleteId(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <XMarkIcon className="w-6 h-6" />
+                  </button>
+                </div>
+                <p className="mb-6 text-gray-600">
+                  Anda akan menghapus produk{" "}
+                  <span className="font-semibold text-red-600">
+                    {products.find((p) => p.id === deleteId)?.name}
+                  </span>
+                  . Tindakan ini tidak dapat dibatalkan.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setDeleteId(null)}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
+                  >
+                    Batal
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={confirmDelete}
+                    disabled={isLoading}
+                    className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all flex items-center gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                        Menghapus...
+                      </>
+                    ) : (
+                      "Hapus"
+                    )}
+                  </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }

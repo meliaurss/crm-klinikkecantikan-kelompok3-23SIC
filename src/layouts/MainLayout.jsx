@@ -1,7 +1,7 @@
 // src/layouts/MainLayout.jsx
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
+import Header from "../components/Admin/Header";
+import Sidebar from "../components/Admin/Sidebar";
 import { motion } from "framer-motion";
 
 export default function MainLayout() {
@@ -22,7 +22,7 @@ export default function MainLayout() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="p-6 bg-gradient-to-b from-white via-blue-50 to-white min-h-full">
+          <div className="p-6 bg-white min-h-full">
             <Outlet />
           </div>
         </motion.main>

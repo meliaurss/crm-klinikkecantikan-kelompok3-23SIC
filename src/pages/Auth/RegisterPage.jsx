@@ -44,7 +44,7 @@ const RegisterPage = () => {
     }
 
     // ✅ Simpan profil dengan role yang dipilih
-    const { error: profileError } = await supabase.from('profiles').insert([
+    const { error: profileError } = await supabase.from('profiles').insert  ([
       {
         id: userId,
         email,
