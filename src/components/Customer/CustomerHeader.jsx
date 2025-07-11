@@ -1,89 +1,70 @@
-import React, { useState } from 'react';
-import { Bell, LogOut, Home } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+// src/components/LandingHeader.jsx
+import { Link } from 'react-router-dom';
+import { SparklesIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'; // Import ShoppingCartIcon
 
-const CustomerHeader = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [showNotif, setShowNotif] = useState(false);
+const CustomerHeader = () => (
+  <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center">
+        {/* Logo & Brand */}
+        <Link to="/" className="flex items-center group">
+          <SparklesIcon className="h-8 w-8 text-indigo-600 transition-transform group-hover:rotate-12 duration-300" />
+          <span className="ml-2 text-xl font-extrabold bg-gradient-to-r from-indigo-600 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            Mahacare
+          </span>
+        </Link>
 
-  const notifications = [
-    { id: 1, message: 'Reservasi Facial Glow Anda diterima untuk 22 Juni 2025' },
-    { id: 2, message: 'Produk Serum Vitamin C telah dikirim' },
-  ];
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  const goToLanding = () => {
-    navigate('/');
-  };
-
-  return (
-    <header className="bg-white shadow p-4 flex justify-between items-center relative z-50">
-      <h1 className="text-lg font-semibold text-indigo-700">Dashboard Customer</h1>
-
-      <div className="flex items-center gap-4">
-        <button
-          className="text-indigo-600 hover:text-indigo-800"
-          onClick={goToLanding}
-          title="Kembali ke Beranda"
-        >
-          <Home className="w-6 h-6" />
-        </button>
-
-        <div className="relative">
-          <button
-            className="relative"
-            onClick={() => setShowNotif(!showNotif)}
-            title="Notifikasi"
+        {/* Nav Links */}
+        <nav className="hidden md:flex space-x-8 text-sm font-medium">
+          {/* Ubah link "Produk" menjadi Link to="/products-all" */}
+          <Link
+            to="/customer/produk" // <--- Ini adalah path ke halaman ProductAll.jsx
+            className="relative text-gray-600 hover:text-indigo-600 transition-colors duration-200 after:content-[''] after:block after:w-0 after:h-[2px] after:bg-indigo-600 after:transition-all after:duration-300 hover:after:w-full"
           >
-            <Bell className="w-6 h-6 text-indigo-600 hover:text-indigo-800 transition-colors" />
-            {notifications.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">
-                {notifications.length}
-              </span>
-            )}
-          </button>
+            Produk
+          </Link>
 
-          <AnimatePresence>
-            {showNotif && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="absolute right-0 mt-2 w-80 bg-white border rounded-xl shadow-lg p-4 space-y-2 z-50"
-              >
-                <h3 className="text-sm font-semibold text-indigo-700">Notifikasi</h3>
-                <ul className="space-y-1 text-sm text-gray-700">
-                  {notifications.map((n) => (
-                    <li key={n.id} className="bg-indigo-50 px-3 py-2 rounded-md shadow-sm">
-                      {n.message}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Link lainnya tetap ke scroll section jika itu yang Anda inginkan */}
+          {["Layanan", "Tentang", "Promo"].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="relative text-gray-600 hover:text-indigo-600 transition-colors duration-200 after:content-[''] after:block after:w-0 after:h-[2px] after:bg-indigo-600 after:transition-all after:duration-300 hover:after:w-full"
+            >
+              {item}
+            </a>
+          ))}
+        </nav>
+
+        {/* Auth & Cart Buttons */}
+        <div className="hidden md:flex items-center space-x-4">
+          {/* Tombol Keranjang */}
+          <Link
+            to="/cart" // Mengarahkan ke halaman CartPage.jsx
+            className="p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-indigo-600 transition-all duration-300 relative"
+            title="Keranjang Belanja"
+          >
+            <ShoppingCartIcon className="h-6 w-6" />
+            {/* Opsional: Tambahkan badge jumlah item di keranjang */}
+            {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">3</span> */}
+          </Link>
+
+          <Link
+            to="/login"
+            className="px-4 py-2 text-indigo-600 border border-indigo-600 rounded-md hover:bg-indigo-50 transition-all duration-300 hover:shadow-md"
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-500 text-white rounded-md hover:brightness-110 shadow-md transition-all duration-300"
+          >
+            Register
+          </Link>
         </div>
-
-        <div className="text-sm text-gray-600 hidden md:block">{user?.email}</div>
-
-        <button
-          onClick={handleLogout}
-          className="text-red-500 hover:text-red-700"
-          title="Logout"
-        >
-          <LogOut className="w-6 h-6" />
-        </button>
       </div>
-    </header>
-  );
-};
+    </div>
+  </header>
+);
 
 export default CustomerHeader;

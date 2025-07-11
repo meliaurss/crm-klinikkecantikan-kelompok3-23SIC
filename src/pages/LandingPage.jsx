@@ -68,7 +68,7 @@ const LandingPage = () => {
       {!loadingProducts && !productsError && (
         <ProductsSection
           products={products}
-          onOpenReservasi={handleOpenReservasi}
+        
         />
       )}
 
