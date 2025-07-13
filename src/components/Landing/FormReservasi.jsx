@@ -70,7 +70,7 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
 
   return (
     <div className=" mx-auto bg-white rounded-xl p-8 lg:p-10 my-10 max-w-auto">
-      <h1 className="font-playfair-display text-4xl lg:text-5xl font-bold text-center text-[#4A4A6A] mb-4">
+      <h1 className="font-playfair-display text-4xl lg:text-5xl font-bold text-center text-[#181C68] mb-4">
         Buat Reservasi Anda
       </h1>
       <p className="font-montserrat text-lg text-center text-gray-600 mb-10">
@@ -274,7 +274,7 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-[#4A4A6A] text-white font-semibold text-lg py-3 rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider mt-8"
+              className="w-full bg-[#181C68] text-white font-semibold text-lg py-3 rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider mt-8"
             >
               KIRIM RESERVASI
             </button>

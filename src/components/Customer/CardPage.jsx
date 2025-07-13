@@ -169,7 +169,7 @@ const CartPage = ({ cartItems, handleUpdateQuantity, handleRemoveItem }) => {
           <div className="flex flex-col gap-8">
             {/* Bagian Produk di Keranjang */}
             <div className="w-full bg-white rounded-lg shadow p-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Produk di Keranjang</h2>
+              <h2 className="text-2xl font-bold text-[#181C68] mb-4">Produk di Keranjang</h2>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead>
                   <tr>
@@ -248,7 +248,7 @@ const CartPage = ({ cartItems, handleUpdateQuantity, handleRemoveItem }) => {
                   />
                   <button
                     onClick={handleApplyCoin}
-                    className="bg-gray-600 text-white px-4 py-2 rounded-r-md hover:bg-gray-700 transition"
+                    className="bg-[#181C68] text-white px-4 py-2 rounded-r-md hover:bg-gray-700 transition"
                   >
                     Terapkan Koin
                   </button>
@@ -388,7 +388,7 @@ const CartPage = ({ cartItems, handleUpdateQuantity, handleRemoveItem }) => {
               </div>
               <button
                 onClick={handleProceedToCheckout}
-                className="mt-6 w-full bg-[#6a902c] text-white py-3 rounded-lg font-semibold hover:bg-[#5a7d25] transition shadow-md"
+                className="mt-6 w-full bg-[#181C68] text-white py-3 rounded-lg font-semibold hover:bg-[#5a7d25] transition shadow-md"
               >
                 Buat Pesanan
               </button>

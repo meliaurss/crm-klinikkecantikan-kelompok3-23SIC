@@ -24,8 +24,15 @@ const LandingHeader = () => (
             Produk
           </Link>
 
+           <Link
+            to="/layanan-kami" // <--- Ini adalah path ke halaman ProductAll.jsx
+            className="relative text-gray-600 hover:text-indigo-600 transition-colors duration-200 after:content-[''] after:block after:w-0 after:h-[2px] after:bg-indigo-600 after:transition-all after:duration-300 hover:after:w-full"
+          >
+            Layanan
+          </Link>
+
           {/* Link lainnya tetap ke scroll section jika itu yang Anda inginkan */}
-          {["Layanan", "Tentang", "Promo"].map((item) => (
+          {[, "Tentang", "Promo"].map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}

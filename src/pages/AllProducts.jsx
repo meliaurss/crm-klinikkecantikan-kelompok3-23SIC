@@ -79,13 +79,7 @@ const AllProducts = ({ products, loading, error, handleAddToCart, currentUser, i
             )}
           </div>
           
-          {/* Tombol Kembali */}
-          <Link
-            to="/"
-            className="px-4 py-2 bg-[#181C68] text-white rounded-lg hover:bg-[#141a59] transition whitespace-nowrap"
-          >
-            Kembali ke Beranda
-          </Link>
+        
         </div>
 
         {/* Status Loading */}

@@ -43,6 +43,8 @@ import { supabase } from './supabase';
 import ReservationHistoryPage from "./components/Customer/ReservationHistoryPage";
 import ProdukHistory from "./components/Customer/ProdukHistory";
 import OrderHistoryManagement from "./pages/Admin/OrderHistoryManagement";
+import LayananManagement from "./pages/Admin/LayananManagement";
+import AllTreatments from "./pages/AllTreatments";
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -133,6 +135,7 @@ export default function App() {
             />
           } />
           <Route path="/prediksi" element={<HeroPrediksiPage />} />
+          <Route path="/layanan-kami" element={<AllTreatments />} />
           <Route path="/prediksi/form" element={<FormPrediksiPage />} />
         </Route>
 
@@ -160,6 +163,7 @@ export default function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="inventory" element={<InventoryManagement />} />
           <Route path="order" element={<OrderHistoryManagement />} />
+          <Route path="layanan" element={<LayananManagement />} />
           <Route path="produk" element={
             <ProdukManagement
               products={products}

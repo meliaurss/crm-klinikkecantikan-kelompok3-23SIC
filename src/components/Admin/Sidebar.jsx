@@ -8,6 +8,7 @@ import {
   MessageCircle,
   CircleHelp,
   LogOut,
+  Heart ,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -15,6 +16,7 @@ const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/Admin/dashboard" },
   { name: "Inventory", icon: <Boxes size={18} />, path: "/Admin/inventory" },
   { name: "Order", icon: <ShoppingBag size={18} />, path: "/Admin/order" },
+  { name: "Treatment", icon: <Heart   size={18} />, path: "/Admin/layanan" },
   { name: "Produk", icon: <ShoppingBag size={18} />, path: "/Admin/produk" },
   { name: "Reservasi", icon: <CalendarCheck size={18} />, path: "/Admin/reservations" },
   { name: "Data Pelanggan", icon: <Users2 size={18} />, path: "/Admin/customers" },

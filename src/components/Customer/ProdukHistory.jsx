@@ -40,7 +40,7 @@ export default function ProdukHistory() {
   return (
     <div className="min-h-screen bg-gray-50 py-10 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10 drop-shadow-sm">
+        <h1 className="text-4xl font-extrabold text-center text-[#181C68] mb-10 drop-shadow-sm">
           <span role="img" aria-label="shopping bags"></span>  Pesanan Saya
         </h1>
 
@@ -134,7 +134,7 @@ export default function ProdukHistory() {
                     )}
                     <div className="flex justify-between pt-3 border-t border-gray-200 mt-3">
                       <span className="font-extrabold text-xl text-gray-900">Total Pembayaran:</span>
-                      <span className="font-extrabold text-xl text-blue-600">{formatCurrency(order.total)}</span>
+                      <span className="font-extrabold text-xl text-[#181C68]">{formatCurrency(order.total)}</span>
                     </div>
                   </div>
                 </div>
