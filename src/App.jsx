@@ -11,7 +11,6 @@ import CustomerLayout from "./layouts/CustomerLayout";
 import { AuthProvider } from "./context/AuthContext";
 
 // Pages - General
-// import Dashboard from "./pages/another/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Auth/Login";
 import RegisterPage from "./pages/Auth/RegisterPage";
@@ -24,7 +23,7 @@ import InventoryManagement from "./pages/Admin/InventoryManagement";
 import CustomerManagement from "./pages/Admin/CustomerManagement";
 import AdminFeedback from "./pages/Admin/AdminFeedback";
 import AdminFAQ from "./pages/Admin/AdminFaq";
-import FAQManagement from "./pages/Admin/FAQManagement"; // Jika digunakan
+// import FAQManagement from "./pages/Admin/FAQManagement"; // Jika digunakan
 
 // Customer Pages
 import CustomerDashboard from "./pages/Customer/CustomerDashboard";
@@ -32,14 +31,17 @@ import HeroPrediksiPage from "./components/Customer/HeroPrediksiPage";
 import FormPrediksiPage from "./pages/Customer/FormPrediksiPage";
 import FormReservasi from "./components/Landing/FormReservasi";
 
+
 // Produk & Keranjang
 import AllProducts from "./pages/AllProducts";
 import DetailProduct from "./components/Customer/DetailProduk";
-import CartPage from "./components/Customer/CardPage";
-
+import CartPage from "./components/Customer/CardPage"; 
 
 // Supabase
 import { supabase } from './supabase';
+import ReservationHistoryPage from "./components/Customer/ReservationHistoryPage";
+import ProdukHistory from "./components/Customer/ProdukHistory";
+import OrderHistoryManagement from "./pages/Admin/OrderHistoryManagement";
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -156,6 +158,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="inventory" element={<InventoryManagement />} />
+          <Route path="order" element={<OrderHistoryManagement />} />
           <Route path="produk" element={
             <ProdukManagement
               products={products}
@@ -183,6 +186,9 @@ export default function App() {
               isCustomerRoute={true}
             />
           } />
+          {/* Rute baru untuk Riwayat Reservasi dan Riwayat Pesanan Produk */}
+          <Route path="riwayat-reservasi" element={<ReservationHistoryPage />} />
+          <Route path="riwayat-pesanan" element={< ProdukHistory/>} />
         </Route>
       </Routes>
     </AuthProvider>

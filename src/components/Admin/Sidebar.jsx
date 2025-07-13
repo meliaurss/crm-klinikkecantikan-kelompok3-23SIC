@@ -14,7 +14,7 @@ import { Link, useLocation } from "react-router-dom";
 const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/Admin/dashboard" },
   { name: "Inventory", icon: <Boxes size={18} />, path: "/Admin/inventory" },
-  { name: "Laporan", icon: <FileBarChart size={18} />, path: "/Admin/laporan" },
+  { name: "Order", icon: <ShoppingBag size={18} />, path: "/Admin/order" },
   { name: "Produk", icon: <ShoppingBag size={18} />, path: "/Admin/produk" },
   { name: "Reservasi", icon: <CalendarCheck size={18} />, path: "/Admin/reservations" },
   { name: "Data Pelanggan", icon: <Users2 size={18} />, path: "/Admin/customers" },

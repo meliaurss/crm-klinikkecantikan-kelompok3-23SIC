@@ -274,7 +274,7 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-[#FF6F61] text-white font-semibold text-lg py-3 rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider mt-8"
+              className="w-full bg-[#4A4A6A] text-white font-semibold text-lg py-3 rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider mt-8"
             >
               KIRIM RESERVASI
             </button>
@@ -301,7 +301,7 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
             </p>
             <button
               onClick={handleCloseSuccessModal} // Mengarahkan ke handleCloseSuccessModal
-              className="mt-6 px-6 py-3 bg-pink-500 text-white font-semibold rounded-xl hover:bg-pink-600"
+              className="mt-6 px-6 py-3 bg-[#4A4A6A] text-white font-semibold rounded-xl hover:bg-[#4A4A6A]"
             >
               Tutup
             </button>

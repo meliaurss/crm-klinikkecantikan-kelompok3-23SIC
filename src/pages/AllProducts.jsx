@@ -33,7 +33,6 @@ const AllProducts = ({ products, loading, error, handleAddToCart, currentUser, i
       return () => clearTimeout(timer);
     }
   }, [notification]);
-
   // Ganti handleAddToCartAndNotify dengan logika kondisional
   const handleAddToCartConditional = (product) => {
     // Logika: Jika tidak ada currentUser (belum login) DAN ini bukan rute customer
