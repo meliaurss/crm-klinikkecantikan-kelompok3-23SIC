@@ -16,18 +16,32 @@ function formatCurrency(num) {
 export default function ProdukHistory() {
   const [purchaseHistory, setPurchaseHistory] = useState([]);
 
-  useEffect(() => {
+  // Function to load and sort history from localStorage
+  const loadPurchaseHistory = () => {
     const stored = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
     // Urutkan riwayat dari yang terbaru ke terlama
     const sortedHistory = stored.sort((a, b) => b.id - a.id);
     setPurchaseHistory(sortedHistory);
+  };
+
+  useEffect(() => {
+    // Load history initially
+    loadPurchaseHistory();
+
+    // Add an event listener for localStorage changes
+    window.addEventListener('storage', loadPurchaseHistory);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('storage', loadPurchaseHistory);
+    };
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-cyan-100 py-10">
+    <div className="min-h-screen bg-gray-50 py-10 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10 drop-shadow-sm">
-          <span role="img" aria-label="shopping bags"></span> Pesanan Saya
+          <span role="img" aria-label="shopping bags"></span>  Pesanan Saya
         </h1>
 
         {purchaseHistory.length === 0 ? (

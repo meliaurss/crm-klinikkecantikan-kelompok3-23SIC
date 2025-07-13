@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 
+
 // Layouts
 import MainLayout from "./layouts/MainLayout";
 import LandingLayout from "./layouts/LandingLayout";
