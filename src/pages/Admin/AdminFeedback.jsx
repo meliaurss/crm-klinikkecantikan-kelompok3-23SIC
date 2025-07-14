@@ -13,11 +13,37 @@ const AdminFeedback = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("feedbacks")
-      .select("*")
+      .select("*, users(name)")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Gagal memuat feedback:", error.message);
+    if (error || !data || data.length === 0) {
+      console.warn("Gagal memuat dari Supabase atau data kosong. Menampilkan data dummy.");
+      // Data dummy hanya untuk tampilan sementara
+      const dummy = [
+        {
+          id: "1",
+          treatment: "Facial Acne Treatment",
+          doctor_rating: 4,
+          service_rating: 5,
+          place_rating: 5,
+          product_rating: 4,
+          feedback_text: "Layanan sangat ramah dan hasilnya memuaskan!",
+          is_approved: true,
+          users: { name: "Amelia Devira" },
+        },
+        {
+          id: "2",
+          treatment: "Botox",
+          doctor_rating: 5,
+          service_rating: 4,
+          place_rating: 4,
+          product_rating: 5,
+          feedback_text: "Dokternya sangat profesional. Tempat juga bersih.",
+          is_approved: false,
+          users: { name: "Dina Febrianti" },
+        },
+      ];
+      setFeedbacks(dummy);
     } else {
       setFeedbacks(data);
     }
@@ -49,12 +75,12 @@ const AdminFeedback = () => {
         <div className="grid gap-4">
           {feedbacks.map((fb) => (
             <div key={fb.id} className="border p-4 rounded shadow">
-              <p className="font-bold text-[#181C68]">{fb.name}</p>
+              <p className="font-bold text-[#181C68]">{fb.users?.name || "Tidak diketahui"}</p>
               <p className="text-sm text-gray-600">Treatment: {fb.treatment}</p>
               <p className="text-sm">
                 ⭐ Dokter: {fb.doctor_rating} | ⭐ Pelayanan: {fb.service_rating} | ⭐ Tempat: {fb.place_rating}
               </p>
-              <p className="italic mt-2">"{fb.message}"</p>
+              <p className="italic mt-2">"{fb.feedback_text}"</p>
               <button
                 onClick={() => toggleApproval(fb.id, fb.is_approved)}
                 className={`mt-2 inline-block px-4 py-1 rounded text-white transition ${

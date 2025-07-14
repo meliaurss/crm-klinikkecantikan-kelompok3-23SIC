@@ -402,8 +402,8 @@ export default function FormReservasi() {
               Kami akan segera menghubungi Anda melalui WhatsApp untuk konfirmasi.
             </p>
             <button
-              onClick={handleCloseSuccessModal}
-              className="mt-6 px-6 py-3 bg-[#4A4A6A] text-white font-semibold rounded-xl hover:bg-[#4A4A6A]"
+              onClick={handleCloseSuccessModal} // Mengarahkan ke handleCloseSuccessModal
+              className="mt-6 px-6 py-3 bg-pink-500 text-white font-semibold rounded-xl hover:bg-pink-600"
             >
               Tutup
             </button>
