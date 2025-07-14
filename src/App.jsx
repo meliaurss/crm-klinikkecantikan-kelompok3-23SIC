@@ -46,6 +46,8 @@ import OrderHistoryManagement from "./pages/Admin/OrderHistoryManagement";
 import LayananManagement from "./pages/Admin/LayananManagement";
 import AllTreatments from "./pages/AllTreatments";
 import DetailTreatments from "./components/Customer/DetailTreatments";
+import TentangKami from "./components/Landing/TentangKami";
+import PromoPage from "./components/Landing/PromoPage";
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -138,6 +140,8 @@ export default function App() {
           <Route path="/prediksi" element={<HeroPrediksiPage />} />
           <Route path="/layanan-kami" element={<AllTreatments />} />
           <Route path="/treatments/:treatmentId" element={<DetailTreatments />} />
+          <Route path="/tentang" element={<TentangKami />} />
+          <Route path="/promo" element={<PromoPage />} />
         </Route>
 
         {/* 🔍 Detail Produk */}
@@ -199,7 +203,7 @@ export default function App() {
 
           {/* Rute baru untuk Riwayat Reservasi dan Riwayat Pesanan Produk */}
           <Route path="riwayat-reservasi" element={<ReservationHistoryPage />} />
-          <Route path="riwayat-pesanan" element={< ProdukHistory/>} />
+          <Route path="riwayat-pesanan" element={< ProdukHistory />} />
         </Route>
       </Routes>
     </AuthProvider>
