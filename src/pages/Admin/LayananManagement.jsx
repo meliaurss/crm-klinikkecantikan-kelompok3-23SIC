@@ -3,7 +3,6 @@ import { PencilIcon, TrashIcon, PlusIcon, XMarkIcon, ArrowPathIcon } from "@hero
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../../supabase.js";
 
-// ✅ Perbaikan fungsi formatCurrency
 function formatCurrency(num) {
   const parsed = parseFloat(num);
   if (isNaN(parsed)) {
@@ -112,7 +111,7 @@ export default function LayananManagement() {
     setFormData({
       name: service.name,
       gambar: service.gambar,
-      price: service.price.toString(), // Ensure price is string for input
+      price: service.price.toString(),
       description: service.description,
     });
     setEditId(service.id);
@@ -214,7 +213,14 @@ export default function LayananManagement() {
                 <input type="text" name="name" placeholder="Nama Layanan" value={formData.name} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm" />
                 <input type="text" name="gambar" placeholder="URL Gambar" value={formData.gambar} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm" />
                 <input type="number" name="price" placeholder="Harga" value={formData.price} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm" />
-                <input type="text" name="description" placeholder="Deskripsi" value={formData.description} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm" />
+                <textarea
+                  name="description"
+                  placeholder="Deskripsi (boleh panjang & pakai poin)"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={4}
+                  className="px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm resize-y"
+                />
               </div>
 
               <div className="flex justify-end gap-3 mt-6">
@@ -234,7 +240,7 @@ export default function LayananManagement() {
                 <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
                   <tr>
                     <th className="px-6 py-4 text-left font-medium">Layanan</th>
-                    <th className="px-4 py-4 text-left font-medium">Deskripsi</th> {/* Added Description Header */}
+                    <th className="px-4 py-4 text-left font-medium">Deskripsi</th>
                     <th className="px-4 py-4 text-left font-medium">Gambar</th>
                     <th className="px-4 py-4 text-right font-medium">Harga</th>
                     <th className="px-4 py-4 text-center font-medium">Aksi</th>
@@ -247,7 +253,7 @@ export default function LayananManagement() {
                         <td className="px-6 py-4">
                           <div className="font-medium text-gray-800">{service.name}</div>
                         </td>
-                        <td className="px-4 py-4 text-sm text-gray-600"> {/* New Description cell */}
+                        <td className="px-4 py-4 text-sm text-gray-600 whitespace-pre-line">
                           {service.description}
                         </td>
                         <td className="px-4 py-4">
@@ -268,7 +274,7 @@ export default function LayananManagement() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="px-6 py-8 text-center text-gray-500">Tidak ada layanan ditemukan.</td> {/* Adjusted colspan */}
+                      <td colSpan="5" className="px-6 py-8 text-center text-gray-500">Tidak ada layanan ditemukan.</td>
                     </tr>
                   )}
                 </tbody>
