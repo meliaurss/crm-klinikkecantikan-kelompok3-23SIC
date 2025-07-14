@@ -48,6 +48,7 @@ import AllTreatments from "./pages/AllTreatments";
 import DetailTreatments from "./components/Customer/DetailTreatments";
 import TentangKami from "./components/Landing/TentangKami";
 import PromoPage from "./components/Landing/PromoPage";
+import FormPrediksi from "./components/Customer/FormPrediksi";
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -138,6 +139,7 @@ export default function App() {
             />
           } />
           <Route path="/prediksi" element={<HeroPrediksiPage />} />
+          <Route path="/prediksi/form" element={<FormPrediksi />} /> {/* <-- Tambahkan ini */}
           <Route path="/layanan-kami" element={<AllTreatments />} />
           <Route path="/treatments/:treatmentId" element={<DetailTreatments />} />
           <Route path="/tentang" element={<TentangKami />} />
@@ -188,6 +190,10 @@ export default function App() {
           <Route index element={<CustomerDashboard />} />
           <Route path="dashboard" element={<CustomerDashboard />} />
           <Route path="reservasi" element={<FormReservasi />} />
+          <Route path="formprediksipage" element={<FormPrediksiPage />} />
+          <Route path="formprediksi" element={<FormPrediksi />} />
+
+
           <Route path="produk" element={
             <AllProducts
               products={products}
