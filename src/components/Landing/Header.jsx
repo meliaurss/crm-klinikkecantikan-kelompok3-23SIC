@@ -18,6 +18,13 @@ const LandingHeader = () => (
         <nav className="hidden md:flex space-x-8 text-sm font-medium">
           {/* Ubah link "Produk" menjadi Link to="/products-all" */}
           <Link
+              to="/" // Path to the customer home page
+              className="relative text-gray-600 hover:text-indigo-600 transition-colors duration-200 after:content-[''] after:block after:w-0 after:h-[2px] after:bg-indigo-600 after:transition-all after:duration-300 hover:after:w-full"
+            >
+              Beranda
+            </Link>
+
+          <Link
             to="/products-all" // <--- Ini adalah path ke halaman ProductAll.jsx
             className="relative text-gray-600 hover:text-indigo-600 transition-colors duration-200 after:content-[''] after:block after:w-0 after:h-[2px] after:bg-indigo-600 after:transition-all after:duration-300 hover:after:w-full"
           >

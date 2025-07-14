@@ -38,7 +38,7 @@ export default function ProdukHistory() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 w-full">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-extrabold text-center text-[#181C68] mb-10 drop-shadow-sm">
           <span role="img" aria-label="shopping bags"></span>  Pesanan Saya
@@ -143,6 +143,6 @@ export default function ProdukHistory() {
           </div>
         )}
       </div>
-    </div>
+
   );
 }
