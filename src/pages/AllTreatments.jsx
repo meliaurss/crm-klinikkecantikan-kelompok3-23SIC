@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "../supabase.js"; // Adjust path as needed based on your project structure
+import { supabase } from "../supabase.js";
 import { ShoppingCartIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
-
 
 // Helper function to format currency
 function formatCurrency(num) {
-  // Ensure the input is a number before formatting
   const numberValue = parseFloat(num);
   if (typeof numberValue !== "number" || isNaN(numberValue) || numberValue === null) {
     return "Rp 0";
@@ -31,9 +29,7 @@ export default function AllTreatments() {
       try {
         const { data, error: fetchError } = await supabase
           .from("treatments")
-          // IMPORTANT: Changed 'gambar' to 'image' as per your error message.
-          // If your Supabase table column is indeed 'gambar', change it back.
-          .select("id, name, gambar, price, description"); // Select relevant columns
+          .select("id, name, gambar, price, description");
 
         if (fetchError) throw fetchError;
 
@@ -55,7 +51,7 @@ export default function AllTreatments() {
       setIsNotifVisible(true);
       const timer = setTimeout(() => {
         setIsNotifVisible(false);
-        setTimeout(() => setNotification(null), 400); // Time for exit animation
+        setTimeout(() => setNotification(null), 400);
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -67,7 +63,7 @@ export default function AllTreatments() {
   };
 
   return (
-    <div className="all-treatments-page min-h-screen bg-gray-50 px-6 py-10">
+
       <div className="max-w-7xl mx-auto">
         {/* Header with title and notification area */}
         <div className="flex justify-between items-center mb-8 h-14">
@@ -124,59 +120,43 @@ export default function AllTreatments() {
 
         {/* Treatments Grid */}
         {!loading && !error && treatments.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"> {/* Changed lg:grid-cols-4 to lg:grid-cols-3 */}
             {treatments.map((treatment) => (
               <div
                 key={treatment.id}
-                className="relative bg-white rounded-lg shadow-md overflow-hidden
-                           transition-all duration-300 ease-in-out transform
-                           flex flex-col group h-[380px] sm:h-[400px] md:h-[420px]"
+                className="bg-white rounded-3xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 transform hover:scale-[1.03] transition-all duration-300 flex flex-col"
               >
                 {/* Treatment Image Area */}
-                <div className="relative bg-white p-4 flex items-center justify-center h-48 md:h-56 overflow-hidden
-                                 transform transition-transform duration-300 group-hover:scale-105 group-hover:z-10">
-                  <img
-                    src={treatment.gambar} // Changed to 'image'
-                    alt={treatment.name}
-                    className="w-full h-full object-contain transition-transform duration-500"
-                    onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/150?text=No+Image"; // Fallback image
-                    }}
-                  />
+                <img
+                  src={treatment.gambar}
+                  alt={treatment.name}
+                  className="w-full h-56 object-cover"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/150?text=No+Image"; // Fallback image
+                  }}
+                />
+                <div className="p-6 text-center flex-1 flex flex-col">
+                  <h3 className="text-xl font-semibold text-indigo-700 mb-3">
+                    {treatment.name}
+                  </h3>
                   {treatment.price && (
-                    <div className="absolute top-4 left-4 bg-[#181C68] text-white text-base font-bold py-1 px-3 rounded-md">
+                    <div className="text-lg font-bold text-gray-800 mb-3">
                       {formatCurrency(treatment.price)}
                     </div>
                   )}
-                  
-                </div>
-
-                {/* Treatment Details */}
-                <div className="p-4 pt-6 pb-4 flex flex-col flex-grow">
-                  <h3 className="text-[#181C68] font-bold text-lg mb-2">
-                    {treatment.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-3 flex-grow">
-                    {treatment.description}
-                  </p>
-
-                  <div className="relative h-12 mt-1 overflow-hidden">
-                    <Link
-                      to={`/treatments/${treatment.id}`} /* Link to a detailed treatment page */
-                      className="w-full bg-[#181C68] text-white py-3 rounded-lg font-semibold
-                                 transform translate-y-full group-hover:translate-y-0
-                                 transition-transform duration-500 ease-out shadow-lg hover:bg-[#181C68]
-                                 absolute bottom-0 left-0 right-0 flex items-center justify-center"
-                    >
-                      LIHAT PERAWATAN
-                    </Link>
-                  </div>
+                  <p className="text-sm text-gray-600 flex-1">{treatment.description}</p>
+                  <Link
+                    to={`/treatments/${treatment.id}`}
+                    className="mt-6 px-5 py-2 bg-gradient-to-r from-indigo-600 to-blue-500 text-white text-sm rounded-full hover:brightness-110 shadow transition-all duration-300 flex items-center justify-center"
+                  >
+                    LIHAT PERAWATAN
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
-    </div>
+  
   );
 }

@@ -36,7 +36,7 @@ import FormReservasi from "./components/Landing/FormReservasi";
 // Produk & Keranjang
 import AllProducts from "./pages/AllProducts";
 import DetailProduct from "./components/Customer/DetailProduk";
-import CartPage from "./components/Customer/CardPage"; 
+import CartPage from "./components/Customer/CardPage";
 
 // Supabase
 import { supabase } from './supabase';
@@ -45,6 +45,7 @@ import ProdukHistory from "./components/Customer/ProdukHistory";
 import OrderHistoryManagement from "./pages/Admin/OrderHistoryManagement";
 import LayananManagement from "./pages/Admin/LayananManagement";
 import AllTreatments from "./pages/AllTreatments";
+import DetailTreatments from "./components/Customer/DetailTreatments";
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -136,13 +137,14 @@ export default function App() {
           } />
           <Route path="/prediksi" element={<HeroPrediksiPage />} />
           <Route path="/layanan-kami" element={<AllTreatments />} />
-          <Route path="/prediksi/form" element={<FormPrediksiPage />} />
+          <Route path="/treatments/:treatmentId" element={<DetailTreatments />} />
         </Route>
 
         {/* 🔍 Detail Produk */}
         <Route path="/product/:productId" element={
           <DetailProduct handleAddToCart={handleAddToCart} />
         } />
+
 
         {/* 🛒 Keranjang */}
         <Route path="/cart" element={
@@ -191,6 +193,10 @@ export default function App() {
               isCustomerRoute={true}
             />
           } />
+          {/* New route for customer treatments/services page */}
+          <Route path="layanan-kami" element={<AllTreatments />} /> {/* <--- ADD THIS LINE */}
+          <Route path="treatments/:treatmentId" element={<DetailTreatments />} /> Keep this for detail
+
           {/* Rute baru untuk Riwayat Reservasi dan Riwayat Pesanan Produk */}
           <Route path="riwayat-reservasi" element={<ReservationHistoryPage />} />
           <Route path="riwayat-pesanan" element={< ProdukHistory/>} />
