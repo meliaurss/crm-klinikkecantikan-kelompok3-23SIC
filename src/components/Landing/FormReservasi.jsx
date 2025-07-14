@@ -5,39 +5,69 @@ import { supabase } from '../../supabase'; // Pastikan path ini benar
 import {
   User, Calendar, Phone, MapPin, Mail, X, HeartPulse, Stethoscope,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate untuk navigasi
+import { useNavigate } from 'react-router-dom';
 
-export default function FormReservasi() { // Hapus prop { onClose } karena ini bukan lagi modal
+export default function FormReservasi() {
   const [formData, setFormData] = useState({
-    name: '', // Nama Lengkap
+    name: '',
     tanggal_lahir: '',
     jenis_kelamin: '',
-    no_hp: '', // Nomor HP
+    no_hp: '',
     email: '',
     alamat: '',
-    tanggal_reservasi: '', // Tanggal Reservasi
-    layanan: '', // Pilih Layanan
-    dokter: '', // Pilih Dokter
-    catatan: '', // Catatan
-    status: 'Menunggu', // Status default
+    tanggal_reservasi: '',
+    layanan: '',
+    dokter: '',
+    catatan: '',
+    status: 'Menunggu',
   });
 
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState(null);
-  const navigate = useNavigate(); // Inisialisasi useNavigate
+  const [userLoading, setUserLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchAndListenUser = async () => {
+      setUserLoading(true);
+
+      // Ambil user saat ini
       const { data, error } = await supabase.auth.getUser();
       if (error || !data?.user) {
-        console.warn("User belum login.");
-        // Opsional: Redirect ke halaman login jika user belum login
-        // navigate('/login');
-        return;
+        console.warn("User belum login atau gagal mengambil data user:", error);
+        setUserId(null); // Atur userId ke null jika ada error atau tidak ada user
+      } else {
+        setUserId(data.user.id);
+        console.log("User ID fetched successfully on component mount:", data.user.id);
       }
-      setUserId(data.user.id);
+      setUserLoading(false);
+
+      // Tambahkan listener untuk perubahan state autentikasi
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        (event, session) => {
+          console.log('Auth event:', event, 'Session:', session);
+          if (event === "SIGNED_IN" && session?.user) {
+            setUserId(session.user.id);
+            console.log("User signed in, ID updated:", session.user.id);
+          } else if (event === "SIGNED_OUT") {
+            setUserId(null);
+            console.log("User signed out, ID set to null.");
+            // Opsional: Redirect ke halaman login jika user logout
+            // navigate('/login');
+          }
+          // Pastikan userLoading diatur ke false setelah event auth state berubah
+          setUserLoading(false);
+        }
+      );
+
+      // Cleanup listener saat komponen di-unmount
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
     };
-    fetchUser();
+
+    fetchAndListenUser();
   }, []);
 
   const handleChange = (e) => {
@@ -47,27 +77,104 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (userLoading) {
+      alert("Sedang memuat data user, mohon tunggu sebentar.");
+      console.log("Submission blocked: User data still loading.");
+      return;
+    }
     if (!userId) {
-      alert("Silakan login terlebih dahulu untuk melakukan reservasi.");
+      alert("Anda harus login untuk membuat reservasi.");
+      console.log("Submission blocked: No user ID found (user not logged in).");
+      // Redirect ke halaman login
+      navigate('/login');
       return;
     }
 
-    const dataToInsert = { ...formData, user_id: userId };
+    setIsSubmitting(true);
+
+    const dataToInsert = {
+      user_id: userId, // Pastikan ini selalu terisi dengan ID user yang valid
+      name: formData.name,
+      tanggal_lahir: formData.tanggal_lahir || null,
+      jenis_kelamin: formData.jenis_kelamin,
+      no_hp: formData.no_hp,
+      email: formData.email,
+      alamat: formData.alamat,
+      tanggal_reservasi: formData.tanggal_reservasi || null,
+      layanan: formData.layanan,
+      dokter: formData.dokter, // Nama kolom 'dokter' sesuai tabel Supabase
+      catatan: formData.catatan || '',
+      status: formData.status,
+    };
+
+    console.log("Data akan dikirim ke Supabase:", dataToInsert); // Log data sebelum insert
+
     const { error } = await supabase.from("reservasi").insert([dataToInsert]);
+
+    setIsSubmitting(false);
+
     if (error) {
-      alert("Gagal mengirim data: " + error.message);
+      console.error("Supabase Insert Error Detail:", JSON.stringify(error, null, 2));
+      if (error.code === "23503") { // Foreign key violation error code
+        alert("Terjadi masalah dengan akun Anda. Silakan coba login ulang atau daftarkan akun baru."); // Pesan lebih spesifik
+      } else {
+        alert("Gagal mengirim data: " + error.message);
+      }
       return;
     }
+
     setSubmitted(true);
-    // Tidak perlu reset form langsung di sini jika akan menampilkan pesan sukses di halaman yang sama
+    // Navigasi ke dashboard customer setelah sukses
+    navigate('/customer/dashboard');
   };
 
   const handleCloseSuccessModal = () => {
     setSubmitted(false);
-    // Setelah submit berhasil dan modal pesan sukses ditutup, navigasi kembali ke dashboard customer
+    setFormData({ // Reset form
+      name: '',
+      tanggal_lahir: '',
+      jenis_kelamin: '',
+      no_hp: '',
+      email: '',
+      alamat: '',
+      tanggal_reservasi: '',
+      layanan: '',
+      dokter: '',
+      catatan: '',
+      status: 'Menunggu',
+    });
+    // Navigasi ke dashboard customer
     navigate('/customer/dashboard');
   };
 
+  // Render kondisional berdasarkan status loading user dan login
+  if (userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-700 text-lg">Memuat data user...</p>
+      </div>
+    );
+  }
+
+  // Jika user sudah selesai dimuat tapi userId kosong (tidak login)
+  if (!userId) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <p className="text-red-600 text-xl mb-4 text-center">
+          Anda harus login untuk membuat reservasi.
+        </p>
+        <button
+          onClick={() => navigate('/login')}
+          className="px-6 py-3 bg-[#FF6F61] text-white font-semibold rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider"
+        >
+          Login Sekarang
+        </button>
+      </div>
+    );
+  }
+
+  // Render formulir jika user sudah login (userId ada)
   return (
     <div className=" mx-auto bg-white rounded-xl p-8 lg:p-10 my-10 max-w-auto">
       <h1 className="font-playfair-display text-4xl lg:text-5xl font-bold text-center text-[#181C68] mb-4">
@@ -80,10 +187,8 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
         {/* Image Section */}
         <div className="flex-1 w-full lg:max-w-md">
-          {/* Pastikan path gambar ini benar. Jika berada di folder 'public', gunakan path relatif. */}
           <img
-            // src="https://i.pinimg.com/736x/b1/5f/7a/b15f7ae369932e902c59d63f486c0d49.jpg" 
-            src="https://i.pinimg.com/736x/b1/5f/7a/b15f7ae369932e902c59d63f486c0d49.jpg" 
+            src="https://i.pinimg.com/736x/b1/5f/7a/b15f7ae369932e902c59d63f486c0d49.jpg"
             alt="Aesthetic consultation"
             className="w-full rounded-xl shadow-lg object-cover"
           />
@@ -267,16 +372,13 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
               </div>
             </div>
 
-           
-             
-        
-
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-[#181C68] text-white font-semibold text-lg py-3 rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider mt-8"
+              disabled={isSubmitting || !userId}
+              className="w-full bg-[#181C68] text-white font-semibold text-lg py-3 rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              KIRIM RESERVASI
+              {isSubmitting ? 'Mengirim...' : 'KIRIM RESERVASI'}
             </button>
           </form>
         </div>
@@ -286,7 +388,7 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="relative bg-white border border-pink-200 rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
             <button
-              onClick={handleCloseSuccessModal} // Mengarahkan ke handleCloseSuccessModal
+              onClick={handleCloseSuccessModal}
               className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
             >
               <X className="w-5 h-5" />
@@ -300,7 +402,7 @@ export default function FormReservasi() { // Hapus prop { onClose } karena ini b
               Kami akan segera menghubungi Anda melalui WhatsApp untuk konfirmasi.
             </p>
             <button
-              onClick={handleCloseSuccessModal} // Mengarahkan ke handleCloseSuccessModal
+              onClick={handleCloseSuccessModal}
               className="mt-6 px-6 py-3 bg-[#4A4A6A] text-white font-semibold rounded-xl hover:bg-[#4A4A6A]"
             >
               Tutup
