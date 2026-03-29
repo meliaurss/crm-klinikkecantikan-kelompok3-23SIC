@@ -49,6 +49,8 @@ import DetailTreatments from "./components/Customer/DetailTreatments";
 import TentangKami from "./components/Landing/TentangKami";
 import PromoPage from "./components/Landing/PromoPage";
 import FormPrediksi from "./components/Customer/FormPrediksi";
+import FAQManagement from "./pages/Admin/FAQManagement";
+import FeedbackManagement from "./pages/Admin/FeedbackManagement";
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -180,8 +182,8 @@ export default function App() {
           } />
           <Route path="reservations" element={<ReservasiManagement />} />
           <Route path="customers" element={<CustomerManagement />} />
-          <Route path="feedback" element={<AdminFeedback />} />
-          <Route path="faqs" element={<AdminFAQ />} />
+          <Route path="feedback" element={<FeedbackManagement />} />
+          <Route path="faqs" element={<FAQManagement />} />
           {/* <Route path="faq-management" element={<FAQManagement />} /> */}
         </Route>
 

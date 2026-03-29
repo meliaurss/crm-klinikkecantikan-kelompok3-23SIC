@@ -51,7 +51,7 @@ const HeroSection = ({ onReservasiClick }) => {
             Untuk Wajah Cerah & Glowing
           </h1>
           <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-6">
-            Dapatkan <span className="font-semibold text-indigo-600">diskon hingga Rp100.000</span> untuk semua treatment spesial bulan ini. Yuk kunjungi cabang <span className="text-[#181C68] font-semibold">Mahacare</span> sekarang juga!
+            Dapatkan <span className="font-semibold text-indigo-600">diskon hingga Rp100.000</span> untuk semua treatment spesial bulan ini. Yuk kunjungi cabang <span className="text-[#181C68] font-semibold">Bahebak Clinic Clinic</span> sekarang juga!
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -72,7 +72,7 @@ const HeroSection = ({ onReservasiClick }) => {
           <motion.img
             key={currentImageIndex}
             src={images[currentImageIndex]}
-            alt="Slideshow Mahacare"
+            alt="Slideshow Bahebak Clinic"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}

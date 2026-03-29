@@ -13,7 +13,7 @@ const Footer = () => {
             transition={{ duration: 0.5 }}
             className="text-center md:text-left"
           >
-            <h3 className="text-2xl font-bold tracking-wider">MAHACARE</h3>
+            <h3 className="text-2xl font-bold tracking-wider">Bahebak Clinic</h3>
             <p className="text-sm mt-2 text-indigo-100">
               © {new Date().getFullYear()} All Rights Reserved
             </p>

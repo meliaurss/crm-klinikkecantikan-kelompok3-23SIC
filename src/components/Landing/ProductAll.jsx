@@ -31,7 +31,7 @@ const ProductAll = ({ products, loading, error }) => {
             Jelajahi Semua Produk Kami
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto text-lg leading-relaxed">
-            Temukan rangkaian lengkap produk perawatan kulit Mahacare. Setiap produk dirancang untuk memberikan hasil terbaik dan memancarkan kecantikan alami Anda.
+            Temukan rangkaian lengkap produk perawatan kulit Bahebak Clinic. Setiap produk dirancang untuk memberikan hasil terbaik dan memancarkan kecantikan alami Anda.
           </p>
         </motion.div>
 

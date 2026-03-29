@@ -70,7 +70,7 @@ const RegisterPage = () => {
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full space-y-6">
         <div className="flex items-center justify-center space-x-2">
           <SparklesIcon className="h-8 w-8 text-indigo-600 animate-pulse" />
-          <h1 className="text-2xl font-extrabold text-indigo-700">Daftar Mahacare</h1>
+          <h1 className="text-2xl font-extrabold text-indigo-700">Daftar Bahebak Clinic</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

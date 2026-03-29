@@ -41,7 +41,7 @@ const Sidebar = () => {
         <div className="mb-4">
           <div className="text-xl font-bold text-white drop-shadow-lg bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-100">
-              ✨ Mahacare
+              ✨ Bahebak Clinic 
             </span>
           </div>
         </div>

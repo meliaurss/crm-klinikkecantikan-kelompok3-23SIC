@@ -14,10 +14,10 @@ const AboutUsSection = () => {
           className="text-center mb-14"
         >
           <h2 className="text-3xl md:text-4xl font-extrabold text-[#181C68] mb-4">
-            Tentang Mahacare Clinic
+            Tentang Bahebak Clinic 
           </h2>
           <p className="text-gray-600 max-w-3xl mx-auto text-sm md:text-base">
-            Mahacare adalah klinik kecantikan modern yang didedikasikan untuk membantu Anda tampil lebih percaya diri melalui perawatan kulit dan wajah terbaik. Kami mengutamakan keamanan, kenyamanan, dan hasil nyata untuk setiap pelanggan.
+            Bahebak Clinic adalah klinik kecantikan modern yang didedikasikan untuk membantu Anda tampil lebih percaya diri melalui perawatan kulit dan wajah terbaik. Kami mengutamakan keamanan, kenyamanan, dan hasil nyata untuk setiap pelanggan.
           </p>
         </motion.div>
 
@@ -85,7 +85,7 @@ const AboutUsSection = () => {
             className="rounded-2xl overflow-hidden shadow-md border border-indigo-100"
           >
             <iframe
-              title="Lokasi Mahacare Clinic"
+              title="Lokasi Bahebak Clinic"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15962.923927076382!2d101.43763949260249!3d0.507067499999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5afefcb77e8c7%3A0x6d47acb4ad9fffd2!2sPekanbaru%2C%20Riau!5e0!3m2!1sen!2sid!4v1718944559301!5m2!1sen!2sid"
               width="100%"
               height="300"

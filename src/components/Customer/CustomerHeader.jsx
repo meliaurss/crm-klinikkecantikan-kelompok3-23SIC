@@ -17,7 +17,7 @@ const CustomerHeader = ({ cartItems }) => {
           <Link to="/" className="flex items-center group">
             <SparklesIcon className="h-8 w-8 text-indigo-600 transition-transform group-hover:rotate-12 duration-300" />
             <span className="ml-2 text-xl font-extrabold bg-gradient-to-r from-indigo-600 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Mahacare
+              Bahebak Clinic
             </span>
           </Link>
 

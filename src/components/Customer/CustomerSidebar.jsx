@@ -16,7 +16,7 @@ const CustomerSidebar = () => {
   return (
     <aside className="w-full md:w-64 bg-white shadow-lg border-r min-h-screen sticky top-0">
       <div className="p-6 border-b">
-        <h2 className="text-2xl font-bold text-indigo-700">Mahacare</h2>
+        <h2 className="text-2xl font-bold text-indigo-700">Bahebak Clinic</h2>
         <p className="text-sm text-gray-500">Customer Panel</p>
       </div>
       <nav className="flex flex-col p-4 space-y-2">

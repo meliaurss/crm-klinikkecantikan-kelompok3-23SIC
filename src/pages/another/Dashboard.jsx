@@ -32,7 +32,7 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    const savedStats = JSON.parse(localStorage.getItem("mahacareStats"));
+    const savedStats = JSON.parse(localStorage.getItem("Bahebak ClinicStats"));
     if (savedStats) {
       setStats(savedStats);
     }
@@ -49,7 +49,7 @@ const Dashboard = () => {
     labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
     datasets: [
       {
-        label: "Penjualan MAHACARE",
+        label: "Penjualan Bahebak Clinic",
         data: [12, 19, 14, 17, 22, 30, 28, 26, 32, 35, 40, 45],
         backgroundColor: "rgba(24, 28, 104, 0.6)",
         borderRadius: 8,
@@ -61,7 +61,7 @@ const Dashboard = () => {
     labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
     datasets: [
       {
-        label: "Jumlah Pelanggan MAHACARE",
+        label: "Jumlah Pelanggan Bahebak Clinic",
         data: [50, 75, 120, 180, 220, 260, 300, 350, 400, 430, 460, 500],
         borderColor: "#181C68",
         backgroundColor: "rgba(24, 28, 104, 0.2)",
@@ -75,7 +75,7 @@ const Dashboard = () => {
   return (
     <div className="p-6 space-y-8 min-h-screen bg-gradient-to-br from-indigo-50 via-indigo-100 to-indigo-200">
       <div className="mb-6">
-        <h1 className="text-3xl font-extrabold text-[#181C68] drop-shadow-sm">Klinik MAHACARE</h1>
+        <h1 className="text-3xl font-extrabold text-[#181C68] drop-shadow-sm">Klinik Bahebak Clinic</h1>
         <p className="text-gray-600 text-sm mt-1">Selamat datang! Pantau aktivitas harian klinik Anda.</p>
       </div>
 

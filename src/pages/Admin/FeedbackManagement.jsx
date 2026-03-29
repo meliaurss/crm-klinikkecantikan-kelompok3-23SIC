@@ -10,9 +10,8 @@ const StarDisplay = ({ rating }) => {
       {[...Array(5)].map((_, index) => (
         <span
           key={index}
-          className={`text-xl ${
-            index < rating ? "text-yellow-400" : "text-gray-300"
-          }`}
+          className={`text-xl ${index < rating ? "text-yellow-400" : "text-gray-300"
+            }`}
         >
           &#9733;
         </span>
@@ -91,14 +90,15 @@ export default function FeedbackManagement({ onNewFeedback }) { // Tambahkan pro
     setFeedbacks(prevFeedbacks => [
       {
         ...newFeedback,
-        id: fb-dummy-${prevFeedbacks.length + 1}-${Date.now()}, // ID unik dummy
+        id: `fb-dummy-${prevFeedbacks.length + 1}-${Date.now()}`, // ✅ pakai backtick
         created_at: new Date().toISOString(),
-        is_approved: false, // Feedback baru biasanya menunggu persetujuan
-        users: { name: newFeedback.name || 'Anonymous', email: 'user@example.com' } // Asumsi user
+        is_approved: false,
+        users: { name: newFeedback.name || 'Anonymous', email: 'user@example.com' }
       },
-      ...prevFeedbacks, // Tambahkan di paling atas
+      ...prevFeedbacks,
     ]);
   }, []);
+
 
   const toggleApproval = (id, currentApprovedStatus) => {
     setFeedbacks(prevFeedbacks =>
@@ -127,7 +127,7 @@ export default function FeedbackManagement({ onNewFeedback }) { // Tambahkan pro
   return (
     <div className="p-6 bg-white rounded-lg shadow-xl max-w-full overflow-x-auto">
       <h1 className="text-3xl font-bold text-indigo-800 mb-6 text-center">Manajemen Feedback Pelanggan (Dummy Data)</h1>
-      
+
       {/* Tombol untuk membuka modal feedback - Contoh saja, Anda bisa menempatkannya di tempat lain */}
       {/* Ini hanya contoh jika Anda ingin tombol "Tambah Feedback" di sini */}
       <div className="mb-4 text-right">
@@ -135,7 +135,7 @@ export default function FeedbackManagement({ onNewFeedback }) { // Tambahkan pro
         {/* <button 
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           onClick={() => { /* Logika untuk membuka modal di komponen induk */}
-          {/* Tambah Feedback Dummy */}
+        {/* Tambah Feedback Dummy */}
         {/* </button> */}
       </div>
 
@@ -197,9 +197,8 @@ export default function FeedbackManagement({ onNewFeedback }) { // Tambahkan pro
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      fb.is_approved ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                    }`}
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${fb.is_approved ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                      }`}
                   >
                     {fb.is_approved ? "Disetujui" : "Menunggu"}
                   </span>
@@ -212,9 +211,8 @@ export default function FeedbackManagement({ onNewFeedback }) { // Tambahkan pro
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
                     onClick={() => toggleApproval(fb.id, fb.is_approved)}
-                    className={`px-4 py-2 rounded-md text-white font-semibold transition-colors duration-200 ${
-                      fb.is_approved ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"
-                    }`}
+                    className={`px-4 py-2 rounded-md text-white font-semibold transition-colors duration-200 ${fb.is_approved ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"
+                      }`}
                   >
                     {fb.is_approved ? "Sembunyikan" : "Tampilkan"}
                   </button>

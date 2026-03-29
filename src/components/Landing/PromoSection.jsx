@@ -26,7 +26,7 @@ const PromoSection = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-gray-600 text-base md:text-lg mb-10 max-w-2xl mx-auto"
         >
-          Nikmati diskon hingga <strong>30%</strong> untuk semua layanan Mahacare! 
+          Nikmati diskon hingga <strong>30%</strong> untuk semua layanan Bahebak Clinic! 
           Dapatkan kulit sehat dan glowing dengan perawatan terbaik dari kami.
         </motion.p>
 
@@ -39,7 +39,7 @@ const PromoSection = () => {
         >
           <img
             src={promoImg}
-            alt="Promo Mahacare"
+            alt="Promo Bahebak Clinic"
             className="w-full h-[300px] md:h-[360px] object-cover group-hover:scale-105 transition-transform duration-500"
           />
 
@@ -61,7 +61,7 @@ const PromoSection = () => {
               transition={{ delay: 0.7, duration: 0.5 }}
               className="text-sm md:text-base mb-6 max-w-md drop-shadow-md"
             >
-              Berlaku hingga <strong>31 Juni 2025</strong> di seluruh cabang Mahacare.
+              Berlaku hingga <strong>31 Juni 2025</strong> di seluruh cabang Bahebak Clinic.
               Yuk, reservasi sekarang dan jangan lewatkan kesempatan emas ini!
             </motion.p>
 

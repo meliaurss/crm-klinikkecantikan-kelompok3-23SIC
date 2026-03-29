@@ -39,7 +39,7 @@ const ServicesSection = ({ onOpenReservasi }) => {
           Layanan Unggulan Kami
         </motion.h2>
         <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
-          Klinik Mahacare menghadirkan berbagai layanan perawatan kulit dan wajah
+          Klinik Bahebak Clinic menghadirkan berbagai layanan perawatan kulit dan wajah
           yang aman, modern, dan terbukti memberikan hasil terbaik.
         </p>
       </div>

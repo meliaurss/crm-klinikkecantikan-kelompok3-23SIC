@@ -22,7 +22,7 @@ const ProductsSection = ({ products = [], onOpenReservasi }) => {
           transition={{ duration: 0.6 }}
           className="text-3xl md:text-4xl font-extrabold text-[#181C68] mb-4"
         >
-          Produk Unggulan Mahacare
+          Produk Unggulan Bahebak Clinic
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -31,7 +31,7 @@ const ProductsSection = ({ products = [], onOpenReservasi }) => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base"
         >
-          Temukan solusi perawatan kulit terbaik dari Mahacare. Produk kami terbuat dari bahan berkualitas dan telah teruji secara dermatologis.
+          Temukan solusi perawatan kulit terbaik dari Bahebak Clinic. Produk kami terbuat dari bahan berkualitas dan telah teruji secara dermatologis.
         </motion.p>
       </div>
 

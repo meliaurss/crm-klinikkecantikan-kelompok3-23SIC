@@ -4,10 +4,10 @@ import React from "react";
 const TentangKami = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold text-center text-indigo-700 mb-6">Tentang Mahacare</h1>
+      <h1 className="text-4xl font-bold text-center text-indigo-700 mb-6">Tentang Bahebak Clinic</h1>
       <p className="text-lg text-gray-700 leading-relaxed text-justify">
-        Mahacare adalah klinik kecantikan modern yang menggabungkan teknologi terkini dengan pelayanan profesional dan ramah. Kami berkomitmen untuk memberikan perawatan terbaik bagi kesehatan dan kecantikan kulit Anda. 
-        Dengan tim dokter berpengalaman, produk berkualitas tinggi, dan layanan yang terstandarisasi, Mahacare hadir untuk menjawab kebutuhan perawatan kulit Anda dari remaja hingga dewasa.
+        Bahebak Clinic adalah klinik kecantikan modern yang menggabungkan teknologi terkini dengan pelayanan profesional dan ramah. Kami berkomitmen untuk memberikan perawatan terbaik bagi kesehatan dan kecantikan kulit Anda. 
+        Dengan tim dokter berpengalaman, produk berkualitas tinggi, dan layanan yang terstandarisasi, Bahebak Clinic hadir untuk menjawab kebutuhan perawatan kulit Anda dari remaja hingga dewasa.
       </p>
       <div className="mt-8 grid md:grid-cols-2 gap-6">
         <div className="bg-white shadow-lg rounded-xl p-6">

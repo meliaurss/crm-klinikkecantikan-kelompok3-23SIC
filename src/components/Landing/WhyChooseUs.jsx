@@ -13,12 +13,12 @@ const WhyChooseUs = () => {
     {
       icon: <Award className="w-12 h-12 text-indigo-600 mb-4" />,
       title: "Pengalaman Profesional",
-      description: "Tim ahli Mahacare memiliki pengalaman bertahun-tahun di bidang estetika dan dermatologi."
+      description: "Tim ahli Bahebak Clinic memiliki pengalaman bertahun-tahun di bidang estetika dan dermatologi."
     },
     {
       icon: <UserPlus className="w-12 h-12 text-indigo-600 mb-4" />,
       title: "Ribuan Pelanggan Puas",
-      description: "Lebih dari 10.000 pelanggan telah merasakan perawatan terbaik kami di seluruh cabang Mahacare."
+      description: "Lebih dari 10.000 pelanggan telah merasakan perawatan terbaik kami di seluruh cabang Bahebak Clinic."
     },
     {
       icon: <ShieldCheck className="w-12 h-12 text-indigo-600 mb-4" />,
@@ -28,7 +28,7 @@ const WhyChooseUs = () => {
     {
       icon: <Smile className="w-12 h-12 text-indigo-600 mb-4" />,
       title: "Hasil Nyata",
-      description: "Perubahan yang terlihat dan dirasakan langsung setelah perawatan secara rutin di Mahacare."
+      description: "Perubahan yang terlihat dan dirasakan langsung setelah perawatan secara rutin di Bahebak Clinic."
     },
     {
       icon: <CheckCircle className="w-12 h-12 text-indigo-600 mb-4" />,
@@ -49,7 +49,7 @@ const WhyChooseUs = () => {
         transition={{ duration: 0.6 }}
         className="text-3xl md:text-4xl font-extrabold text-center text-[#181C68] mb-12"
       >
-        Kenapa Memilih Klinik Mahacare?
+        Kenapa Memilih Klinik Bahebak Clinic?
       </motion.h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">

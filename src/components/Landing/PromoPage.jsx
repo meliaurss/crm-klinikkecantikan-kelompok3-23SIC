@@ -25,7 +25,7 @@ const PromoPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold text-center text-indigo-700 mb-6">Promo Spesial Mahacare</h1>
+      <h1 className="text-4xl font-bold text-center text-indigo-700 mb-6">Promo Spesial Bahebak Clinic</h1>
       <div className="grid gap-6 md:grid-cols-2">
         {promos.map((promo) => (
           <div key={promo.id} className="bg-white shadow-lg rounded-xl p-6 border-l-4 border-indigo-500">
