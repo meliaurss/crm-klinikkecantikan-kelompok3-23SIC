@@ -13,80 +13,249 @@ const formatCurrency = (price) => {
 
 const ProductsSection = ({ products = [], onOpenReservasi }) => {
   return (
-    <section id="products" className="py-20 px-4 md:px-12">
-      <div className="max-w-6xl mx-auto text-center mb-14">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl font-extrabold text-[#181C68] mb-4"
-        >
-          Produk Unggulan Bahebak Clinic
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base"
-        >
-          Temukan solusi perawatan kulit terbaik dari Bahebak Clinic. Produk kami terbuat dari bahan berkualitas dan telah teruji secara dermatologis.
-        </motion.p>
-      </div>
+    <>
+      <style>{`
+        .products-section {
+          background-color: #FFFFFF; /* Putih bersih */
+          font-family: 'Jost', sans-serif;
+          position: relative;
+        }
 
-      <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {products.length > 0 ? (
-          products.map((product, index) => (
+        .luxury-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: linear-gradient(135deg, rgba(201,169,110,0.15), rgba(184,184,184,0.12));
+          border: 1px solid rgba(201,169,110,0.4);
+          border-radius: 100px;
+          padding: 6px 16px;
+          margin-bottom: 20px;
+        }
+
+        .luxury-badge-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #C9A96E;
+        }
+
+        .luxury-badge-text {
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #7B4A2D;
+        }
+
+        .products-title {
+          font-family: 'Cormorant Garamond', serif;
+          color: #2C1A0E;
+          font-weight: 700;
+          letter-spacing: -0.5px;
+          line-height: 1.2;
+        }
+
+        .products-title .accent-italic {
+          font-style: italic;
+          color: #7B4A2D;
+        }
+
+        /* Styling untuk Kartu Produk di dalam Map */
+        .product-card {
+          background: #FAF6F1; /* Latar kartu sedikit krem agar kontras dengan background putih */
+          border-radius: 24px;
+          border: 1px solid rgba(201, 169, 110, 0.15);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 10px 30px rgba(44, 26, 14, 0.02);
+          transition: all 0.4s ease;
+          height: 100%;
+          max-width: 380px;
+          margin: 0 auto;
+        }
+
+        .product-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(44, 26, 14, 0.06);
+          border-color: rgba(201, 169, 110, 0.4);
+        }
+
+        .product-image-wrapper {
+          position: relative;
+          height: 260px;
+          overflow: hidden;
+          background: #FFFFFF;
+        }
+
+        .product-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.7s ease;
+        }
+
+        .product-card:hover .product-image {
+          transform: scale(1.08);
+        }
+
+        .product-content {
+          padding: 28px 24px;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          text-align: left;
+        }
+
+        .product-name {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 22px;
+          font-weight: 700;
+          color: #2C1A0E;
+          margin-bottom: 8px;
+        }
+
+        .product-desc {
+          font-size: 14px;
+          color: #6B4F3A;
+          line-height: 1.6;
+          font-weight: 300;
+          margin-bottom: 24px;
+          flex: 1;
+        }
+
+        .product-footer {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          border-top: 1px solid rgba(201, 169, 110, 0.2);
+          padding-top: 20px;
+          margin-top: auto;
+        }
+
+        .price-label {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: #A0623A;
+          margin-bottom: 4px;
+        }
+
+        .product-price {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 24px;
+          font-weight: 700;
+          color: #2C1A0E;
+        }
+
+        .btn-solid-luxury {
+          background: linear-gradient(135deg, #7B4A2D, #4A2C17);
+          color: #E2C99A;
+          padding: 10px 20px;
+          border-radius: 100px;
+          font-family: 'Jost', sans-serif;
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          transition: all 0.3s ease;
+          border: none;
+          cursor: pointer;
+        }
+
+        .btn-solid-luxury:hover {
+          background: linear-gradient(135deg, #8A5636, #5A351C);
+          transform: scale(1.05);
+          box-shadow: 0 8px 20px rgba(123, 74, 45, 0.2);
+        }
+      `}</style>
+
+      <section id="products" className="products-section py-24 px-6 md:px-12 lg:px-24">
+        <div className="max-w-6xl mx-auto">
+          
+          {/* Header Section */}
+          <div className="text-center mb-16">
             <motion.div
-              key={product.id}
+              initial={{ opacity: 0, y: -10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="luxury-badge"
+            >
+              <span className="luxury-badge-dot" />
+              <span className="luxury-badge-text">Skincare Eksklusif</span>
+            </motion.div>
+
+            <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
-              className="bg-white rounded-3xl shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all transform hover:scale-[1.02] max-w-sm mx-auto"
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="products-title text-3xl md:text-4xl lg:text-5xl mb-6"
             >
-              <div className="overflow-hidden h-[250px]">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                />
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between text-left">
-                <div>
-                  <h3 className="text-xl font-semibold text-[#181C68] mb-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    {product.description}
-                  </p>
-                </div>
+              Produk <span className="accent-italic">Unggulan</span> Bahebak
+            </motion.h2>
+            
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-[#6B4F3A] max-w-2xl mx-auto text-sm md:text-base font-light leading-relaxed"
+            >
+              Temukan solusi perawatan kulit terbaik. Produk kami terbuat dari bahan premium berkualitas tinggi dan telah teruji secara klinis untuk hasil yang optimal.
+            </motion.p>
+          </div>
 
-                <div className="flex items-center justify-between mt-auto pt-4">
-                  <div>
-                    <p className="text-gray-500 text-xs font-medium uppercase">Harga</p>
-                    <p className="text-2xl font-bold text-[#181C68] mt-1">
-                      {formatCurrency(product.price)}
-                    </p>
+          {/* Grid Products */}
+          <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {products.length > 0 ? (
+              products.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.15 }}
+                  className="product-card"
+                >
+                  <div className="product-image-wrapper">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="product-image"
+                    />
                   </div>
-                  <button
-                    onClick={onOpenReservasi}
-                    className="bg-gradient-to-r from-[#4f46e5] to-[#60a5fa] text-white py-2 px-6 rounded-full hover:brightness-110 hover:scale-105 transition-all font-medium text-sm"
-                  >
-                    Beli Sekarang
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))
-        ) : (
-          <p className="text-center col-span-full text-gray-500">
-            Belum ada produk yang ditampilkan.
-          </p>
-        )}
-      </div>
-    </section>
+                  
+                  <div className="product-content">
+                    <div>
+                      <h3 className="product-name">{product.name}</h3>
+                      <p className="product-desc">{product.description}</p>
+                    </div>
+
+                    <div className="product-footer">
+                      <div>
+                        <div className="price-label">Harga Spesial</div>
+                        <div className="product-price">{formatCurrency(product.price)}</div>
+                      </div>
+                      <button
+                        onClick={onOpenReservasi}
+                        className="btn-solid-luxury"
+                      >
+                        Beli <span>→</span>
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <p className="text-center col-span-full text-[#A0623A] font-light">
+                Koleksi produk sedang dipersiapkan.
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

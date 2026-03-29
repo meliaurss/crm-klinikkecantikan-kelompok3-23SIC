@@ -6,7 +6,6 @@ import ReservationStatus from '../../components/Customer/ReservationStatus';
 import FeedbackModal from '../../components/Customer/FeedbackModal';
 import HeroSection from '../../components/Landing/HeroSection';
 import ServicesSection from '../../components/Landing/ServicesSection';
-import PromoSection from '../../components/Landing/PromoSection';
 import ProductsSection from '../../components/Landing/ProductsSection';
 import AboutUsSection from '../../components/Landing/AboutUsSection';
 import FAQSection from '../../components/Landing/FAQSection';
@@ -16,6 +15,7 @@ import CustomerFeedbackDisplay from '../../components/Customer/CustomerFeedbackD
 import FormFeedback from '../../components/Customer/FormFeedback';
 
 import { useNavigate } from 'react-router-dom';
+import PromoPage from '../../components/Landing/PromoPage';
 
 export default function CustomerDashboard() {
   const { user } = useAuth();
@@ -67,7 +67,7 @@ export default function CustomerDashboard() {
         <CustomerFeedbackDisplay />
       </section>
 
-      <PromoSection />
+      <PromoPage />
       <ServicesSection />
       <ProductsSection />
       <AboutUsSection />

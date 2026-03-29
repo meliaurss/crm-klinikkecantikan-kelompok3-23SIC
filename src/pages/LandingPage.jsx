@@ -3,11 +3,11 @@ import HeroSection from '../components/Landing/HeroSection';
 import WhyChooseUs from '../components/Landing/WhyChooseUs';
 import ServicesSection from '../components/Landing/ServicesSection';
 import ProductsSection from '../components/Landing/ProductsSection';
-import PromoSection from '../components/Landing/PromoSection';
 import FeedbackSection from '../components/Landing/FeedbackSection';
 import FAQSection from '../components/Landing/FAQSection';
 import AboutUsSection from '../components/Landing/AboutUsSection';
 import { supabase } from '../supabase'; // pastikan path ini sesuai
+import PromoPage from '../components/Landing/PromoPage';
 
 // import ReservasiForm from '../components/ReservasiForm'; // aktifkan jika formulir sudah siap
 
@@ -72,7 +72,7 @@ const LandingPage = () => {
         />
       )}
 
-      <PromoSection />
+      <PromoPage />
       <FeedbackSection />
       <FAQSection />
       <AboutUsSection />
