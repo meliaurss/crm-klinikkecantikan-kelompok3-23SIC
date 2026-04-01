@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const fetchProfile = async id => {
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).maybeSingle();
     if (data && !error) setUser(data);
   };
 
@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
     if (error || !data.user) return { success: false, message: error?.message || 'Login gagal' };
 
     const userId = data.user.id;
-    const { data: profile, error: profileError } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    if (profileError || !profile) return { success: false, message: 'Gagal mengambil role pengguna.' };
+    const { data: profile, error: profileError } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+    if (profileError || !profile) return { success: false, message: 'Profile tidak ditemukan.' };
 
     setUser(profile);
     return { success: true, user: profile };

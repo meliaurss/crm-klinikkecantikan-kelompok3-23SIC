@@ -35,7 +35,7 @@ export default function CustomerFeedbackDisplay() {
       is_approved: true,
       created_at: '2025-07-10T10:00:00Z',
       treatment: 'Facial Whitening',
-      users: { name: 'Customer Bahebak Clinic', email: 'customer@example.com' } // Dummy user data
+      users: { name: 'Customer The Rose Clinic', email: 'customer@example.com' } // Dummy user data
     },
     {
       id: 'feedback-2',

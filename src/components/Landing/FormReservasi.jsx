@@ -1,27 +1,27 @@
-// src/components/Landing/FormReservasi.jsx
-
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../supabase'; // Pastikan path ini benar
-import {
-  User, Calendar, Phone, MapPin, Mail, X, HeartPulse, Stethoscope,
-} from 'lucide-react';
+import { supabase } from '../../supabase';
+import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+const inputClass = {
+  width: '100%',
+  borderRadius: '3px',
+  border: '1px solid #CCD4E1',
+  padding: '11px 14px',
+  fontFamily: "'DM Sans', sans-serif",
+  fontSize: '13px',
+  color: '#020202',
+  background: '#FCFCFC',
+  outline: 'none',
+  transition: 'border-color 0.2s',
+};
 
 export default function FormReservasi() {
   const [formData, setFormData] = useState({
-    name: '',
-    tanggal_lahir: '',
-    jenis_kelamin: '',
-    no_hp: '',
-    email: '',
-    alamat: '',
-    tanggal_reservasi: '',
-    layanan: '',
-    dokter: '',
-    catatan: '',
+    name: '', tanggal_lahir: '', jenis_kelamin: '', no_hp: '', email: '',
+    alamat: '', tanggal_reservasi: '', layanan: '', dokter: '', catatan: '',
     status: 'Menunggu',
   });
-
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
@@ -29,45 +29,20 @@ export default function FormReservasi() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAndListenUser = async () => {
+    const init = async () => {
       setUserLoading(true);
-
-      // Ambil user saat ini
       const { data, error } = await supabase.auth.getUser();
-      if (error || !data?.user) {
-        console.warn("User belum login atau gagal mengambil data user:", error);
-        setUserId(null); // Atur userId ke null jika ada error atau tidak ada user
-      } else {
-        setUserId(data.user.id);
-        console.log("User ID fetched successfully on component mount:", data.user.id);
-      }
+      if (!error && data?.user) setUserId(data.user.id);
+      else setUserId(null);
       setUserLoading(false);
-
-      // Tambahkan listener untuk perubahan state autentikasi
-      const { data: authListener } = supabase.auth.onAuthStateChange(
-        (event, session) => {
-          console.log('Auth event:', event, 'Session:', session);
-          if (event === "SIGNED_IN" && session?.user) {
-            setUserId(session.user.id);
-            console.log("User signed in, ID updated:", session.user.id);
-          } else if (event === "SIGNED_OUT") {
-            setUserId(null);
-            console.log("User signed out, ID set to null.");
-            // Opsional: Redirect ke halaman login jika user logout
-            // navigate('/login');
-          }
-          // Pastikan userLoading diatur ke false setelah event auth state berubah
-          setUserLoading(false);
-        }
-      );
-
-      // Cleanup listener saat komponen di-unmount
-      return () => {
-        authListener.subscription.unsubscribe();
-      };
+      const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) setUserId(session.user.id);
+        else if (event === 'SIGNED_OUT') setUserId(null);
+        setUserLoading(false);
+      });
+      return () => listener.subscription.unsubscribe();
     };
-
-    fetchAndListenUser();
+    init();
   }, []);
 
   const handleChange = (e) => {
@@ -77,339 +52,211 @@ export default function FormReservasi() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (userLoading) {
-      alert("Sedang memuat data user, mohon tunggu sebentar.");
-      console.log("Submission blocked: User data still loading.");
-      return;
-    }
-    if (!userId) {
-      alert("Anda harus login untuk membuat reservasi.");
-      console.log("Submission blocked: No user ID found (user not logged in).");
-      // Redirect ke halaman login
-      navigate('/login');
-      return;
-    }
-
+    if (userLoading) { alert('Sedang memuat data user, mohon tunggu.'); return; }
+    if (!userId) { alert('Anda harus login untuk membuat reservasi.'); navigate('/login'); return; }
     setIsSubmitting(true);
-
-    const dataToInsert = {
-      user_id: userId, // Pastikan ini selalu terisi dengan ID user yang valid
-      name: formData.name,
+    const { error } = await supabase.from('reservasi').insert([{
+      user_id: userId, ...formData,
       tanggal_lahir: formData.tanggal_lahir || null,
-      jenis_kelamin: formData.jenis_kelamin,
-      no_hp: formData.no_hp,
-      email: formData.email,
-      alamat: formData.alamat,
       tanggal_reservasi: formData.tanggal_reservasi || null,
-      layanan: formData.layanan,
-      dokter: formData.dokter, // Nama kolom 'dokter' sesuai tabel Supabase
       catatan: formData.catatan || '',
-      status: formData.status,
-    };
-
-    console.log("Data akan dikirim ke Supabase:", dataToInsert); // Log data sebelum insert
-
-    const { error } = await supabase.from("reservasi").insert([dataToInsert]);
-
+    }]);
     setIsSubmitting(false);
-
     if (error) {
-      console.error("Supabase Insert Error Detail:", JSON.stringify(error, null, 2));
-      if (error.code === "23503") { // Foreign key violation error code
-        alert("Terjadi masalah dengan akun Anda. Silakan coba login ulang atau daftarkan akun baru."); // Pesan lebih spesifik
-      } else {
-        alert("Gagal mengirim data: " + error.message);
-      }
+      alert(error.code === '23503' ? 'Masalah akun, coba login ulang.' : 'Gagal mengirim: ' + error.message);
       return;
     }
-
     setSubmitted(true);
-    // Navigasi ke dashboard customer setelah sukses
     navigate('/customer/dashboard');
   };
 
-  const handleCloseSuccessModal = () => {
+  const resetAndClose = () => {
     setSubmitted(false);
-    setFormData({ // Reset form
-      name: '',
-      tanggal_lahir: '',
-      jenis_kelamin: '',
-      no_hp: '',
-      email: '',
-      alamat: '',
-      tanggal_reservasi: '',
-      layanan: '',
-      dokter: '',
-      catatan: '',
-      status: 'Menunggu',
-    });
-    // Navigasi ke dashboard customer
+    setFormData({ name: '', tanggal_lahir: '', jenis_kelamin: '', no_hp: '', email: '', alamat: '', tanggal_reservasi: '', layanan: '', dokter: '', catatan: '', status: 'Menunggu' });
     navigate('/customer/dashboard');
   };
 
-  // Render kondisional berdasarkan status loading user dan login
-  if (userLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-700 text-lg">Memuat data user...</p>
-      </div>
-    );
-  }
+  if (userLoading) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans', sans-serif", color: '#5a6a7e' }}>
+      Memuat data user...
+    </div>
+  );
 
-  // Jika user sudah selesai dimuat tapi userId kosong (tidak login)
-  if (!userId) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <p className="text-red-600 text-xl mb-4 text-center">
-          Anda harus login untuk membuat reservasi.
-        </p>
-        <button
-          onClick={() => navigate('/login')}
-          className="px-6 py-3 bg-[#FF6F61] text-white font-semibold rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider"
-        >
-          Login Sekarang
-        </button>
-      </div>
-    );
-  }
+  if (!userId) return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, fontFamily: "'DM Sans', sans-serif" }}>
+      <p style={{ color: '#293A52', fontSize: 16 }}>Anda harus login untuk membuat reservasi.</p>
+      <button onClick={() => navigate('/login')} style={{ background: '#293A52', color: '#FCFCFC', border: 'none', borderRadius: '3px', padding: '12px 28px', fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' }}>
+        Login Sekarang
+      </button>
+    </div>
+  );
 
-  // Render formulir jika user sudah login (userId ada)
+  const selectStyle = {
+    ...inputClass,
+    appearance: 'none',
+    backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23293A52' d='M2 0L0 2h4L2 0zM2 5L0 3h4L2 5z'/%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 12px center',
+    backgroundSize: '8px 10px',
+    cursor: 'pointer',
+  };
+
   return (
-    <div className=" mx-auto bg-white rounded-xl p-8 lg:p-10 my-10 max-w-auto">
-      <h1 className="font-playfair-display text-4xl lg:text-5xl font-bold text-center text-[#181C68] mb-4">
-        Buat Reservasi Anda
-      </h1>
-      <p className="font-montserrat text-lg text-center text-gray-600 mb-10">
-        Isi formulir di bawah untuk menjadwalkan konsultasi atau layanan Anda.
-      </p>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700&family=DM+Sans:wght@300;400;500&display=swap');
 
-      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-        {/* Image Section */}
-        <div className="flex-1 w-full lg:max-w-md">
-          <img
-            src="https://i.pinimg.com/736x/b1/5f/7a/b15f7ae369932e902c59d63f486c0d49.jpg"
-            alt="Aesthetic consultation"
-            className="w-full rounded-xl shadow-lg object-cover"
-          />
+        .form-input:focus {
+          border-color: #293A52 !important;
+          box-shadow: 0 0 0 3px rgba(41,58,82,0.08);
+        }
+
+        .form-section-label {
+          font-size: 10px;
+          font-weight: 500;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #a8b5c7;
+          margin-bottom: 14px;
+          display: block;
+        }
+      `}</style>
+
+      <div style={{ maxWidth: 960, margin: '0 auto', background: '#FCFCFC', borderRadius: '3px', padding: '48px 40px', fontFamily: "'DM Sans', sans-serif" }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 500, color: '#020202', letterSpacing: '-0.4px', marginBottom: 10 }}>
+            Buat Reservasi Anda
+          </h1>
+          <div style={{ width: 40, height: 1, background: '#CCD4E1', margin: '0 auto 14px' }} />
+          <p style={{ fontSize: 14, color: '#5a6a7e', fontWeight: 300, lineHeight: 1.7 }}>
+            Isi formulir di bawah untuk menjadwalkan konsultasi atau layanan Anda.
+          </p>
         </div>
 
-        {/* Form Section */}
-        <div className="flex-1 w-full ">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Form Row 1: Nama, Tanggal Lahir, Jenis Kelamin */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="form-group">
-                <label htmlFor="name" className="sr-only">Nama Lengkap *</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Nama Lengkap *"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-500 text-gray-800 bg-gray-50"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="tanggal_lahir" className="sr-only">Tanggal Lahir *</label>
-                <input
-                  type="date"
-                  id="tanggal_lahir"
-                  name="tanggal_lahir"
-                  placeholder="Tanggal Lahir *"
-                  value={formData.tanggal_lahir}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-500 text-gray-800 bg-gray-50"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="jenis_kelamin" className="sr-only">Jenis Kelamin *</label>
-                <select
-                  id="jenis_kelamin"
-                  name="jenis_kelamin"
-                  value={formData.jenis_kelamin}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 text-gray-500 appearance-none bg-white pr-10 bg-gray-50"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M2%200L0%202h4L2%200zM2%205L0%203h4L2%205z%22%2F%3E%3C%2Fsvg%3E")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 10px center',
-                    backgroundSize: '8px 10px',
-                  }}
-                >
-                  <option value="" disabled hidden>Pilih Jenis Kelamin *</option>
-                  <option value="Perempuan">Perempuan</option>
-                  <option value="Laki-laki">Laki-laki</option>
-                </select>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 40, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          {/* Image */}
+          <div style={{ flex: '1 1 280px', maxWidth: 340 }}>
+            <div style={{ position: 'relative', borderRadius: '3px', overflow: 'hidden', border: '1px solid #CCD4E1' }}>
+              <img
+                src="https://i.pinimg.com/736x/b1/5f/7a/b15f7ae369932e902c59d63f486c0d49.jpg"
+                alt="Aesthetic consultation"
+                style={{ width: '100%', display: 'block', objectFit: 'cover' }}
+              />
+              {/* Overlay tag */}
+              <div style={{ position: 'absolute', bottom: 14, left: 14, background: 'rgba(252,252,252,0.92)', backdropFilter: 'blur(8px)', border: '1px solid #CCD4E1', borderRadius: '3px', padding: '5px 12px', fontSize: 10, fontWeight: 500, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#293A52' }}>
+                The Rose Clinic
               </div>
             </div>
+          </div>
 
-            {/* Form Row 2: Nomor HP, Email */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="form-group">
-                <label htmlFor="no_hp" className="sr-only">Nomor HP *</label>
-                <input
-                  type="tel"
-                  id="no_hp"
-                  name="no_hp"
-                  placeholder="Nomor HP *"
-                  value={formData.no_hp}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-500 text-gray-800 bg-gray-50"
-                />
+          {/* Form */}
+          <div style={{ flex: '1 1 320px' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {/* Row 1 */}
+              <div>
+                <span className="form-section-label">Data Diri</span>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                  <input className="form-input" style={inputClass} type="text" name="name" placeholder="Nama Lengkap *" value={formData.name} onChange={handleChange} required />
+                  <input className="form-input" style={inputClass} type="date" name="tanggal_lahir" value={formData.tanggal_lahir} onChange={handleChange} required />
+                  <select className="form-input" style={selectStyle} name="jenis_kelamin" value={formData.jenis_kelamin} onChange={handleChange} required>
+                    <option value="" disabled hidden>Jenis Kelamin *</option>
+                    <option value="Perempuan">Perempuan</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                  </select>
+                </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="email" className="sr-only">Email Anda *</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Email Anda *"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-500 text-gray-800 bg-gray-50"
-                />
-              </div>
-            </div>
 
-            {/* Form Row 3: Alamat */}
-            <div className="form-group">
-              <label htmlFor="alamat" className="sr-only">Alamat *</label>
-              <textarea
-                id="alamat"
-                name="alamat"
-                rows="3"
-                placeholder="Alamat Lengkap *"
-                value={formData.alamat}
-                onChange={handleChange}
-                required
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-500 resize-y text-gray-800 bg-gray-50"
-              ></textarea>
-            </div>
-
-            {/* Form Row 4: Tanggal Reservasi, Pilih Layanan */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="form-group">
-                <label htmlFor="tanggal_reservasi" className="sr-only">Tanggal Reservasi *</label>
-                <input
-                  type="date"
-                  id="tanggal_reservasi"
-                  name="tanggal_reservasi"
-                  placeholder="Tanggal Reservasi *"
-                  value={formData.tanggal_reservasi}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-500 text-gray-800 bg-gray-50"
-                />
+              {/* Row 2 */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <input className="form-input" style={inputClass} type="tel" name="no_hp" placeholder="Nomor HP *" value={formData.no_hp} onChange={handleChange} required />
+                <input className="form-input" style={inputClass} type="email" name="email" placeholder="Email *" value={formData.email} onChange={handleChange} required />
               </div>
-              <div className="form-group">
-                <label htmlFor="layanan" className="sr-only">Pilih Layanan *</label>
-                <select
-                  id="layanan"
-                  name="layanan"
-                  value={formData.layanan}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 text-gray-500 appearance-none bg-white pr-10 bg-gray-50"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M2%200L0%202h4L2%200zM2%205L0%203h4L2%205z%22%2F%3E%3C%2Fsvg%3E")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 10px center',
-                    backgroundSize: '8px 10px',
-                  }}
-                >
-                  <option value="" disabled hidden>Pilih Layanan *</option>
-                  <option value="Konsultasi Umum">Konsultasi Umum</option>
-                  <option value="Perawatan Gigi">Perawatan Gigi</option>
-                  <option value="Kontrol Kecantikan">Kontrol Kecantikan</option>
-                  <option value="Pemeriksaan Lab">Pemeriksaan Lab</option>
-                </select>
-              </div>
-            </div>
 
-            {/* Form Row 5: Pilih Dokter, Catatan */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="form-group">
-                <label htmlFor="dokter" className="sr-only">Pilih Dokter *</label>
-                <select
-                  id="dokter"
-                  name="dokter"
-                  value={formData.dokter}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 text-gray-500 appearance-none bg-white pr-10 bg-gray-50"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M2%200L0%202h4L2%200zM2%205L0%203h4L2%205z%22%2F%3E%3C%2Fsvg%3E")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 10px center',
-                    backgroundSize: '8px 10px',
-                  }}
-                >
+              {/* Alamat */}
+              <textarea className="form-input" style={{ ...inputClass, resize: 'vertical' }} name="alamat" rows={3} placeholder="Alamat Lengkap *" value={formData.alamat} onChange={handleChange} required />
+
+              {/* Row reservasi & layanan */}
+              <div>
+                <span className="form-section-label">Detail Reservasi</span>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <input className="form-input" style={inputClass} type="date" name="tanggal_reservasi" value={formData.tanggal_reservasi} onChange={handleChange} required />
+                  <select className="form-input" style={selectStyle} name="layanan" value={formData.layanan} onChange={handleChange} required>
+                    <option value="" disabled hidden>Pilih Layanan *</option>
+                    <option>Konsultasi Umum</option>
+                    <option>Facial Glow Treatment</option>
+                    <option>Acne Cure Treatment</option>
+                    <option>Anti-Aging Laser</option>
+                    <option>Brightening Skinbooster</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Dokter & catatan */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <select className="form-input" style={selectStyle} name="dokter" value={formData.dokter} onChange={handleChange} required>
                   <option value="" disabled hidden>Pilih Dokter *</option>
-                  <option value="dr. Rina Kusuma">dr. Rina Kusuma</option>
-                  <option value="dr. Andi Wijaya">dr. Andi Wijaya</option>
-                  <option value="drg. Sinta Dewi">drg. Sinta Dewi</option>
-                  <option value="dr. Maya Indah">dr. Maya Indah</option>
+                  <option>dr. Tengku Rose</option>
+                  <option>dr. Rina Kusuma</option>
+                  <option>dr. Andi Wijaya</option>
+                  <option>dr. Maya Indah</option>
                 </select>
+                <textarea className="form-input" style={{ ...inputClass, resize: 'vertical' }} name="catatan" rows={2} placeholder="Catatan (mis. alergi obat)" value={formData.catatan} onChange={handleChange} />
               </div>
-              <div className="form-group">
-                <label htmlFor="catatan" className="sr-only">Catatan</label>
-                <textarea
-                  id="catatan"
-                  name="catatan"
-                  rows="2"
-                  placeholder="Catatan (Contoh: Alergi obat tertentu)"
-                  value={formData.catatan}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-500 resize-y text-gray-800 bg-gray-50"
-                ></textarea>
-              </div>
-            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting || !userId}
-              className="w-full bg-[#181C68] text-white font-semibold text-lg py-3 rounded-lg shadow-md transition-colors hover:bg-[#E65A52] tracking-wider mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Mengirim...' : 'KIRIM RESERVASI'}
-            </button>
-          </form>
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isSubmitting || !userId}
+                style={{
+                  background: isSubmitting ? '#a8b5c7' : '#293A52',
+                  color: '#FCFCFC',
+                  border: 'none',
+                  borderRadius: '3px',
+                  padding: '14px 24px',
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  letterSpacing: '1.5px',
+                  textTransform: 'uppercase',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  width: '100%',
+                  marginTop: 8,
+                  transition: 'background 0.25s',
+                }}
+              >
+                {isSubmitting ? 'Mengirim...' : 'Kirim Reservasi →'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
+      {/* Success modal */}
       {submitted && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="relative bg-white border border-pink-200 rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
-            <button
-              onClick={handleCloseSuccessModal}
-              className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
-            >
-              <X className="w-5 h-5" />
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(41,58,82,0.35)', backdropFilter: 'blur(4px)' }}>
+          <div style={{ position: 'relative', background: '#FCFCFC', border: '1px solid #CCD4E1', borderRadius: '3px', padding: '40px 32px', maxWidth: 420, width: '90%', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}>
+            <button onClick={resetAndClose} style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', cursor: 'pointer', color: '#a8b5c7' }}>
+              <X size={18} />
             </button>
-            <h2 className="text-xl font-semibold text-green-600 mb-3">
-              Reservasi Berhasil!
-            </h2>
-            <p className="text-gray-700 text-base leading-relaxed">
-              Terima kasih, <span className="font-semibold">{formData.name}</span>.
-              Reservasi Anda untuk layanan <span className="font-semibold">{formData.layanan}</span> bersama <span className="font-semibold">{formData.dokter}</span> pada tanggal <span className="font-semibold">{formData.tanggal_reservasi}</span> telah kami terima.
-              Kami akan segera menghubungi Anda melalui WhatsApp untuk konfirmasi.
+            <div style={{ width: 40, height: 40, borderRadius: '3px', background: '#e8ecf1', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#293A52" strokeWidth="2" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+            </div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 500, color: '#020202', marginBottom: 12 }}>Reservasi Berhasil!</h2>
+            <div style={{ width: 32, height: 1, background: '#CCD4E1', margin: '0 auto 14px' }} />
+            <p style={{ fontSize: 14, color: '#5a6a7e', fontWeight: 300, lineHeight: 1.75 }}>
+              Terima kasih, <strong style={{ color: '#293A52', fontWeight: 500 }}>{formData.name}</strong>.
+              Reservasi untuk <strong style={{ color: '#293A52', fontWeight: 500 }}>{formData.layanan}</strong> bersama{' '}
+              <strong style={{ color: '#293A52', fontWeight: 500 }}>{formData.dokter}</strong> pada{' '}
+              <strong style={{ color: '#293A52', fontWeight: 500 }}>{formData.tanggal_reservasi}</strong> telah kami terima.
+              Kami akan menghubungi Anda melalui WhatsApp untuk konfirmasi.
             </p>
-            <button
-              onClick={handleCloseSuccessModal} // Mengarahkan ke handleCloseSuccessModal
-              className="mt-6 px-6 py-3 bg-pink-500 text-white font-semibold rounded-xl hover:bg-pink-600"
-            >
+            <button onClick={resetAndClose} style={{ marginTop: 24, background: '#293A52', color: '#FCFCFC', border: 'none', borderRadius: '3px', padding: '11px 28px', fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase', cursor: 'pointer' }}>
               Tutup
             </button>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

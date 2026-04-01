@@ -46,7 +46,7 @@
 //           <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-blue-500 mb-2 drop-shadow">
 //             Halo, {user?.name || user?.email}
 //           </h1>
-//           <p className="text-gray-500 text-sm">Terima kasih telah menjadi bagian dari Bahebak Clinic!</p>
+//           <p className="text-gray-500 text-sm">Terima kasih telah menjadi bagian dari The Rose Clinic!</p>
 //         </div>
 
 //         <div className="md:col-span-2">

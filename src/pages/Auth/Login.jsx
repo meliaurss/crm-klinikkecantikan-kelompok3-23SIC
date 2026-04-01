@@ -85,7 +85,7 @@ const Login = () => {
           </motion.button>
         </form>
         <p className="text-center text-gray-500 text-xs mt-6">
-          © {new Date().getFullYear()} Bahebak Clinic. All rights reserved.
+          © {new Date().getFullYear()} The Rose Clinic. All rights reserved.
         </p>
       </motion.div>
     </div>

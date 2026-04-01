@@ -56,7 +56,7 @@ const Header = () => {
       <div className="flex justify-between items-center px-6 py-4">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-700 tracking-wide">
-          <span className="font-bold text-indigo-600">Bahebak Clinic</span>
+          <span className="font-bold text-indigo-600">The Rose Clinic</span>
           <span>/</span>
           {generateBreadcrumb()}
         </div>

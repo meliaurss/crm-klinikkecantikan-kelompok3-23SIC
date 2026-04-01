@@ -6,68 +6,206 @@ const Footer = () => {
   return (
     <>
       <style>{`
-        .footer-section {
-          background-color: #2C1A0E; /* Cokelat tua pekat khas klinik mewah */
-          color: #FAF6F1; /* Teks warna krem terang */
-          font-family: 'Jost', sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500&family=DM+Sans:wght@300;400;500&display=swap');
+
+        .footer-root {
+          background-color: #293A52;
+          font-family: 'DM Sans', sans-serif;
+          border-top: 1px solid rgba(204, 212, 225, 0.15);
         }
-        
+
+        .footer-inner {
+          max-width: 1160px;
+          margin: 0 auto;
+          padding: 48px 32px;
+          display: flex;
+          flex-direction: column;
+          gap: 40px;
+        }
+
+        /* ── Top row ── */
+        .footer-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 32px;
+          flex-wrap: wrap;
+        }
+
+        /* Brand block */
         .footer-brand {
-          font-family: 'Cormorant Garamond', serif;
-          color: #C9A96E; /* Aksen tulisan emas */
-          letter-spacing: 1px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
         }
 
-        .social-link {
-          color: rgba(250, 246, 241, 0.8); /* Krem semi-transparan */
-          transition: all 0.3s ease;
-          display: inline-block;
+        .footer-logo-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
 
-        .social-link:hover {
-          color: #C9A96E; /* Berubah emas saat disentuh kursor */
-          transform: translateY(-3px) scale(1.1);
+        .footer-logo-mark {
+          width: 30px;
+          height: 30px;
+          border-radius: 3px;
+          background: rgba(204, 212, 225, 0.15);
+          border: 1px solid rgba(204, 212, 225, 0.25);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .footer-logo-mark svg {
+          width: 13px;
+          height: 13px;
+          fill: none;
+          stroke: #CCD4E1;
+          stroke-width: 1.5;
+          stroke-linecap: round;
+        }
+
+        .footer-brand-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 18px;
+          font-weight: 500;
+          color: #FCFCFC;
+          letter-spacing: 0.2px;
+        }
+
+        .footer-tagline {
+          font-size: 12px;
+          font-weight: 300;
+          color: rgba(204, 212, 225, 0.6);
+          letter-spacing: 0.5px;
+          max-width: 240px;
+          line-height: 1.6;
+        }
+
+        /* Social icons */
+        .footer-socials {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+        }
+
+        .social-btn {
+          width: 36px;
+          height: 36px;
+          border-radius: 3px;
+          background: rgba(204, 212, 225, 0.08);
+          border: 1px solid rgba(204, 212, 225, 0.15);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: rgba(252, 252, 252, 0.7);
+          text-decoration: none;
+          transition: all 0.25s ease;
+        }
+
+        .social-btn:hover {
+          background: rgba(204, 212, 225, 0.18);
+          border-color: rgba(204, 212, 225, 0.35);
+          color: #FCFCFC;
+          transform: translateY(-2px);
+        }
+
+        .social-btn svg {
+          width: 15px;
+          height: 15px;
+        }
+
+        /* ── Divider ── */
+        .footer-divider {
+          height: 1px;
+          background: rgba(204, 212, 225, 0.12);
+        }
+
+        /* ── Bottom row ── */
+        .footer-bottom {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+
+        .footer-copy {
+          font-size: 11px;
+          color: rgba(204, 212, 225, 0.45);
+          letter-spacing: 0.5px;
+        }
+
+        .footer-links {
+          display: flex;
+          gap: 20px;
+        }
+
+        .footer-links a {
+          font-size: 11px;
+          color: rgba(204, 212, 225, 0.45);
+          text-decoration: none;
+          letter-spacing: 0.5px;
+          transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+          color: rgba(204, 212, 225, 0.8);
         }
       `}</style>
 
-      {/* Tambahan border atas tipis berwarna emas pudar agar lebih elegan */}
-      <footer className="footer-section py-12 border-t border-[#C9A96E]/20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            
-            {/* Brand & Copyright */}
+      <footer className="footer-root">
+        <div className="footer-inner">
+          <div className="footer-top">
+            {/* Brand */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              className="footer-brand"
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-center md:text-left"
             >
-              <h3 className="text-3xl font-bold footer-brand">Bahebak Clinic</h3>
-              <p className="text-sm mt-3 text-[#FAF6F1]/60 tracking-wide font-light">
-                © {new Date().getFullYear()} All Rights Reserved.
+              <div className="footer-logo-row">
+                <div className="footer-logo-mark">
+                  <svg viewBox="0 0 16 16">
+                    <path d="M8 2C8 2 6 6 2 8C6 10 8 14 8 14C8 14 10 10 14 8C10 6 8 2 8 2Z" />
+                  </svg>
+                </div>
+                <span className="footer-brand-name">The Rose Clinic</span>
+              </div>
+              <p className="footer-tagline">
+                Healthy Skin, Beautiful You. Perawatan estetika premium bersama dr. Tengku Rose.
               </p>
             </motion.div>
 
-            {/* Social Media Icons */}
+            {/* Socials */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              className="footer-socials"
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex space-x-6 mt-4 md:mt-0"
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.15 }}
             >
-              {[FaFacebook, FaInstagram, FaTwitter, FaYoutube].map((Icon, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                >
-                  <Icon className="w-5 h-5 md:w-6 md:h-6" />
+              {[FaInstagram, FaFacebook, FaTwitter, FaYoutube].map((Icon, i) => (
+                <a key={i} href="#" target="_blank" rel="noopener noreferrer" className="social-btn">
+                  <Icon />
                 </a>
               ))}
             </motion.div>
+          </div>
 
+          <div className="footer-divider" />
+
+          <div className="footer-bottom">
+            <p className="footer-copy">
+              © {new Date().getFullYear()} The Rose Aesthetic Clinic. All rights reserved.
+            </p>
+            <div className="footer-links">
+              <a href="#">Kebijakan Privasi</a>
+              <a href="#">Syarat & Ketentuan</a>
+              <a href="#">Kontak</a>
+            </div>
           </div>
         </div>
       </footer>

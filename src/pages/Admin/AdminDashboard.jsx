@@ -248,7 +248,7 @@ const Dashboard = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                📊 Dashboard Klinik Bahebak Clinic
+                📊 Dashboard Klinik The Rose Clinic
               </motion.h1>
               <motion.p 
                 className="text-slate-600 mt-2"

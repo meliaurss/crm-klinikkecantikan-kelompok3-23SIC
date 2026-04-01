@@ -35,604 +35,585 @@ const HeroSection = ({ onReservasiClick }) => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap');
 
         :root {
-          --brown-deep:    #2C1A0E;
-          --brown-rich:    #4A2C17;
-          --brown-warm:    #7B4A2D;
-          --brown-mid:     #A0623A;
-          --brown-light:   #C8906A;
-          --brown-pale:    #E8D5C4;
-          --brown-cream:   #F5EDE4;
-          --silver-dark:   #8A8A8A;
-          --silver-mid:    #B8B8B8;
-          --silver-light:  #D8D8D8;
-          --silver-pale:   #EFEFEF;
-          --gold-accent:   #C9A96E;
-          --gold-light:    #E2C99A;
-          --ivory:         #FAF6F1;
+          /* The Rose Aesthetic Clinic — colour system */
+          --primary:      #293A52;
+          --primary-90:   #344a66;
+          --primary-70:   #4a6a94;
+          --primary-20:   #d0d8e3;
+          --primary-10:   #e8ecf1;
+          --primary-05:   #f4f6f8;
+          --secondary:    #CCD4E1;
+          --sec-dark:     #a8b5c7;
+          --sec-light:    #e3e8f0;
+          --sec-pale:     #f0f3f7;
+          --white:        #FCFCFC;
+          --black:        #020202;
+          --gray-text:    #5a6a7e;
         }
 
         .hero-section {
           position: relative;
           min-height: 100vh;
-          background: linear-gradient(
-            135deg,
-            var(--ivory) 0%,
-            #F0E6D8 30%,
-            #E8D5C4 60%,
-            #F5EDE4 100%
-          );
+          background-color: var(--white);
           overflow: hidden;
-          font-family: 'Jost', sans-serif;
-          padding: 0;
+          font-family: 'DM Sans', sans-serif;
         }
 
-        /* Dekoratif noise texture overlay */
+        /* ── Background: fine dot-grid texture ── */
         .hero-section::before {
           content: '';
           position: absolute;
           inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-          background-repeat: repeat;
-          background-size: 200px;
-          opacity: 0.4;
+          background-image: radial-gradient(circle, var(--secondary) 1px, transparent 1px);
+          background-size: 28px 28px;
+          opacity: 0.35;
           pointer-events: none;
-          z-index: 1;
+          z-index: 0;
         }
 
-        /* Orb dekoratif 1 - coklat hangat besar */
-        .orb-1 {
+        /* ── Primary blush — top-left ── */
+        .blush-tl {
           position: absolute;
-          top: -120px;
-          left: -80px;
-          width: 500px;
-          height: 500px;
-          background: radial-gradient(circle, rgba(160, 98, 58, 0.22) 0%, rgba(74, 44, 23, 0.08) 60%, transparent 100%);
+          top: -180px;
+          left: -180px;
+          width: 560px;
+          height: 560px;
+          background: radial-gradient(circle, rgba(41, 58, 82, 0.07) 0%, transparent 70%);
           border-radius: 50%;
-          z-index: 1;
-          animation: orbFloat 8s ease-in-out infinite;
+          z-index: 0;
+          pointer-events: none;
         }
 
-        /* Orb dekoratif 2 - silver kanan bawah */
-        .orb-2 {
+        /* ── Secondary blush — bottom-right ── */
+        .blush-br {
           position: absolute;
-          bottom: -80px;
-          right: -60px;
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, rgba(184, 184, 184, 0.25) 0%, rgba(138, 138, 138, 0.08) 60%, transparent 100%);
+          bottom: -120px;
+          right: -100px;
+          width: 420px;
+          height: 420px;
+          background: radial-gradient(circle, rgba(204, 212, 225, 0.35) 0%, transparent 70%);
           border-radius: 50%;
-          z-index: 1;
-          animation: orbFloat 10s ease-in-out infinite reverse;
+          z-index: 0;
+          pointer-events: none;
         }
 
-        /* Orb kecil gold */
-        .orb-3 {
-          position: absolute;
-          top: 40%;
-          left: 35%;
-          width: 180px;
-          height: 180px;
-          background: radial-gradient(circle, rgba(201, 169, 110, 0.15) 0%, transparent 70%);
-          border-radius: 50%;
-          z-index: 1;
-          animation: orbFloat 12s ease-in-out infinite 2s;
-        }
-
-        @keyframes orbFloat {
-          0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-20px) scale(1.04); }
-        }
-
-        /* Garis dekoratif diagonal */
-        .deco-lines {
+        /* ── Thin vertical rule ── */
+        .vertical-rule {
           position: absolute;
           top: 0;
-          right: 0;
-          width: 45%;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 1px;
           height: 100%;
-          z-index: 1;
+          background: linear-gradient(to bottom, transparent 0%, var(--secondary) 25%, var(--secondary) 75%, transparent 100%);
+          z-index: 0;
+          opacity: 0.4;
           pointer-events: none;
-          overflow: hidden;
         }
 
-        .deco-lines::before {
-          content: '';
-          position: absolute;
-          top: -10%;
-          right: -5%;
-          width: 120%;
-          height: 120%;
-          background: repeating-linear-gradient(
-            -45deg,
-            transparent,
-            transparent 48px,
-            rgba(201, 169, 110, 0.06) 48px,
-            rgba(201, 169, 110, 0.06) 50px
-          );
-        }
-
-        /* Badge mewah atas */
-        .luxury-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: linear-gradient(135deg, rgba(201,169,110,0.15), rgba(184,184,184,0.12));
-          border: 1px solid rgba(201,169,110,0.4);
-          border-radius: 100px;
-          padding: 6px 16px;
-          margin-bottom: 20px;
-          backdrop-filter: blur(8px);
-        }
-
-        .luxury-badge-dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, var(--gold-accent), var(--brown-light));
-          animation: dotPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes dotPulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(0.8); }
-        }
-
-        .luxury-badge-text {
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 2px;
-          text-transform: uppercase;
-          color: var(--brown-warm);
-        }
-
-        /* Heading utama */
-        .hero-title {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(2.4rem, 5vw, 4rem);
-          font-weight: 700;
-          line-height: 1.15;
-          color: var(--brown-deep);
-          margin-bottom: 18px;
-          letter-spacing: -0.5px;
-        }
-
-        .hero-title .accent-italic {
-          font-style: italic;
-          color: var(--brown-warm);
-          position: relative;
-        }
-
-        /* Underline dekoratif emas di bawah kata kunci */
-        .hero-title .underline-deco {
-          position: relative;
-          display: inline-block;
-        }
-
-        .hero-title .underline-deco::after {
-          content: '';
-          position: absolute;
-          bottom: -4px;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background: linear-gradient(90deg, var(--gold-accent), var(--silver-mid), var(--gold-accent));
-          border-radius: 2px;
-        }
-
-        /* Subtitle */
-        .hero-sub {
-          font-size: 14px;
-          line-height: 1.8;
-          color: #6B4F3A;
-          margin-bottom: 32px;
-          font-weight: 300;
-          max-width: 420px;
-        }
-
-        .hero-sub .highlight {
-          font-weight: 500;
-          color: var(--brown-warm);
-          position: relative;
-        }
-
-        /* Promo badge inline */
-        .promo-pill {
-          display: inline-block;
-          background: linear-gradient(135deg, var(--brown-rich), var(--brown-warm));
-          color: var(--gold-light);
-          font-size: 12px;
-          font-weight: 500;
-          padding: 2px 10px;
-          border-radius: 100px;
-          letter-spacing: 0.5px;
-        }
-
-        /* Tombol CTA utama */
-        .btn-primary {
+        /* ── Clinic logo badge ── */
+        .clinic-badge {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: linear-gradient(135deg, var(--brown-deep) 0%, var(--brown-rich) 50%, var(--brown-warm) 100%);
-          color: var(--gold-light);
-          border: none;
-          padding: 14px 30px;
-          border-radius: 100px;
-          font-family: 'Jost', sans-serif;
-          font-size: 14px;
-          font-weight: 500;
-          letter-spacing: 1px;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          box-shadow:
-            0 4px 20px rgba(44, 26, 14, 0.35),
-            inset 0 1px 0 rgba(255,255,255,0.1);
-          transition: box-shadow 0.3s ease, transform 0.2s ease;
+          background: var(--white);
+          border: 1px solid var(--secondary);
+          border-radius: 4px;
+          padding: 7px 16px 7px 10px;
+          margin-bottom: 20px;
+          box-shadow: 0 1px 6px rgba(41, 58, 82, 0.07);
         }
 
-        .btn-primary::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(201,169,110,0.25), transparent);
-          transition: left 0.5s ease;
+        .clinic-badge-line {
+          width: 3px;
+          height: 24px;
+          background: var(--primary);
+          border-radius: 2px;
+          flex-shrink: 0;
         }
 
-        .btn-primary:hover::before {
-          left: 100%;
-        }
-
-        .btn-primary:hover {
-          box-shadow:
-            0 8px 32px rgba(44, 26, 14, 0.45),
-            inset 0 1px 0 rgba(255,255,255,0.15);
-        }
-
-        .btn-icon {
-          font-size: 16px;
-          filter: drop-shadow(0 0 4px rgba(201,169,110,0.6));
-        }
-
-        /* Tombol sekunder outline */
-        .btn-secondary {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: transparent;
-          color: var(--brown-warm);
-          border: 1px solid rgba(160, 98, 58, 0.4);
-          padding: 14px 24px;
-          border-radius: 100px;
-          font-family: 'Jost', sans-serif;
-          font-size: 14px;
-          font-weight: 400;
-          letter-spacing: 0.5px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          backdrop-filter: blur(4px);
-        }
-
-        .btn-secondary:hover {
-          background: rgba(160, 98, 58, 0.08);
-          border-color: rgba(160, 98, 58, 0.7);
-        }
-
-        /* Grup tombol */
-        .btn-group {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          flex-wrap: wrap;
-        }
-
-        /* Stats row */
-        .stats-row {
-          display: flex;
-          gap: 28px;
-          margin-top: 44px;
-          padding-top: 32px;
-          border-top: 1px solid rgba(160, 98, 58, 0.15);
-        }
-
-        .stat-item {
+        .clinic-badge-text {
           display: flex;
           flex-direction: column;
           gap: 2px;
         }
 
-        .stat-number {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 26px;
-          font-weight: 700;
-          color: var(--brown-deep);
+        .clinic-badge-eyebrow {
+          font-size: 9px;
+          font-weight: 500;
+          letter-spacing: 2.5px;
+          text-transform: uppercase;
+          color: var(--gray-text);
           line-height: 1;
+        }
+
+        .clinic-badge-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--primary);
+          line-height: 1;
+          letter-spacing: 0.3px;
+        }
+
+        /* ── Main heading ── */
+        .hero-title {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(2.5rem, 4.5vw, 3.8rem);
+          font-weight: 500;
+          line-height: 1.1;
+          color: var(--black);
+          margin-bottom: 6px;
+          letter-spacing: -0.5px;
+        }
+
+        .hero-title .italic-rose {
+          font-style: italic;
+          color: var(--primary);
+        }
+
+        .hero-title .block-second {
+          display: block;
+          font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+          font-weight: 400;
+          color: var(--sec-dark);
+          letter-spacing: 0;
+          margin-top: 4px;
+        }
+
+        /* ── Rule under heading ── */
+        .heading-divider {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin: 20px 0 14px;
+        }
+
+        .heading-divider-line {
+          flex: 1;
+          max-width: 60px;
+          height: 1px;
+          background: var(--secondary);
+        }
+
+        .heading-divider-rose {
+          font-size: 12px;
+          color: var(--secondary);
+          line-height: 1;
+        }
+
+        /* ── Body copy ── */
+        .hero-sub {
+          font-size: 14px;
+          line-height: 1.85;
+          color: var(--gray-text);
+          margin-bottom: 32px;
+          font-weight: 300;
+          max-width: 400px;
+        }
+
+        .hero-sub strong {
+          font-weight: 500;
+          color: var(--primary);
+        }
+
+        /* ── Promo ribbon ── */
+        .promo-ribbon {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: var(--primary-05);
+          border: 1px solid var(--primary-20);
+          border-radius: 3px;
+          padding: 4px 11px;
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--primary);
+          letter-spacing: 0.3px;
+          margin-bottom: 16px;
+        }
+
+        .promo-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: var(--primary);
+          flex-shrink: 0;
+        }
+
+        /* ── Primary CTA ── */
+        .btn-primary {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          background: var(--primary);
+          color: var(--white);
+          border: none;
+          padding: 14px 28px;
+          border-radius: 3px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: background 0.25s ease, transform 0.15s ease;
+        }
+
+        .btn-primary:hover {
+          background: var(--primary-90);
+        }
+
+        .btn-primary-arrow {
+          font-size: 15px;
+          transition: transform 0.2s ease;
+        }
+
+        .btn-primary:hover .btn-primary-arrow {
+          transform: translateX(4px);
+        }
+
+        /* ── Secondary CTA ── */
+        .btn-secondary {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: transparent;
+          color: var(--primary);
+          border: 1px solid var(--secondary);
+          padding: 14px 22px;
+          border-radius: 3px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px;
+          font-weight: 400;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          transition: all 0.25s ease;
+        }
+
+        .btn-secondary:hover {
+          background: var(--primary-05);
+          border-color: var(--primary);
+        }
+
+        .btn-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        /* ── Stats ── */
+        .stats-row {
+          display: flex;
+          gap: 0;
+          margin-top: 44px;
+          padding-top: 32px;
+          border-top: 1px solid var(--sec-light);
+        }
+
+        .stat-item {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          padding-right: 24px;
+        }
+
+        .stat-item + .stat-item {
+          padding-left: 24px;
+          padding-right: 24px;
+          border-left: 1px solid var(--sec-light);
+        }
+
+        .stat-number {
+          font-family: 'Playfair Display', serif;
+          font-size: 28px;
+          font-weight: 500;
+          color: var(--primary);
+          line-height: 1;
+        }
+
+        .stat-number sup {
+          font-size: 14px;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 400;
+          color: var(--primary-70);
+          vertical-align: super;
         }
 
         .stat-label {
           font-size: 11px;
-          color: var(--brown-mid);
-          letter-spacing: 1px;
+          color: var(--sec-dark);
+          letter-spacing: 1.5px;
           text-transform: uppercase;
           font-weight: 400;
         }
 
-        .stat-divider {
-          width: 1px;
-          background: linear-gradient(to bottom, transparent, rgba(160,98,58,0.25), transparent);
-          align-self: stretch;
+        /* ── Right column: image frame ── */
+        .image-column {
+          position: relative;
+          flex: 1 1 380px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
-        /* Frame gambar mewah */
         .image-frame {
           position: relative;
           width: 100%;
-          max-width: 430px;
+          max-width: 420px;
         }
 
-        /* Frame border dekoratif */
-        .image-frame::before {
+        .image-frame::after {
           content: '';
           position: absolute;
-          top: -12px;
-          right: -12px;
-          bottom: 12px;
-          left: 12px;
-          border: 1.5px solid rgba(201, 169, 110, 0.45);
-          border-radius: 32px;
+          top: 16px;
+          left: 16px;
+          right: -16px;
+          bottom: -16px;
+          border: 1px solid var(--sec-light);
+          border-radius: 2px;
           z-index: 0;
           pointer-events: none;
         }
 
-        /* Corner ornament kiri atas */
-        .frame-ornament {
+        .corner-tl,
+        .corner-br {
           position: absolute;
-          z-index: 4;
+          z-index: 5;
           pointer-events: none;
         }
 
-        .frame-ornament.tl {
-          top: -4px;
-          left: -4px;
-          width: 32px;
-          height: 32px;
-          border-top: 2px solid var(--gold-accent);
-          border-left: 2px solid var(--gold-accent);
-          border-radius: 4px 0 0 0;
+        .corner-tl {
+          top: -6px;
+          left: -6px;
+          width: 28px;
+          height: 28px;
+          border-top: 2px solid var(--primary);
+          border-left: 2px solid var(--primary);
         }
 
-        .frame-ornament.br {
-          bottom: -4px;
-          right: -4px;
-          width: 32px;
-          height: 32px;
-          border-bottom: 2px solid var(--gold-accent);
-          border-right: 2px solid var(--gold-accent);
-          border-radius: 0 0 4px 0;
+        .corner-br {
+          bottom: -6px;
+          right: -6px;
+          width: 28px;
+          height: 28px;
+          border-bottom: 2px solid var(--primary);
+          border-right: 2px solid var(--primary);
         }
 
         .image-main {
           position: relative;
           z-index: 2;
           width: 100%;
-          height: 480px;
+          height: 490px;
           object-fit: cover;
-          border-radius: 24px;
-          box-shadow:
-            0 24px 60px rgba(44, 26, 14, 0.3),
-            0 8px 20px rgba(44, 26, 14, 0.15),
-            inset 0 0 0 1px rgba(255,255,255,0.5);
+          border-radius: 2px;
           display: block;
         }
 
-        /* Overlay shimmer pada gambar */
-        .image-overlay {
+        .image-vignette {
           position: absolute;
           inset: 0;
           z-index: 3;
-          border-radius: 24px;
+          border-radius: 2px;
           background: linear-gradient(
-            145deg,
-            rgba(255,255,255,0.12) 0%,
-            transparent 40%,
-            rgba(44, 26, 14, 0.08) 100%
+            to bottom,
+            transparent 55%,
+            rgba(41, 58, 82, 0.12) 100%
           );
           pointer-events: none;
         }
 
-        /* Badge mengambang di gambar */
-        .floating-badge {
+        /* ── Floating cards ── */
+        .float-card {
           position: absolute;
-          z-index: 5;
-          background: rgba(250, 246, 241, 0.92);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(201, 169, 110, 0.35);
-          border-radius: 16px;
+          z-index: 6;
+          background: rgba(252, 252, 252, 0.96);
+          backdrop-filter: blur(10px);
+          border: 1px solid var(--secondary);
+          border-radius: 4px;
           padding: 12px 16px;
-          box-shadow: 0 8px 24px rgba(44, 26, 14, 0.15);
+          box-shadow: 0 4px 20px rgba(41, 58, 82, 0.10);
         }
 
-        .badge-left {
-          bottom: 40px;
-          left: -24px;
+        .float-bottom-left {
+          bottom: 28px;
+          left: -28px;
           display: flex;
           align-items: center;
-          gap: 10px;
-          min-width: 160px;
+          gap: 12px;
+          min-width: 168px;
         }
 
-        .badge-right {
-          top: 40px;
+        .float-top-right {
+          top: 32px;
           right: -20px;
           text-align: center;
-          min-width: 90px;
+          min-width: 88px;
         }
 
-        .badge-icon {
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, var(--brown-rich), var(--brown-warm));
+        .float-icon {
+          width: 34px;
+          height: 34px;
+          border-radius: 3px;
+          background: var(--primary);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 16px;
           flex-shrink: 0;
         }
 
-        .badge-label {
-          font-size: 10px;
-          color: var(--silver-dark);
+        .float-icon svg {
+          width: 14px;
+          height: 14px;
+          fill: none;
+          stroke: var(--white);
+          stroke-width: 1.5;
+          stroke-linecap: round;
+        }
+
+        .float-eyebrow {
+          font-size: 9px;
+          color: var(--sec-dark);
           text-transform: uppercase;
-          letter-spacing: 1px;
+          letter-spacing: 1.5px;
           font-weight: 400;
           line-height: 1;
           margin-bottom: 3px;
         }
 
-        .badge-value {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 15px;
-          font-weight: 700;
-          color: var(--brown-deep);
+        .float-value {
+          font-family: 'Playfair Display', serif;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--primary);
           line-height: 1;
         }
 
-        .badge-rating {
-          font-family: 'Cormorant Garamond', serif;
+        .float-rating-num {
+          font-family: 'Playfair Display', serif;
           font-size: 22px;
-          font-weight: 700;
-          color: var(--brown-deep);
+          font-weight: 500;
+          color: var(--primary);
           line-height: 1;
           margin-bottom: 2px;
         }
 
-        .badge-stars {
-          font-size: 11px;
-          color: var(--gold-accent);
-          letter-spacing: 1px;
+        .float-stars {
+          font-size: 10px;
+          color: var(--primary-70);
+          letter-spacing: 2px;
         }
 
-        /* Dot indicators slideshow */
+        /* ── Slideshow dots ── */
         .slide-dots {
           position: absolute;
-          bottom: -24px;
+          bottom: -28px;
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           gap: 6px;
-          z-index: 6;
+          z-index: 7;
         }
 
         .slide-dot {
-          width: 6px;
-          height: 6px;
+          width: 5px;
+          height: 5px;
           border-radius: 50%;
-          background: var(--silver-light);
-          transition: all 0.35s ease;
-          cursor: pointer;
+          background: var(--secondary);
           border: none;
           padding: 0;
+          cursor: pointer;
+          transition: all 0.3s ease;
         }
 
         .slide-dot.active {
-          width: 20px;
+          width: 18px;
           border-radius: 3px;
-          background: linear-gradient(90deg, var(--brown-warm), var(--gold-accent));
+          background: var(--primary);
         }
 
-        /* Scroll hint */
-        .scroll-hint {
+        /* ── Scroll cue ── */
+        .scroll-cue {
           position: absolute;
-          bottom: 32px;
+          bottom: 28px;
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 8px;
+          gap: 6px;
           z-index: 10;
-          opacity: 0.5;
+          opacity: 0.3;
           pointer-events: none;
         }
 
-        .scroll-line {
-          width: 1px;
-          height: 40px;
-          background: linear-gradient(to bottom, var(--brown-warm), transparent);
-          animation: scrollDown 2s ease-in-out infinite;
-        }
-
-        @keyframes scrollDown {
-          0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
-          50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
-          100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
-        }
-
-        .scroll-text {
+        .scroll-cue-text {
           font-size: 9px;
-          letter-spacing: 2.5px;
+          letter-spacing: 3px;
           text-transform: uppercase;
-          color: var(--brown-warm);
+          color: var(--primary);
           writing-mode: vertical-rl;
           transform: rotate(180deg);
         }
 
-        /* Responsive */
+        .scroll-cue-line {
+          width: 1px;
+          height: 36px;
+          background: linear-gradient(to bottom, var(--primary), transparent);
+          animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+          0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+          50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+          100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+        }
+
+        /* ── Hashtag strip ── */
+        .hashtag-strip {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin-bottom: 16px;
+          font-size: 11px;
+          font-weight: 400;
+          color: var(--sec-dark);
+          letter-spacing: 1px;
+          text-transform: uppercase;
+        }
+
+        .hashtag-strip span.sep {
+          color: var(--primary-20);
+          font-size: 8px;
+        }
+
+        /* ── Responsive ── */
         @media (max-width: 768px) {
-          .hero-section {
-            padding-bottom: 60px;
-          }
-
-          .hero-title {
-            font-size: 2rem;
-          }
-
-          .stats-row {
-            gap: 20px;
-          }
-
-          .badge-left {
-            left: 8px;
-            bottom: 24px;
-          }
-
-          .badge-right {
-            right: 8px;
-            top: 24px;
-          }
-
-          .image-frame::before {
-            display: none;
-          }
-
-          .btn-group {
-            justify-content: center;
-          }
-
-          .stats-row {
-            justify-content: center;
-          }
+          .hero-title { font-size: 2rem; }
+          .float-bottom-left { left: 8px; bottom: 20px; }
+          .float-top-right  { right: 8px; top: 20px; }
+          .image-frame::after { display: none; }
+          .btn-group { justify-content: center; }
+          .stats-row { justify-content: center; }
         }
       `}</style>
 
       <section className="hero-section">
-        {/* Orbs dekoratif */}
-        <div className="orb-1" />
-        <div className="orb-2" />
-        <div className="orb-3" />
-        <div className="deco-lines" />
+        <div className="blush-tl" />
+        <div className="blush-br" />
+        <div className="vertical-rule" />
 
         <div
           style={{
-            maxWidth: '1200px',
+            maxWidth: '1160px',
             margin: '0 auto',
-            padding: '0 32px',
+            padding: '0 36px',
             minHeight: '100vh',
             display: 'flex',
             alignItems: 'center',
@@ -645,86 +626,108 @@ const HeroSection = ({ onReservasiClick }) => {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              gap: '64px',
+              gap: '72px',
               width: '100%',
-              paddingTop: '80px',
-              paddingBottom: '80px',
+              paddingTop: '88px',
+              paddingBottom: '88px',
               flexWrap: 'wrap-reverse',
             }}
           >
-            {/* ── KOLOM KIRI: teks ── */}
+            {/* ── LEFT: copy ── */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 36 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              style={{ flex: '1 1 380px', minWidth: 0 }}
+              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              style={{ flex: '1 1 360px', minWidth: 0 }}
             >
-              {/* Badge atas */}
+              {/* Clinic badge */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="luxury-badge"
+                transition={{ duration: 0.55, delay: 0.15 }}
+                className="clinic-badge"
               >
-                <span className="luxury-badge-dot" />
-                <span className="luxury-badge-text">Premium Beauty Clinic</span>
+                <div className="clinic-badge-line" />
+                <div className="clinic-badge-text">
+                  <span className="clinic-badge-eyebrow">by dr. Tengku Rose</span>
+                  <span className="clinic-badge-name">The Rose Aesthetic Clinic</span>
+                </div>
+              </motion.div>
+
+              {/* Promo ribbon */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="promo-ribbon">
+                  <span className="promo-dot" />
+                  Diskon Rp100.000 · Treatment Bulan Ini
+                </div>
               </motion.div>
 
               {/* Heading */}
               <h1 className="hero-title">
-                Klinik Kecantikan
+                Healthy Skin,
                 <br />
-                <span className="accent-italic">Modern</span>{' '}
-                untuk{' '}
-                <span className="underline-deco">Wajah Cerah</span>
-                <br />
-                &amp; <span className="accent-italic">Glowing</span>
+                <span className="italic-rose">Beautiful</span> You
+                <span className="block-second">The Rose Aesthetic Clinic</span>
               </h1>
 
-              {/* Subtitle */}
+              {/* Divider ornament */}
+              <div className="heading-divider">
+                <div className="heading-divider-line" />
+                <span className="heading-divider-rose">✦</span>
+              </div>
+
+              {/* Hashtag brand strip */}
+              <div className="hashtag-strip">
+                <span>#HealthySkin</span>
+                <span className="sep">✦</span>
+                <span>#BeautifulYou</span>
+                <span className="sep">✦</span>
+                <span>#TheRoseClinic</span>
+              </div>
+
+              {/* Body copy */}
               <p className="hero-sub">
-                Dapatkan{' '}
-                <span className="promo-pill">Diskon Rp100.000</span>
-                {' '}untuk semua treatment spesial bulan ini.
-                Kunjungi{' '}
-                <span className="highlight">Bahebak Clinic</span>
-                {' '}dan rasakan pengalaman perawatan premium yang mewah.
+                Rasakan pengalaman perawatan estetika premium bersama{' '}
+                <strong>dr. Tengku Rose</strong>. Treatment modern dengan teknologi terkini,
+                didesain untuk kulit sehat &amp; bercahaya.
               </p>
 
-              {/* Tombol CTA */}
+              {/* CTA buttons */}
               <div className="btn-group">
                 <motion.button
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   className="btn-primary"
                   onClick={handleReservasiClick}
                 >
-                  <span className="btn-icon">✦</span>
-                  RESERVASI SEKARANG
+                  Reservasi Sekarang
+                  <span className="btn-primary-arrow">→</span>
                 </motion.button>
 
                 <motion.button
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   className="btn-secondary"
                   onClick={() => navigate('/treatments')}
                 >
-                  Lihat Treatment →
+                  Lihat Treatment
                 </motion.button>
               </div>
 
-              {/* Stats row */}
+              {/* Stats */}
               <div className="stats-row">
                 <div className="stat-item">
-                  <span className="stat-number">5K+</span>
+                  <span className="stat-number">5K<sup>+</sup></span>
                   <span className="stat-label">Pelanggan</span>
                 </div>
-                <div className="stat-divider" />
                 <div className="stat-item">
                   <span className="stat-number">12</span>
                   <span className="stat-label">Treatment</span>
                 </div>
-                <div className="stat-divider" />
                 <div className="stat-item">
                   <span className="stat-number">4.9</span>
                   <span className="stat-label">Rating</span>
@@ -732,62 +735,67 @@ const HeroSection = ({ onReservasiClick }) => {
               </div>
             </motion.div>
 
-            {/* ── KOLOM KANAN: gambar ── */}
+            {/* ── RIGHT: image ── */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.92 }}
+              initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-              style={{ flex: '1 1 380px', display: 'flex', justifyContent: 'center' }}
+              transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+              className="image-column"
             >
               <div className="image-frame">
                 {/* Corner ornaments */}
-                <div className="frame-ornament tl" />
-                <div className="frame-ornament br" />
+                <div className="corner-tl" />
+                <div className="corner-br" />
 
-                {/* Gambar slideshow */}
+                {/* Slideshow */}
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentImageIndex}
                     src={images[currentImageIndex]}
-                    alt="Bahebak Clinic"
+                    alt="The Rose Aesthetic Clinic"
                     className="image-main"
-                    initial={{ opacity: 0, scale: 1.04 }}
+                    initial={{ opacity: 0, scale: 1.03 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.97 }}
-                    transition={{ duration: 0.6, ease: 'easeInOut' }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.55, ease: 'easeInOut' }}
                   />
                 </AnimatePresence>
 
-                {/* Overlay shimmer */}
-                <div className="image-overlay" />
+                {/* Vignette */}
+                <div className="image-vignette" />
 
-                {/* Badge mengambang kiri bawah */}
+                {/* Float card — bottom left */}
                 <motion.div
-                  className="floating-badge badge-left"
-                  initial={{ opacity: 0, x: -20 }}
+                  className="float-card float-bottom-left"
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
+                  transition={{ delay: 0.75, duration: 0.55 }}
                 >
-                  <div className="badge-icon">✦</div>
+                  <div className="float-icon">
+                    {/* sparkle / leaf icon */}
+                    <svg viewBox="0 0 16 16">
+                      <path d="M8 2C8 2 6 6 2 8C6 10 8 14 8 14C8 14 10 10 14 8C10 6 8 2 8 2Z"/>
+                    </svg>
+                  </div>
                   <div>
-                    <div className="badge-label">Treatment Bulan Ini</div>
-                    <div className="badge-value">Hemat Rp100K</div>
+                    <div className="float-eyebrow">Promo Bulan Ini</div>
+                    <div className="float-value">Hemat Rp100.000</div>
                   </div>
                 </motion.div>
 
-                {/* Badge mengambang kanan atas */}
+                {/* Float card — top right */}
                 <motion.div
-                  className="floating-badge badge-right"
-                  initial={{ opacity: 0, x: 20 }}
+                  className="float-card float-top-right"
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1, duration: 0.6 }}
+                  transition={{ delay: 0.9, duration: 0.55 }}
                 >
-                  <div className="badge-label">Rating</div>
-                  <div className="badge-rating">4.9</div>
-                  <div className="badge-stars">★★★★★</div>
+                  <div className="float-eyebrow">Rating</div>
+                  <div className="float-rating-num">4.9</div>
+                  <div className="float-stars">★★★★★</div>
                 </motion.div>
 
-                {/* Dot indikator slideshow */}
+                {/* Dots */}
                 <div className="slide-dots">
                   {images.map((_, i) => (
                     <button
@@ -803,10 +811,10 @@ const HeroSection = ({ onReservasiClick }) => {
           </div>
         </div>
 
-        {/* Scroll hint */}
-        <div className="scroll-hint">
-          <span className="scroll-text">scroll</span>
-          <div className="scroll-line" />
+        {/* Scroll cue */}
+        <div className="scroll-cue">
+          <span className="scroll-cue-text">scroll</span>
+          <div className="scroll-cue-line" />
         </div>
       </section>
     </>

@@ -1,151 +1,145 @@
-import React, { useEffect, useState } from "react";
-import { supabase } from "../../supabase";
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../../supabase';
 
 export default function FeedbackSection() {
-  // 1. Siapkan data dummy sesuai struktur Supabase
   const dummyFeedbacks = [
-    {
-      id: 'dummy-1',
-      name: "Amanda Syifa",
-      message: "Pelayanannya sangat luar biasa! Kulitku terasa jauh lebih sehat dan bersinar setelah melakukan treatment di sini. Dokter sangat ramah dan informatif.",
-      treatment: "Facial Acne Treatment",
-      doctor_rating: 5
-    },
-    {
-      id: 'dummy-2',
-      name: "Clarissa Putri",
-      message: "Klinik langgananku. Suasananya sangat mewah dan menenangkan. Hasil botox-nya sangat natural, benar-benar memuaskan!",
-      treatment: "Botox Injection",
-      doctor_rating: 5
-    },
-    {
-      id: 'dummy-3',
-      name: "Siti Nurhaliza",
-      message: "Konsultasi kulitnya sangat detail. Skincare yang direkomendasikan sangat cocok untuk tipe kulit sensitifku. Terima kasih Bahebak Clinic!",
-      treatment: "Skin Consultation",
-      doctor_rating: 4
-    },
-    {
-      id: 'dummy-4',
-      name: "Nadine Chandrawinata",
-      message: "Tempatnya bersih, wangi, dan pelayanannya sekelas hotel bintang lima. Sangat direkomendasikan untuk me-time dan memanjakan diri.",
-      treatment: "Glowing Peeling",
-      doctor_rating: 5
-    }
+    { id: 'dummy-1', name: "Amanda Syifa", message: "Pelayanannya sangat luar biasa! Kulitku terasa jauh lebih sehat dan bersinar setelah melakukan treatment di sini. Dokter sangat ramah dan informatif.", treatment: "Facial Acne Treatment", doctor_rating: 5 },
+    { id: 'dummy-2', name: "Clarissa Putri", message: "Klinik langgananku. Suasananya sangat mewah dan menenangkan. Hasil treatment-nya sangat natural, benar-benar memuaskan!", treatment: "Botox Injection", doctor_rating: 5 },
+    { id: 'dummy-3', name: "Siti Nurhaliza", message: "Konsultasi kulitnya sangat detail. Skincare yang direkomendasikan sangat cocok untuk tipe kulit sensitifku. Terima kasih The Rose Clinic!", treatment: "Skin Consultation", doctor_rating: 4 },
+    { id: 'dummy-4', name: "Nadine C.", message: "Tempatnya bersih, wangi, dan pelayanannya sekelas hotel bintang lima. Sangat direkomendasikan untuk me-time dan memanjakan diri.", treatment: "Glowing Peeling", doctor_rating: 5 },
   ];
 
-  // 2. Masukkan data dummy sebagai nilai awal state
   const [feedbacks, setFeedbacks] = useState(dummyFeedbacks);
 
   useEffect(() => {
-    const loadFeedback = async () => {
+    const load = async () => {
       const { data, error } = await supabase
-        .from("feedbacks")
-        .select("*")
-        .eq("is_approved", true)
-        .order("created_at", { ascending: false });
-
-      // 3. Jika Supabase berhasil menarik data DAN datanya tidak kosong, timpa data dummy
-      if (!error && data && data.length > 0) {
-        setFeedbacks(data);
-      }
+        .from('feedbacks')
+        .select('*')
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) setFeedbacks(data);
     };
-
-    loadFeedback();
+    load();
   }, []);
+
+  const renderStars = (n) =>
+    Array.from({ length: 5 }).map((_, i) => (
+      <span key={i} style={{ color: i < n ? '#293A52' : '#CCD4E1', fontSize: 12 }}>★</span>
+    ));
 
   return (
     <>
       <style>{`
-        /* Menggunakan background putih agar berselang-seling cantik dengan kremnya Promo */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
         .feedback-section {
-          background-color: #FFFFFF;
-          font-family: 'Jost', sans-serif;
+          background-color: #f4f6f8;
+          font-family: 'DM Sans', sans-serif;
         }
-        
+
         .feedback-title {
-          font-family: 'Cormorant Garamond', serif;
-          color: #2C1A0E;
-          font-weight: 700;
-          letter-spacing: -0.5px;
+          font-family: 'Playfair Display', serif;
+          color: #020202;
+          font-weight: 500;
+          letter-spacing: -0.4px;
         }
 
         .feedback-title .accent-italic {
           font-style: italic;
-          color: #7B4A2D;
+          color: #293A52;
         }
 
         .feedback-card {
-          background: #FAF6F1; /* Kartu warna krem */
-          border-radius: 20px;
-          border: 1px solid rgba(201, 169, 110, 0.2);
-          padding: 28px;
-          box-shadow: 0 10px 30px rgba(44, 26, 14, 0.02);
-          transition: all 0.4s ease;
+          background: #FCFCFC;
+          border-radius: 3px;
+          border: 1px solid #CCD4E1;
+          padding: 32px 28px;
+          transition: all 0.35s ease;
           position: relative;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
         }
 
         .feedback-card:hover {
           transform: translateY(-5px);
-          box-shadow: 0 15px 35px rgba(44, 26, 14, 0.06);
-          border-color: rgba(201, 169, 110, 0.5);
+          box-shadow: 0 16px 36px rgba(41, 58, 82, 0.09);
+          border-color: #a8b5c7;
         }
 
-        /* Ikon kutipan cantik di pojok kanan atas kartu */
-        .quote-icon {
-          font-size: 60px;
-          color: rgba(201, 169, 110, 0.15);
+        /* Large quote mark */
+        .quote-mark {
+          font-family: 'Playfair Display', serif;
+          font-size: 72px;
+          color: #e3e8f0;
           position: absolute;
-          top: 10px;
+          top: 6px;
           right: 20px;
-          font-family: 'Cormorant Garamond', serif;
           line-height: 1;
+          pointer-events: none;
+          user-select: none;
         }
 
         .feedback-name {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 22px;
-          font-weight: 700;
-          color: #7B4A2D; /* Menggantikan warna indigo */
-          margin-bottom: 8px;
+          font-family: 'Playfair Display', serif;
+          font-size: 18px;
+          font-weight: 500;
+          color: #293A52;
         }
 
         .feedback-message {
-          font-size: 15px;
-          color: #6B4F3A;
-          line-height: 1.6;
+          font-size: 14px;
+          color: #5a6a7e;
+          line-height: 1.75;
           font-weight: 300;
           font-style: italic;
-          margin-bottom: 20px;
+          flex: 1;
         }
 
         .feedback-meta {
-          font-size: 12px;
-          color: #A0623A;
-          background: rgba(201, 169, 110, 0.1);
-          padding: 8px 14px;
-          border-radius: 8px;
-          display: inline-block;
-          font-weight: 500;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          border-top: 1px solid #e3e8f0;
+          padding-top: 14px;
+          margin-top: auto;
+          flex-wrap: wrap;
+        }
+
+        .feedback-treatment {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 1.5px;
+          color: #a8b5c7;
+          font-weight: 400;
+        }
+
+        .feedback-stars {
+          display: flex;
+          gap: 2px;
         }
       `}</style>
 
-      {/* STRUKTUR TAG ASLI (Tetap dipertahankan agar tidak error) */}
-      <section className="feedback-section py-20 px-6">
+      <section className="feedback-section py-20 px-6 md:px-12 lg:px-24">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-4xl md:text-5xl text-center mb-12 feedback-title">
-            Apa Kata <span className="accent-italic">Mereka?</span>
-          </h2>
-          
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl md:text-5xl feedback-title">
+              Apa Kata <span className="accent-italic">Mereka?</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
             {feedbacks.map((fb) => (
               <div key={fb.id} className="feedback-card">
-                <span className="quote-icon">"</span>
-                <p className="feedback-name">{fb.name}</p>
+                <span className="quote-mark">"</span>
+                <div className="feedback-name">{fb.name}</div>
                 <p className="feedback-message">"{fb.message}"</p>
-                <p className="feedback-meta">
-                  Treatment: {fb.treatment} &nbsp;|&nbsp; ⭐ Dokter: {fb.doctor_rating}
-                </p>
+                <div className="feedback-meta">
+                  <span className="feedback-treatment">{fb.treatment}</span>
+                  <div className="feedback-stars">{renderStars(fb.doctor_rating)}</div>
+                </div>
               </div>
             ))}
           </div>
