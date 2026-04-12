@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 
-
 // Layouts
 import MainLayout from "./layouts/MainLayout";
 import LandingLayout from "./layouts/LandingLayout";
@@ -24,33 +23,33 @@ import InventoryManagement from "./pages/Admin/InventoryManagement";
 import CustomerManagement from "./pages/Admin/CustomerManagement";
 import AdminFeedback from "./pages/Admin/AdminFeedback";
 import AdminFAQ from "./pages/Admin/AdminFaq";
-// import FAQManagement from "./pages/Admin/FAQManagement"; // Jika digunakan
+import FAQManagement from "./pages/Admin/FAQManagement";
+import FeedbackManagement from "./pages/Admin/FeedbackManagement";
+import OrderHistoryManagement from "./pages/Admin/OrderHistoryManagement";
+import LayananManagement from "./pages/Admin/LayananManagement";
 
 // Customer Pages
 import CustomerDashboard from "./pages/Customer/CustomerDashboard";
 import HeroPrediksiPage from "./components/Customer/HeroPrediksiPage";
 import FormPrediksiPage from "./pages/Customer/FormPrediksiPage";
 import FormReservasi from "./components/Landing/FormReservasi";
+import ReservationHistoryPage from "./components/Customer/ReservationHistoryPage";
+import ProdukHistory from "./components/Customer/ProdukHistory";
+import FormPrediksi from "./components/Customer/FormPrediksi";
 
-
-// Produk & Keranjang
+// Produk, Layanan & Keranjang
 import AllProducts from "./pages/AllProducts";
 import DetailProduct from "./components/Customer/DetailProduk";
 import CartPage from "./components/Customer/CardPage";
+import AllTreatments from "./pages/AllTreatments";
+import DetailTreatments from "./components/Customer/DetailTreatments";
+
+// Landing Components (digunakan juga di Customer)
+import TentangKami from "./components/Landing/TentangKami";
+import PromoPage from "./components/Landing/PromoPage";
 
 // Supabase
 import { supabase } from './supabase';
-import ReservationHistoryPage from "./components/Customer/ReservationHistoryPage";
-import ProdukHistory from "./components/Customer/ProdukHistory";
-import OrderHistoryManagement from "./pages/Admin/OrderHistoryManagement";
-import LayananManagement from "./pages/Admin/LayananManagement";
-import AllTreatments from "./pages/AllTreatments";
-import DetailTreatments from "./components/Customer/DetailTreatments";
-import TentangKami from "./components/Landing/TentangKami";
-import PromoPage from "./components/Landing/PromoPage";
-import FormPrediksi from "./components/Customer/FormPrediksi";
-import FAQManagement from "./pages/Admin/FAQManagement";
-import FeedbackManagement from "./pages/Admin/FeedbackManagement";
 
 export default function App() {
   const [products, setProducts] = useState([]);
@@ -141,7 +140,7 @@ export default function App() {
             />
           } />
           <Route path="/prediksi" element={<HeroPrediksiPage />} />
-          <Route path="/prediksi/form" element={<FormPrediksi />} /> {/* <-- Tambahkan ini */}
+          <Route path="/prediksi/form" element={<FormPrediksi />} />
           <Route path="/layanan-kami" element={<AllTreatments />} />
           <Route path="/treatments/:treatmentId" element={<DetailTreatments />} />
           <Route path="/tentang" element={<TentangKami />} />
@@ -152,7 +151,6 @@ export default function App() {
         <Route path="/product/:productId" element={
           <DetailProduct handleAddToCart={handleAddToCart} />
         } />
-
 
         {/* 🛒 Keranjang */}
         <Route path="/cart" element={
@@ -184,7 +182,6 @@ export default function App() {
           <Route path="customers" element={<CustomerManagement />} />
           <Route path="feedback" element={<FeedbackManagement />} />
           <Route path="faqs" element={<FAQManagement />} />
-          {/* <Route path="faq-management" element={<FAQManagement />} /> */}
         </Route>
 
         {/* 👩‍⚕️ Customer */}
@@ -195,7 +192,6 @@ export default function App() {
           <Route path="formprediksipage" element={<FormPrediksiPage />} />
           <Route path="formprediksi" element={<FormPrediksi />} />
 
-
           <Route path="produk" element={
             <AllProducts
               products={products}
@@ -205,13 +201,16 @@ export default function App() {
               isCustomerRoute={true}
             />
           } />
-          {/* New route for customer treatments/services page */}
-          <Route path="layanan-kami" element={<AllTreatments />} /> {/* <--- ADD THIS LINE */}
-          <Route path="treatments/:treatmentId" element={<DetailTreatments />} /> Keep this for detail
+          
+          <Route path="layanan-kami" element={<AllTreatments />} />
+          <Route path="treatments/:treatmentId" element={<DetailTreatments />} /> 
 
-          {/* Rute baru untuk Riwayat Reservasi dan Riwayat Pesanan Produk */}
+          {/* PERBAIKAN: Gunakan relative path (tanpa awalan "/") untuk rute bersarang */}
+          <Route path="tentang" element={<TentangKami />} />
+          <Route path="promo" element={<PromoPage />} />
+
           <Route path="riwayat-reservasi" element={<ReservationHistoryPage />} />
-          <Route path="riwayat-pesanan" element={< ProdukHistory />} />
+          <Route path="riwayat-pesanan" element={<ProdukHistory />} />
         </Route>
       </Routes>
     </AuthProvider>

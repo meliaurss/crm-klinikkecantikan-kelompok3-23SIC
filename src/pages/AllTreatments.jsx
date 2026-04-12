@@ -70,101 +70,119 @@ export default function AllTreatments() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Header with title and notification area */}
-      <div className="flex justify-between items-center mb-8 h-14">
-        <h1 className="text-3xl font-bold text-[#181C68]">Semua Perawatan</h1>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+      `}</style>
 
-        {/* --- NOTIFICATION LOCATION --- */}
-        <div className="flex-1 flex justify-center px-4">
-          {notification && (
-            <div
-              className={`flex items-center gap-3 w-full max-w-sm p-3 rounded-lg shadow-md text-white font-semibold transition-all duration-300 ease-in-out
-                ${notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'}
-                ${isNotifVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-            >
-              {notification.type === 'success' ? (
-                <CheckCircleIcon className="h-6 w-6 flex-shrink-0" />
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+      <div className="font-['DM_Sans',sans-serif] bg-[#f4f6f8] min-h-screen py-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header with title and notification area */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-10 h-auto md:h-14 gap-4">
+            <h1 className="text-3xl md:text-4xl font-['Playfair_Display',serif] font-semibold text-[#293A52]">
+              Semua Perawatan
+            </h1>
+
+            {/* --- NOTIFICATION LOCATION --- */}
+            <div className="flex-1 flex justify-center md:justify-end px-4 w-full md:w-auto">
+              {notification && (
+                <div
+                  className={`flex items-center gap-3 w-full max-w-sm p-3.5 rounded-sm shadow-sm font-medium text-[13px] tracking-wide transition-all duration-300 ease-in-out border
+                    ${notification.type === 'success' ? 'bg-[#EEF7F2] text-[#287D3C] border-[#CDE7D5]' : 'bg-[#FFF0F0] text-[#D32F2F] border-[#FFD6D6]'}
+                    ${isNotifVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}
+                >
+                  {notification.type === 'success' ? (
+                    <CheckCircleIcon className="h-5 w-5 flex-shrink-0" />
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  )}
+                  <span>{notification.message}</span>
+                </div>
               )}
-              <span className="text-sm">{notification.message}</span>
+            </div>
+          </div>
+
+          {/* Loading Status */}
+          {loading && (
+            <p className="text-center text-[#5a6a7e] text-[13px] uppercase tracking-widest font-medium mt-16 flex items-center justify-center">
+              <svg className="animate-spin h-5 w-5 mr-3 text-[#293A52]" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Memuat perawatan...
+            </p>
+          )}
+
+          {/* Error Status */}
+          {error && (
+            <div className="flex justify-center mt-16">
+              <p className="text-center bg-[#FFF0F0] border border-[#FFD6D6] text-[#D32F2F] text-[14px] px-6 py-4 rounded-sm shadow-sm inline-block">
+                Oups! Gagal memuat perawatan: {error}. Silakan coba lagi nanti.
+              </p>
+            </div>
+          )}
+
+          {/* No Treatments Available Status */}
+          {!loading && !error && treatments.length === 0 && (
+            <div className="text-center mt-16 p-10 bg-[#FCFCFC] border border-[#CCD4E1] rounded-sm max-w-md mx-auto">
+              <h2 className="text-xl font-['Playfair_Display',serif] font-semibold text-[#293A52] mb-2">Perawatan Belum Tersedia</h2>
+              <p className="text-[#5a6a7e] text-[14px] font-light">
+                Maaf, saat ini belum ada perawatan yang bisa ditampilkan. Silakan kembali nanti!
+              </p>
+            </div>
+          )}
+
+          {/* Treatments Grid */}
+          {!loading && !error && treatments.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {treatments.map((treatment) => (
+                <div
+                  key={treatment.id}
+                  className="group bg-[#FCFCFC] border border-[#e8ecf1] rounded-sm shadow-sm hover:shadow-xl hover:shadow-[#293a52]/10 hover:border-[#a8b5c7] overflow-hidden transform hover:-translate-y-1.5 transition-all duration-300 flex flex-col"
+                >
+                  {/* Treatment Image Area */}
+                  <div className="relative overflow-hidden h-60 bg-[#e8ecf1]">
+                    <img
+                      src={treatment.gambar}
+                      alt={treatment.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.target.src = "https://via.placeholder.com/400x300?text=No+Image"; // Fallback image
+                      }}
+                    />
+                    {treatment.price && (
+                      <div className="absolute top-4 left-4 bg-[#293A52] text-white text-[13px] font-medium py-1.5 px-3 rounded-sm tracking-wide z-10 shadow-sm">
+                        {formatCurrency(treatment.price)}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Details Area */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-xl font-['Playfair_Display',serif] font-semibold text-[#293A52] mb-2">
+                      {treatment.name}
+                    </h3>
+                    <div className="w-8 h-[1px] bg-[#CCD4E1] mb-4" />
+                    
+                    <p className="text-[13.5px] text-[#5a6a7e] font-light leading-relaxed flex-1 mb-6">
+                      {truncateText(treatment.description, 100)} {/* Truncate to 100 characters */}
+                    </p>
+                    
+                    <Link
+                      to={`/treatments/${treatment.id}`}
+                      className="mt-auto px-4 py-3 bg-[#293A52] text-white font-['DM_Sans',sans-serif] text-[11px] font-medium tracking-widest uppercase rounded-sm hover:bg-[#344a66] transition-colors duration-200 text-center flex items-center justify-center w-full"
+                    >
+                      Lihat Detail Perawatan
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
       </div>
-
-      {/* Loading Status */}
-      {loading && (
-        <p className="text-center text-blue-600 text-xl font-medium mt-10 flex items-center justify-center">
-          <svg className="animate-spin h-6 w-6 mr-3 text-blue-500" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Memuat perawatan...
-        </p>
-      )}
-
-      {/* Error Status */}
-      {error && (
-        <p className="text-center text-red-600 text-xl font-medium mt-10">
-          Oups! Gagal memuat perawatan: {error}. Silakan coba lagi nanti.
-        </p>
-      )}
-
-      {/* No Treatments Available Status */}
-      {!loading && !error && treatments.length === 0 && (
-        <div className="text-center mt-10 p-8 bg-white rounded-lg shadow-md max-w-lg mx-auto">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-3">Perawatan Belum Tersedia</h2>
-          <p className="text-gray-500">
-            Maaf, saat ini belum ada perawatan yang bisa ditampilkan. Silakan kembali nanti!
-          </p>
-        </div>
-      )}
-
-      {/* Treatments Grid */}
-      {!loading && !error && treatments.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
-          {treatments.map((treatment) => (
-            <div
-              key={treatment.id}
-              className="bg-white rounded-3xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 transform hover:scale-[1.03] transition-all duration-300 flex flex-col"
-            >
-              {/* Treatment Image Area */}
-              <img
-                src={treatment.gambar}
-                alt={treatment.name}
-                className="w-full h-56 object-cover"
-                onError={(e) => {
-                  e.target.src = "https://via.placeholder.com/150?text=No+Image"; // Fallback image
-                }}
-              />
-              <div className="p-6 text-center flex-1 flex flex-col">
-                <h3 className="text-xl font-semibold text-indigo-700 mb-3">
-                  {treatment.name}
-                </h3>
-                {treatment.price && (
-                  <div className="text-lg font-bold text-gray-800 mb-3">
-                    {formatCurrency(treatment.price)}
-                  </div>
-                )}
-                {/* Apply truncation here */}
-                <p className="text-sm text-gray-600 flex-1">
-                  {truncateText(treatment.description, 100)} {/* Truncate to 100 characters */}
-                </p>
-                <Link
-                  to={`/treatments/${treatment.id}`}
-                  className="mt-6 px-5 py-2 bg-gradient-to-r from-indigo-600 to-blue-500 text-white text-sm rounded-full hover:brightness-110 shadow transition-all duration-300 flex items-center justify-center"
-                >
-                  LIHAT PERAWATAN
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   );
 }
