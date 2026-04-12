@@ -10,20 +10,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { supabase } from "../../supabase";
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  exit: { opacity: 0, y: -20 },
-};
-
 const popIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { type: "spring", damping: 20 },
-  },
-  exit: { opacity: 0, scale: 0.9 },
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { type: "spring", damping: 25, stiffness: 300 } },
+  exit: { opacity: 0, scale: 0.95 },
 };
 
 export default function CustomerManagement() {
@@ -62,11 +52,9 @@ export default function CustomerManagement() {
         .from("users")
         .select("*")
         .eq("role", "customer");
-
       if (error) throw error;
       setCustomers(data || []);
     } catch (error) {
-      console.error("Error fetching customers:", error.message);
       setErrorMessage("Gagal memuat data pelanggan");
     } finally {
       setLoading(false);
@@ -91,77 +79,44 @@ export default function CustomerManagement() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const resetFormState = () => {
+    setEditMode(false);
+    setEditId(null);
+    setFormData({ name: "", email: "", telepon: "", status: "", membership_tier: "", riwayat: "" });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.telepon ||
-      !formData.status ||
-      !formData.membership_tier ||
-      !formData.riwayat
-    ) {
+    if (!formData.name || !formData.email || !formData.telepon || !formData.status || !formData.membership_tier || !formData.riwayat) {
       setErrorMessage("Semua kolom wajib diisi.");
       return;
     }
 
     setLoading(true);
     try {
-      let result;
       if (editMode) {
-        result = await supabase
-          .from("users")
-          .update(formData)
-          .eq("id", editId);
+        await supabase.from("users").update(formData).eq("id", editId);
       } else {
-        result = await supabase
-          .from("users")
-          .insert([{ ...formData, role: "customer" }]);
+        await supabase.from("users").insert([{ ...formData, role: "customer" }]);
       }
-
-      const { error } = result;
-      if (error) throw error;
-
       await fetchCustomers();
       setShowForm(false);
-      setEditMode(false);
-      setEditId(null);
-      setFormData({
-        name: "",
-        email: "",
-        telepon: "",
-        status: "",
-        membership_tier: "",
-        riwayat: "",
-      });
+      resetFormState();
     } catch (error) {
-      console.error("Error saving customer:", error.message);
       setErrorMessage(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = (id, name) => {
-    setDeleteId(id);
-    setDeleteName(name);
-  };
-
   const confirmDelete = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from("users")
-        .delete()
-        .eq("id", deleteId);
-      if (error) throw error;
+      await supabase.from("users").delete().eq("id", deleteId);
       await fetchCustomers();
       setDeleteId(null);
-      setDeleteName("");
     } catch (error) {
-      console.error("Error deleting customer:", error.message);
       setErrorMessage("Gagal menghapus pelanggan");
     } finally {
       setLoading(false);
@@ -183,370 +138,197 @@ export default function CustomerManagement() {
   };
 
   const statusBadgeColor = (status) => {
-    switch (status) {
-      case "Member":
-        return "bg-green-100 text-green-800";
-      case "Baru":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+    return status === "Member" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700";
   };
 
   const tierBadgeColor = (tier) => {
     switch (tier) {
-      case "Platinum":
-        return "bg-purple-100 text-purple-800";
-      case "Gold":
-        return "bg-yellow-100 text-yellow-800";
-      case "Silver":
-        return "bg-gray-100 text-gray-800";
-      case "Basic":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+      case "Platinum": return "bg-purple-100 text-purple-700";
+      case "Gold": return "bg-amber-100 text-amber-700";
+      case "Silver": return "bg-slate-200 text-slate-700";
+      default: return "bg-blue-100 text-blue-700";
     }
   };
 
   return (
-    <div className="min-h-screen p-4 bg-white ">
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto"
-      >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <motion.h1 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="text-2xl font-bold text-gray-800"
-          >
-            Manajemen Pelanggan 
-          </motion.h1>
+    <div className="min-h-screen p-4 sm:p-8 bg-[#f8fafc] font-['Plus_Jakarta_Sans',sans-serif]">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto">
+        
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-[#0f172a]">Manajemen Pelanggan</h1>
+            <p className="text-sm text-slate-500">Kelola data pelanggan The Rose Clinic</p>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                setShowForm(!showForm);
-                setEditMode(false);
-                setEditId(null);
-                setFormData({ name: "", email: "", telepon: "", status: "", membership_tier: "", riwayat: "" });
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all"
-            >
-              {showForm ? (
-                <>
-                  <XMarkIcon className="w-5 h-5" />
-                  <span>Batal</span>
-                </>
-              ) : (
-                <>
-                  <PlusIcon className="w-5 h-5" />
-                  <span>Tambah Pelanggan</span>
-                </>
-              )}
-            </motion.button>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Cari pelanggan..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-72 px-4 py-2 pl-10 border border-slate-200 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-[#101828]/10 focus:border-[#101828] outline-none transition-all text-sm"
+              />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            </div>
             
-            {!showForm && (
-              <div className="relative flex-grow sm:w-64">
-                <input
-                  type="text"
-                  placeholder="Cari pelanggan..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-2 pl-10 border-0 rounded-xl bg-white/70 backdrop-blur-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/90 transition-all"
-                />
-                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-            )}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                if (showForm) resetFormState();
+                setShowForm(!showForm);
+              }}
+              className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl shadow-sm font-semibold text-sm transition-all ${
+                showForm 
+                ? "bg-slate-100 text-slate-600 border border-slate-200" 
+                : "bg-[#101828] text-white hover:bg-slate-800"
+              }`}
+            >
+              {showForm ? <XMarkIcon className="w-5 h-5" /> : <PlusIcon className="w-5 h-5" />}
+              {showForm ? "Batal" : "Tambah Pelanggan"}
+            </motion.button>
           </div>
         </div>
 
-        <AnimatePresence>
-          {errorMessage && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm"
-            >
-              {errorMessage}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {errorMessage && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg text-sm">
+            {errorMessage}
+          </div>
+        )}
 
+        {/* Form Section */}
         <AnimatePresence>
           {showForm && (
-            <motion.div
-              variants={fadeIn}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="mb-8 p-6 rounded-2xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg max-w-3xl mx-auto"
-            >
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                {editMode ? "Edit Pelanggan" : "Tambah Pelanggan Baru"}
-              </h2>
-              
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { label: "Nama", name: "name", type: "text", required: true },
-                  { label: "Email", name: "email", type: "email", required: true },
-                  { label: "Telepon", name: "telepon", type: "text", required: true },
-                ].map(({ label, name, type, required }) => (
-                  <div className="mb-2" key={name}>
-                    <label className="block mb-1 font-medium text-sm text-gray-700">
-                      {label} {required && <span className="text-red-500">*</span>}
-                    </label>
-                    <input
-                      type={type}
-                      name={name}
-                      value={formData[name]}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
-                      required={required}
-                    />
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden mb-8">
+              <form onSubmit={handleSubmit} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-md">
+                <h2 className="text-lg font-bold mb-6 text-slate-800 flex items-center gap-2">
+                  <div className={`w-2 h-6 rounded-full ${editMode ? 'bg-amber-500' : 'bg-[#101828]'}`}></div>
+                  {editMode ? "Edit Pelanggan" : "Tambah Pelanggan Baru"}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Nama</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#101828]/10 outline-none text-sm" />
                   </div>
-                ))}
-
-                <div>
-                  <label className="block mb-1 font-medium text-sm text-gray-700">Status <span className="text-red-500">*</span></label>
-                  <select 
-                    name="status" 
-                    value={formData.status} 
-                    onChange={handleInputChange} 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
-                    required
-                  >
-                    <option value="">Pilih Status</option>
-                    <option value="Baru">Baru</option>
-                    <option value="Member">Member</option>
-                  </select>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Email</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#101828]/10 outline-none text-sm" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Telepon</label>
+                    <input type="text" name="telepon" value={formData.telepon} onChange={handleInputChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#101828]/10 outline-none text-sm" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Status</label>
+                    <select name="status" value={formData.status} onChange={handleInputChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#101828]/10 outline-none text-sm">
+                      <option value="">Pilih Status</option>
+                      <option value="Baru">Baru</option>
+                      <option value="Member">Member</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Membership</label>
+                    <select name="membership_tier" value={formData.membership_tier} onChange={handleInputChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#101828]/10 outline-none text-sm">
+                      <option value="">Pilih Tier</option>
+                      <option value="Basic">Basic</option>
+                      <option value="Silver">Silver</option>
+                      <option value="Gold">Gold</option>
+                      <option value="Platinum">Platinum</option>
+                    </select>
+                  </div>
+                  <div className="md:col-span-2 space-y-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Riwayat</label>
+                    <textarea name="riwayat" value={formData.riwayat} onChange={handleInputChange} rows={3} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#101828]/10 outline-none text-sm resize-none" />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block mb-1 font-medium text-sm text-gray-700">Membership <span className="text-red-500">*</span></label>
-                  <select 
-                    name="membership_tier" 
-                    value={formData.membership_tier} 
-                    onChange={handleInputChange} 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
-                    required
-                  >
-                    <option value="">Pilih Membership</option>
-                    <option value="Basic">Basic</option>
-                    <option value="Silver">Silver</option>
-                    <option value="Gold">Gold</option>
-                    <option value="Platinum">Platinum</option>
-                  </select>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block mb-1 font-medium text-sm text-gray-700">Riwayat <span className="text-red-500">*</span></label>
-                  <textarea 
-                    name="riwayat" 
-                    value={formData.riwayat} 
-                    onChange={handleInputChange} 
-                    rows={3} 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm"
-                    required
-                  />
-                </div>
-
-                <div className="md:col-span-2 flex justify-end gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setShowForm(false)}
-                    className="px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
-                  >
-                    Batal
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    type="submit"
-                    disabled={loading}
-                    className={`px-5 py-2.5 text-white rounded-lg transition-all flex items-center gap-2 ${
-                      editMode
-                        ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
-                        : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                    }`}
-                  >
-                    {loading ? (
-                      <>
-                        <ArrowPathIcon className="w-4 h-4 animate-spin" />
-                        Memproses...
-                      </>
-                    ) : editMode ? (
-                      "Update Pelanggan"
-                    ) : (
-                      "Simpan Pelanggan"
-                    )}
-                  </motion.button>
+                <div className="flex justify-end gap-3 mt-8">
+                  <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 text-slate-500 font-medium text-sm hover:bg-slate-50 rounded-lg transition-all">Batal</button>
+                  <button type="submit" disabled={loading} className="px-8 py-2 bg-[#101828] text-white font-bold rounded-xl shadow-lg text-sm hover:bg-slate-800 transition-all flex items-center gap-2">
+                    {loading ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : (editMode ? "Update Pelanggan" : "Simpan Pelanggan")}
+                  </button>
                 </div>
               </form>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {loading && !showForm ? (
-          <div className="flex justify-center items-center h-64">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full"
-            />
-          </div>
-        ) : (
-          <motion.div 
-            variants={popIn}
-            initial="hidden"
-            animate="visible"
-            className="overflow-hidden rounded-2xl shadow-xl bg-white/30 backdrop-blur-lg border border-white/40"
-          >
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        {/* Table Section */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="bg-[#101828] text-white">
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Telepon</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Membership</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Riwayat</th>
+                  <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {loading && !showForm && !deleteId ? (
                   <tr>
-                    {["Nama", "Email", "Telepon", "Status", "Membership", "Riwayat", "Aksi"].map((head) => (
-                      <th key={head} className="px-6 py-4 text-left font-medium">
-                        {head}
-                      </th>
-                    ))}
+                    <td colSpan="7" className="px-6 py-12 text-center text-slate-400">
+                      <ArrowPathIcon className="w-8 h-8 animate-spin mx-auto mb-2" />
+                      Memuat data...
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-white/20">
-                  {filteredCustomers.length > 0 ? (
-                    filteredCustomers.map((customer) => (
-                      <motion.tr
-                        key={customer.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                        className="hover:bg-white/20"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-800">
-                          {customer.name}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-gray-600">
-                          {customer.email}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-gray-600">
-                          {customer.telepon}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadgeColor(customer.status)}`}>
-                            {customer.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${tierBadgeColor(customer.membership_tier)}`}>
-                            {customer.membership_tier}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 text-gray-600 max-w-xs truncate">
-                          {customer.riwayat}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <div className="flex justify-center gap-2">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={() => handleEdit(customer)}
-                              className="p-1.5 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-100 transition-all"
-                            >
-                              <PencilIcon className="w-5 h-5" />
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={() => handleDelete(customer.id, customer.name)}
-                              className="p-1.5 text-red-600 hover:text-red-800 rounded-full hover:bg-red-100 transition-all"
-                            >
-                              <TrashIcon className="w-5 h-5" />
-                            </motion.button>
-                          </div>
-                        </td>
-                      </motion.tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
-                        Tidak ada data pelanggan ditemukan.
+                ) : filteredCustomers.length > 0 ? (
+                  filteredCustomers.map((customer) => (
+                    <tr key={customer.id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                      <td className="px-6 py-4 font-bold text-slate-700">{customer.name}</td>
+                      <td className="px-6 py-4 text-slate-600">{customer.email}</td>
+                      <td className="px-6 py-4 text-slate-600">{customer.telepon}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusBadgeColor(customer.status)}`}>
+                          {customer.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${tierBadgeColor(customer.membership_tier)}`}>
+                          {customer.membership_tier}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500 max-w-xs truncate">{customer.riwayat}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center gap-2">
+                          <button onClick={() => handleEdit(customer)} className="p-2 text-[#101828] hover:bg-slate-100 rounded-lg transition-all" title="Edit"><PencilIcon className="w-4 h-4" /></button>
+                          <button onClick={() => { setDeleteId(customer.id); setDeleteName(customer.name); }} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all" title="Hapus"><TrashIcon className="w-4 h-4" /></button>
+                        </div>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-12 text-center text-slate-400 italic">Tidak ada data ditemukan.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
+        {/* Delete Confirmation Modal */}
         <AnimatePresence>
           {deleteId && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            >
-              <motion.div
-                variants={popIn}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Konfirmasi Hapus
-                  </h3>
-                  <button
-                    onClick={() => setDeleteId(null)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <XMarkIcon className="w-6 h-6" />
-                  </button>
+            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+              <motion.div variants={popIn} initial="hidden" animate="visible" exit="exit" className="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+                <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <TrashIcon className="w-8 h-8" />
                 </div>
-                <p className="mb-6 text-gray-600">
-                  Anda akan menghapus pelanggan{" "}
-                  <span className="font-semibold text-red-600">
-                    {deleteName}
-                  </span>
-                  . Tindakan ini tidak dapat dibatalkan.
-                </p>
-                <div className="flex justify-end gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setDeleteId(null)}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
-                  >
-                    Batal
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={confirmDelete}
-                    disabled={loading}
-                    className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all flex items-center gap-2"
-                  >
-                    {loading ? (
-                      <>
-                        <ArrowPathIcon className="w-4 h-4 animate-spin" />
-                        Menghapus...
-                      </>
-                    ) : (
-                      "Hapus"
-                    )}
-                  </motion.button>
+                <h2 className="text-xl font-bold text-slate-800 mb-2">Hapus Pelanggan?</h2>
+                <p className="text-slate-500 text-sm mb-8">Data <span className="font-bold text-slate-800">"{deleteName}"</span> akan dihapus permanen.</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setDeleteId(null)} className="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl text-sm">Batal</button>
+                  <button onClick={confirmDelete} className="flex-1 py-3 bg-[#101828] text-white font-bold rounded-xl shadow-lg text-sm hover:bg-slate-800 transition-all">Hapus</button>
                 </div>
               </motion.div>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </motion.div>

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { PencilIcon, ArrowPathIcon } from "@heroicons/react/24/outline"; // Added ArrowPathIcon for loading
+import { PencilIcon, ArrowPathIcon, XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 
 function formatCurrency(num) {
-  // Ensure num is a number before formatting
   if (typeof num !== 'number' || isNaN(num) || num === null) {
-    return "Rp 0"; // Return a default value for invalid numbers
+    return "Rp 0";
   }
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -14,24 +13,17 @@ function formatCurrency(num) {
   }).format(num);
 }
 
-// Framer Motion variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  exit: { opacity: 0, y: -20 },
-};
-
 const popIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { type: "spring", damping: 20 } },
-  exit: { opacity: 0, scale: 0.9 },
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { type: "spring", damping: 25, stiffness: 300 } },
+  exit: { opacity: 0, scale: 0.95 },
 };
 
 export default function OrderHistoryManagement() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showEditForm, setShowEditForm] = useState(false);
-  const [editEntryId, setEditEntryId] = useState(null); // This will now refer to the orderId for status updates
+  const [editEntryId, setEditEntryId] = useState(null);
   const [formData, setFormData] = useState({ status: "" });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -51,7 +43,7 @@ export default function OrderHistoryManagement() {
         appliedCoin: order.appliedCoin,
         orderDate: order.date,
         status: order.status,
-        address: order.address, // Include address from localStorage
+        address: order.address,
       }));
       setOrderHistory(flattened);
       setIsLoading(false);
@@ -61,7 +53,6 @@ export default function OrderHistoryManagement() {
   }, []);
 
   const handleStatusChange = (orderId, newStatus) => {
-    setIsLoading(true);
     const updatedHistory = orderHistory.map((order) =>
       order.id === orderId ? { ...order, status: newStatus } : order
     );
@@ -72,10 +63,6 @@ export default function OrderHistoryManagement() {
       order.id === orderId ? { ...order, status: newStatus } : order
     );
     localStorage.setItem("purchaseHistory", JSON.stringify(updatedLocalOrders));
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
   };
 
   const handleEdit = (entry) => {
@@ -94,7 +81,7 @@ export default function OrderHistoryManagement() {
       handleStatusChange(editEntryId, formData.status);
       setShowEditForm(false);
       setEditEntryId(null);
-      setIsLoading(false); // Set loading to false after update
+      setIsLoading(false);
     }, 500);
   };
 
@@ -105,214 +92,164 @@ export default function OrderHistoryManagement() {
   );
 
   return (
-    <div className="min-h-screen p-6 w-full mx-auto bg-white">
+    <div className="min-h-screen p-4 sm:p-8 bg-[#f8fafc] font-['Plus_Jakarta_Sans',sans-serif]">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
         className="max-w-7xl mx-auto"
       >
-        <div className="flex justify-between items-center mb-6">
-          <motion.h1
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl font-bold text-gray-800"
-          >
-            Manajemen Pesanan
-          </motion.h1>
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-[#0f172a]">Manajemen Pesanan</h1>
+            <p className="text-sm text-slate-500">Pantau dan kelola status pengiriman pelanggan</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Cari data..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-72 px-4 py-2 pl-10 border border-slate-200 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-[#101828]/10 focus:border-[#101828] outline-none transition-all text-sm"
+              />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            </div>
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center"
-        >
-          <div className="relative flex-grow">
-            <input
-              type="text"
-              placeholder="Cari ID pesanan, produk, atau alamat..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 pl-10 border-0 rounded-xl bg-white/70 backdrop-blur-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/90 transition-all"
-            />
-            <svg
-              className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </motion.div>
-
+        {/* Edit Form Section */}
         <AnimatePresence>
           {showEditForm && (
             <motion.div
-              variants={fadeIn}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="mb-8 p-6 rounded-2xl bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg max-w-xl mx-auto"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden mb-8"
             >
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                Edit Status Pesanan
-              </h2>
+              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-md max-w-xl mx-auto">
+                <h2 className="text-lg font-bold mb-6 text-slate-800 flex items-center gap-2">
+                  <div className="w-2 h-6 rounded-full bg-[#101828]"></div>
+                  Update Status Pesanan #{editEntryId}
+                </h2>
 
-              <div className="mb-3">
-                <label className="block mb-2 font-medium text-sm text-gray-700">Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ status: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white/80 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm transition-all"
-                >
-                  <option value="">Pilih Status</option>
-                  {statusOptions.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <div className="space-y-1 mb-6">
+                  <label className="text-xs font-bold text-slate-500 uppercase">Status Pengiriman</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ status: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#101828]/10 focus:border-[#101828] outline-none text-sm"
+                  >
+                    <option value="">Pilih Status</option>
+                    {statusOptions.map((status) => (
+                      <option key={status} value={status}>{status}</option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="flex justify-end gap-3 mt-4">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setShowEditForm(false)}
-                  className="px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
-                >
-                  Batal
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={handleUpdateOrder}
-                  disabled={isLoading}
-                  className={`px-5 py-2.5 text-white rounded-lg transition-all flex items-center gap-2 ${
-                    isLoading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
-                  }`}
-                >
-                  {isLoading ? (
-                    <>
-                      <ArrowPathIcon className="w-4 h-4 animate-spin" />
-                      Memproses...
-                    </>
-                  ) : (
-                    "Update Status"
-                  )}
-                </motion.button>
+                <div className="flex justify-end gap-3">
+                  <button 
+                    onClick={() => setShowEditForm(false)} 
+                    className="px-6 py-2 text-slate-500 font-medium hover:bg-slate-50 rounded-lg transition-all text-sm"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handleUpdateOrder}
+                    disabled={isLoading}
+                    className="px-8 py-2 text-white font-bold rounded-lg shadow-lg bg-[#101828] hover:bg-slate-800 transition-all flex items-center gap-2 text-sm"
+                  >
+                    {isLoading ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : "Simpan Perubahan"}
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {isLoading && !showEditForm ? ( // Only show loading spinner for initial data load
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        ) : (
-          <motion.div
-            variants={popIn}
-            initial="hidden"
-            animate="visible"
-            className="overflow-hidden rounded-2xl shadow-xl bg-white/30 backdrop-blur-lg border border-white/40"
-          >
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        {/* Table Section */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="bg-[#101828] text-white">
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">ID Pesanan</th>
+                  <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider">Produk</th>
+                  <th className="px-4 py-4 text-right text-xs font-bold uppercase tracking-wider">Total Bayar</th>
+                  <th className="px-4 py-4 text-center text-xs font-bold uppercase tracking-wider">Tanggal</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Alamat Pengiriman</th>
+                  <th className="px-4 py-4 text-center text-xs font-bold uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-4 text-center text-xs font-bold uppercase tracking-wider">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {isLoading && !showEditForm ? (
                   <tr>
-                    <th className="px-6 py-4 text-left font-medium">ID Pesanan</th>
-                    <th className="px-4 py-4 text-left font-medium">Produk</th>
-                    <th className="px-4 py-4 text-right font-medium">Total Pembayaran</th>
-                    <th className="px-4 py-4 text-center font-medium">Tanggal</th>
-                    <th className="px-6 py-4 text-left font-medium">Alamat Pengiriman</th> {/* New Table Header */}
-                    <th className="px-4 py-4 text-center font-medium">Status</th>
-                    <th className="px-4 py-4 text-center font-medium">Aksi</th>
+                    <td colSpan="7" className="px-6 py-12 text-center">
+                      <div className="flex flex-col items-center gap-2 text-slate-400">
+                        <ArrowPathIcon className="w-8 h-8 animate-spin" />
+                        <p>Memuat data pesanan...</p>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-white/20">
-                  {filteredOrderHistory.length > 0 ? (
-                    filteredOrderHistory.map((order) => (
-                      <motion.tr
-                        key={order.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                        className="hover:bg-white/20"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-800">
-                          {order.orderId}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-gray-600">
-                          {order.items.map(item => (
-                            <div key={item.id}>
-                              {item.name} (x{item.quantity})
-                            </div>
-                          ))}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right font-medium text-gray-800">
-                          {formatCurrency(order.totalPayment)}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center text-gray-600">
-                          {order.orderDate}
-                        </td>
-                        <td className="px-6 py-4 text-left text-gray-600"> {/* Adjusted padding and alignment */}
-                          {order.address}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              order.status === "Selesai"
-                                ? "bg-green-100 text-green-800"
-                                : order.status === "Sedang Diantar"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-blue-100 text-blue-800"
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <div className="flex justify-center gap-2">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={() => handleEdit(order)}
-                              className="p-1.5 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-100 transition-all"
-                            >
-                              <PencilIcon className="w-5 h-5" />
-                            </motion.button>
-                            {/* The select for status change is now handled by the edit form */}
+                ) : filteredOrderHistory.length > 0 ? (
+                  filteredOrderHistory.map((order) => (
+                    <tr key={order.id} className="hover:bg-slate-50/50 transition-colors text-sm">
+                      <td className="px-6 py-4 font-bold text-slate-700">#{order.orderId}</td>
+                      <td className="px-4 py-4 text-slate-600">
+                        {order.items.map((item, idx) => (
+                          <div key={idx} className="whitespace-nowrap">
+                            {item.name} <span className="text-slate-400 text-xs">x{item.quantity}</span>
                           </div>
-                        </td>
-                      </motion.tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="7" // Updated colspan to include the new column
-                        className="px-6 py-8 text-center text-gray-500"
-                      >
-                        Tidak ada riwayat pesanan ditemukan.
+                        ))}
+                      </td>
+                      <td className="px-4 py-4 text-right font-bold text-slate-900">
+                        {formatCurrency(order.totalPayment)}
+                      </td>
+                      <td className="px-4 py-4 text-center text-slate-500 whitespace-nowrap">
+                        {order.orderDate}
+                      </td>
+                      <td className="px-6 py-4 text-slate-500 max-w-xs truncate">
+                        {order.address}
+                      </td>
+                      <td className="px-4 py-4 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            order.status === "Selesai"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : order.status === "Sedang Diantar"
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-blue-100 text-blue-700"
+                          }`}
+                        >
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex justify-center">
+                          <button 
+                            onClick={() => handleEdit(order)} 
+                            className="p-2 text-[#101828] hover:bg-slate-100 rounded-lg transition-all"
+                            title="Edit Status"
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-12 text-center text-slate-400 italic">
+                      Tidak ada riwayat pesanan ditemukan.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

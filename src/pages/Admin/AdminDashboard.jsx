@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Bar, Line } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
-  LineElement,
   PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
@@ -17,395 +16,252 @@ import { motion } from "framer-motion";
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
-  LineElement,
   PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
   Filler
 );
 
-// Enhanced Framer Motion animations
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 30, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94],
-    },
-  },
-};
-
-const floatingVariants = {
-  floating: {
-    y: [-10, 10],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut",
-    },
-  },
-};
-
 const Dashboard = () => {
-  const [stats, setStats] = useState({
-    reservasi: 23,
-    pelangganBaru: 12,
-    pendapatan: 3500000,
-    pembelianProduk: 17,
+  // 1. State untuk Filter
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedYear, setSelectedYear] = useState("2024");
+  
+  // 2. Data Dummy Berdasarkan Filter (Simulasi Data Dinamis)
+  const [dynamicStats, setDynamicStats] = useState({
+    reservasiCount: 12,
+    totalPelanggan: 5240,
+    treatmentFavorit: "Facial Glow Premium",
+    produkTerlaris: "Rose Brightening Serum"
   });
 
+  // Efek simulasi ketika tanggal berubah
   useEffect(() => {
-    // Simulate real-time data updates
-    const interval = setInterval(() => {
-      setStats(prev => ({
-        ...prev,
-        reservasi: prev.reservasi + Math.floor(Math.random() * 3),
-        pelangganBaru: prev.pelangganBaru + Math.floor(Math.random() * 2),
-      }));
-    }, 5000);
+    // Di sini nantinya Anda akan melakukan Fetch API berdasarkan selectedDate
+    const randomReservasi = Math.floor(Math.random() * 20) + 5;
+    setDynamicStats(prev => ({ ...prev, reservasiCount: randomReservasi }));
+  }, [selectedDate]);
 
-    return () => clearInterval(interval);
-  }, []);
-
-  const cards = [
-    { 
-      label: "Reservasi Hari Ini", 
-      value: stats.reservasi, 
-      icon: "📅",
-      gradient: "from-blue-400 to-blue-600",
-      change: "+12%"
-    },
-    { 
-      label: "Pelanggan Baru", 
-      value: stats.pelangganBaru, 
-      icon: "👥",
-      gradient: "from-cyan-400 to-blue-500",
-      change: "+8%"
-    },
-    { 
-      label: "Pendapatan", 
-      value: `Rp${stats.pendapatan.toLocaleString("id-ID")}`, 
-      icon: "💰",
-      gradient: "from-indigo-400 to-purple-500",
-      change: "+15%"
-    },
-    { 
-      label: "Pembelian Produk", 
-      value: stats.pembelianProduk, 
-      icon: "🛒",
-      gradient: "from-teal-400 to-blue-500",
-      change: "+5%"
-    },
-  ];
-
-  const barData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
-    datasets: [
-      {
-        label: "Penjualan Produk",
-        data: [10, 14, 18, 22, 28, 35, 38, 34, 40, 44, 48, 52],
-        backgroundColor: (context) => {
-          const gradient = context.chart.ctx.createLinearGradient(0, 0, 0, 400);
-          gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
-          gradient.addColorStop(1, 'rgba(29, 78, 216, 0.4)');
-          return gradient;
-        },
-        borderRadius: 12,
-        barThickness: 25,
-        borderSkipped: false,
-      },
-    ],
+  const colors = {
+    navy: "#1e293b",
+    slate: "#64748b",
+    roseBackground: "#fcfcfc",
   };
 
-  const barOptions = {
+  // 3. Konfigurasi Grafik Pasien Bulanan
+  const generateChartData = (year) => {
+    // Dummy data berbeda tiap tahun untuk simulasi
+    const dataMap = {
+      "2024": [120, 150, 180, 140, 210, 250, 300, 280, 320, 350, 380, 420],
+      "2025": [200, 230, 210, 280, 300, 350, 400, 450, 420, 480, 500, 550],
+      "2026": [400, 420, 450, 410, 480, 520, 580, 600, 620, 0, 0, 0], // Tahun berjalan
+    };
+
+    return {
+      labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+      datasets: [
+        {
+          label: `Total Pasien ${year}`,
+          data: dataMap[year] || dataMap["2024"],
+          borderColor: colors.navy,
+          backgroundColor: "rgba(30, 41, 59, 0.05)",
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: colors.navy,
+          pointBorderColor: "#fff",
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+        },
+      ],
+    };
+  };
+
+  const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(30, 58, 138, 0.9)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        cornerRadius: 12,
+        backgroundColor: colors.navy,
         padding: 12,
-        displayColors: false,
-        borderColor: 'rgba(59, 130, 246, 0.3)',
-        borderWidth: 1,
-      },
+        titleFont: { size: 14, weight: 'bold' },
+        cornerRadius: 8,
+      }
     },
     scales: {
-      y: {
-        ticks: { 
-          color: 'rgba(30, 58, 138, 0.7)', 
-          beginAtZero: true,
-          font: { size: 12 }
-        },
-        grid: { 
-          color: 'rgba(59, 130, 246, 0.1)',
-          drawBorder: false
-        },
-        border: { display: false }
+      y: { 
+        beginAtZero: true,
+        grid: { borderDash: [5, 5], color: '#e2e8f0' },
+        ticks: { color: colors.slate, font: { size: 12 } } 
       },
-      x: {
-        ticks: { 
-          color: 'rgba(30, 58, 138, 0.7)',
-          font: { size: 12 }
-        },
+      x: { 
         grid: { display: false },
-        border: { display: false }
-      },
+        ticks: { color: colors.slate, font: { size: 12 } } 
+      }
     },
   };
 
-  const lineData = {
-    labels: barData.labels,
-    datasets: [
-      {
-        label: "Jumlah Pelanggan",
-        data: [50, 80, 120, 160, 190, 220, 250, 280, 310, 340, 370, 400],
-        borderColor: 'rgba(59, 130, 246, 1)',
-        backgroundColor: (context) => {
-          const gradient = context.chart.ctx.createLinearGradient(0, 0, 0, 400);
-          gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
-          gradient.addColorStop(1, 'rgba(59, 130, 246, 0.01)');
-          return gradient;
-        },
-        pointBackgroundColor: '#3b82f6',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 3,
-        pointRadius: 6,
-        pointHoverRadius: 8,
-        fill: true,
-        tension: 0.4,
-        borderWidth: 3,
-      },
-    ],
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
 
-  const lineOptions = {
-    ...barOptions,
-    interaction: {
-      intersect: false,
-      mode: 'index',
-    },
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
   };
 
   return (
-    <div className="relative">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full blur-3xl opacity-10"
-          variants={floatingVariants}
-          animate="floating"
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-cyan-100 to-blue-200 rounded-full blur-3xl opacity-10"
-          variants={floatingVariants}
-          animate="floating"
-          transition={{ delay: 1.5 }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-100 to-purple-200 rounded-full blur-3xl opacity-5"
-          variants={floatingVariants}
-          animate="floating"
-          transition={{ delay: 0.8 }}
-        />
-      </div>
-
+    <div className="min-h-screen bg-[#fcfcfc] p-4 md:p-8 font-sans text-slate-800">
       <motion.div
-        className="relative z-10 space-y-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        className="max-w-7xl mx-auto space-y-8"
       >
-        {/* Header */}
-        <motion.div
-          className="backdrop-blur-xl bg-white/80 border border-gray-200 rounded-3xl p-6 shadow-lg"
-          variants={itemVariants}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <motion.h1 
-                className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                📊 Dashboard Klinik The Rose Clinic
-              </motion.h1>
-              <motion.p 
-                className="text-slate-600 mt-2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7 }}
-              >
-                Pantau kinerja klinik Anda secara real-time dengan teknologi terdepan
-              </motion.p>
-            </div>
-            <motion.div
-              className="hidden md:block"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.9 }}
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl shadow-lg">
-                ⚡
-              </div>
-            </motion.div>
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 pb-8">
+          <div>
+            <h1 className="text-3xl font-serif font-bold text-[#1e293b] tracking-tight">
+              The Rose Aesthetic Clinic <span className="font-light italic text-slate-400 text-xl ml-2">Admin Dashboard</span>
+            </h1>
+           
           </div>
-        </motion.div>
+          
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 w-full sm:w-auto">
+               <span className="text-[10px] font-black text-slate-400 uppercase">Cek Tanggal Reservasi</span>
+               <input 
+                type="date" 
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="outline-none text-sm text-[#1e293b] font-bold cursor-pointer bg-transparent"
+               />
+            </div>
+          </div>
+        </div>
 
-        {/* Stats Cards */}
-        <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-          variants={containerVariants}
-        >
-          {cards.map((card, i) => (
-            <motion.div
-              key={card.label}
-              className="group relative backdrop-blur-xl bg-white/90 border border-gray-200 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
-              variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-slate-600 text-sm font-medium mb-1">{card.label}</p>
-                  <motion.h2 
-                    className="text-xl font-bold text-slate-800 mb-2"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1 }}
-                  >
-                    {card.value}
-                  </motion.h2>
-                  <div className="flex items-center">
-                    <span className="text-green-500 text-sm font-semibold">{card.change}</span>
-                    <span className="text-slate-500 text-xs ml-1">vs last month</span>
+        {/* Top Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Card Reservasi Tanggal Terpilih */}
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 relative group overflow-hidden">
+            <div className="flex justify-between items-start mb-4">
+               <p className="text-slate-400 text-xs font-bold uppercase">Reservasi</p>
+               <span className="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-full font-bold">LIVE</span>
+            </div>
+            <h2 className="text-4xl font-bold text-[#1e293b]">{dynamicStats.reservasiCount}</h2>
+            <p className="text-slate-500 text-xs mt-2 font-medium">Pada {new Date(selectedDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
+                <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+            </div>
+          </motion.div>
+
+          {/* Card Total Pelanggan */}
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 group">
+            <p className="text-slate-400 text-xs font-bold uppercase mb-4">Total Pelanggan</p>
+            <h2 className="text-4xl font-bold text-[#1e293b]">{dynamicStats.totalPelanggan.toLocaleString()}</h2>
+            <p className="text-green-500 text-xs mt-2 font-bold">↑ 12% dari bulan lalu</p>
+          </motion.div>
+
+          {/* Card Treatment Terpopuler */}
+          <motion.div variants={itemVariants} className="bg-[#1e293b] p-6 rounded-3xl shadow-xl text-white relative overflow-hidden">
+            <p className="text-slate-400 text-[10px] font-bold uppercase mb-4">Treatment Terpopuler</p>
+            <h2 className="text-xl font-serif font-bold leading-tight mb-2">{dynamicStats.treatmentFavorit}</h2>
+            <div className="flex items-center gap-2">
+                <span className="text-yellow-400 text-xs">★★★★★</span>
+                <span className="text-slate-400 text-[10px]">Pilihan utama pelanggan</span>
+            </div>
+            <div className="absolute top-2 right-4 text-2xl opacity-20">✨</div>
+          </motion.div>
+
+          {/* Card Produk Terlaris */}
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <p className="text-slate-400 text-[10px] font-bold uppercase mb-4">Produk Terlaris</p>
+            <h2 className="text-xl font-serif font-bold text-[#1e293b] leading-tight mb-2">{dynamicStats.produkTerlaris}</h2>
+            <div className="w-full bg-slate-100 h-1.5 rounded-full mt-4">
+                <div className="bg-slate-400 h-1.5 rounded-full w-[85%]"></div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Main Content: Chart & Summary */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Chart Section */}
+          <motion.div 
+            variants={itemVariants}
+            className="lg:col-span-2 bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <div>
+                <h3 className="text-xl font-serif font-bold text-slate-800 italic">Kunjungan Pasien</h3>
+                <p className="text-slate-400 text-xs font-medium">Laporan trafik pasien per bulan</p>
+              </div>
+              <select 
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="bg-slate-50 border border-slate-200 text-xs font-bold px-4 py-2 rounded-xl outline-none text-slate-600 focus:ring-2 focus:ring-slate-200"
+              >
+                <option value="2024">Laporan 2024</option>
+                <option value="2025">Laporan 2025</option>
+                <option value="2026">Laporan 2026</option>
+              </select>
+            </div>
+            
+            <div className="h-[380px] w-full">
+              <Line data={generateChartData(selectedYear)} options={chartOptions} />
+            </div>
+          </motion.div>
+
+          {/* Summary & Recommendations */}
+          <motion.div variants={itemVariants} className="space-y-6">
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
+              <h3 className="font-serif font-bold text-lg text-slate-800 mb-6 border-b border-slate-50 pb-4">Status Operasional</h3>
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-slate-400 font-bold uppercase tracking-widest">Slot Tersedia</span>
+                    <span className="text-sm font-bold text-slate-700">8 Sesi/Jam</span>
                   </div>
+                  <div className="h-10 w-10 rounded-full border-2 border-green-500 flex items-center justify-center text-[10px] font-bold text-green-600">80%</div>
                 </div>
-                <motion.div
-                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center text-white text-lg shadow-lg group-hover:shadow-xl transition-shadow duration-300`}
-                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {card.icon}
-                </motion.div>
+                
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-slate-400 font-bold uppercase tracking-widest">Staf Aktif</span>
+                    <span className="text-sm font-bold text-slate-700">12 Spesialis</span>
+                  </div>
+                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-slate-400 font-bold uppercase tracking-widest">Tingkat Kepuasan</span>
+                    <span className="text-sm font-bold text-slate-700">4.9 / 5.0</span>
+                  </div>
+                  <span className="text-yellow-500">★★★★★</span>
+                </div>
               </div>
-              
-              {/* Decorative gradient line */}
-              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${card.gradient} rounded-b-2xl opacity-60`} />
-            </motion.div>
-          ))}
-        </motion.div>
 
-        {/* Charts */}
-        <motion.div 
-          className="grid md:grid-cols-2 gap-6"
-          variants={containerVariants}
-        >
-          <motion.div
-            className="backdrop-blur-xl bg-white/90 border border-gray-200 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
-            variants={itemVariants}
-            whileHover={{ scale: 1.01 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                📦 Penjualan Produk
-              </h3>
-              <motion.div
-                className="w-3 h-3 bg-green-400 rounded-full"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
+              <button className="w-full mt-10 bg-slate-50 text-[#1e293b] py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-[#1e293b] hover:text-white transition-all duration-300 border border-slate-100">
+                Ekspor Laporan {selectedYear}
+              </button>
             </div>
-            <div className="h-64">
-              <Bar data={barData} options={barOptions} />
+
+            {/* Insight Card */}
+            <div className="bg-gradient-to-br from-[#1e293b] to-[#334155] p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden">
+              <div className="relative z-10">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin Insight</p>
+                <p className="text-sm leading-relaxed mt-4 italic text-slate-200">
+                  "Trend penggunaan <strong>{dynamicStats.treatmentFavorit}</strong> meningkat di akhir pekan. Pertimbangkan untuk menambah stok serum pendukung."
+                </p>
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
             </div>
           </motion.div>
-
-          <motion.div
-            className="backdrop-blur-xl bg-white/90 border border-gray-200 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
-            variants={itemVariants}
-            whileHover={{ scale: 1.01 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                📈 Perkembangan Pelanggan
-              </h3>
-              <motion.div
-                className="w-3 h-3 bg-blue-400 rounded-full"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-              />
-            </div>
-            <div className="h-64">
-              <Line data={lineData} options={lineOptions} />
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Additional Stats Row */}
-        <motion.div
-          className="backdrop-blur-xl bg-white/90 border border-gray-200 rounded-3xl p-6 shadow-lg"
-          variants={itemVariants}
-        >
-          <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-            📊 Ringkasan Performa
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <motion.div
-                className="text-2xl font-bold text-slate-800"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.2 }}
-              >
-                98.5%
-              </motion.div>
-              <p className="text-slate-600 text-sm">Tingkat Kepuasan</p>
-            </div>
-            <div className="text-center">
-              <motion.div
-                className="text-2xl font-bold text-slate-800"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.4 }}
-              >
-                4.8/5
-              </motion.div>
-              <p className="text-slate-600 text-sm">Rating Pelayanan</p>
-            </div>
-            <div className="text-center">
-              <motion.div
-                className="text-2xl font-bold text-slate-800"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.6 }}
-              >
-                24/7
-              </motion.div>
-              <p className="text-slate-600 text-sm">Layanan Aktif</p>
-            </div>
-          </div>
-        </motion.div>
+        </div>
       </motion.div>
     </div>
   );
